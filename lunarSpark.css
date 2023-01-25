@@ -1,0 +1,80 @@
+
+body {
+	background-color: black;
+}
+
+div#left {
+/*	width: 20%;*/
+	min-width: 250px;
+	border: 1px solid white;
+	float: left;
+	padding: 2px;
+}
+
+div#right {
+/*	width: 20%;*/
+/*	min-width: 550px;*/
+	text-align:center;
+	border: 1px solid white;
+	float: left;
+	padding: 2px;
+}
+
+div#center {
+/*	width: 59%;*/
+	text-align:center;
+	border: 1px solid white;
+	float: left;
+	min-width: 540px;
+}
+canvas {
+	/* border: 1px solid gray; */
+}
+
+/* table alignment */
+.left {
+	display: block;
+	text-align: left;
+}
+
+.right {
+	float: right;
+	text-align: right;
+}
+.unit {
+	width: 5em;
+	text-align: right;
+}
+
+/* satellite */
+.satellite {
+	font:16px 'Courier';
+	border: 1px solid black;
+	margin: 1px;
+	padding: 2px;
+}
+.notinview {
+	background-color: cornflowerblue;
+	color: white;
+}
+.inview {
+	background-color: palegoldenrod;
+	color: black;
+}
+
+/* customer */
+.customer {
+	font:16px 'Courier';
+	border: 1px solid black;
+	margin: 1px;	
+	padding: 2px;
+	min-width: 270px;
+}
+.inshadow {
+	background-color: darkgray;
+	color: white;
+}
+.notinshadow {
+	background-color: lightgray;
+	color: black;
+}
