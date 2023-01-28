@@ -5,7 +5,7 @@
 const minPerDay = 60*24; // minutes per day
 var time = 0 // minuites
 const refreshRate = 100 // 50 msec (20Hz), 100 msec (10Hz);
-const timeStep = 1; // min/refresh
+var timeStep = 1; // min/refresh
 var simState = "pause"
 
 
@@ -31,7 +31,7 @@ function stepSim() {
 
 function runSim() {
     stepSim();
-    if ((time > 29.5*minPerDay) || (simState != "run")) {
+    if ((time >= 29.5*minPerDay) || (simState != "run")) {
         clearInterval(simRun);
     }
 }
@@ -41,6 +41,58 @@ function startSim() {
 }
 function pauseSim() {
     simState = "pause"
+}
+
+function faster() {
+    timeStep = timeStep+1
+    stepRate = document.getElementById('stepRate');
+    stepRate.innerHTML = timeStep;
+}
+function slower() {
+    if (timeStep > 1) {
+        timeStep = timeStep-1
+    }
+    stepRate = document.getElementById('stepRate');
+    stepRate.innerHTML = timeStep;
+}
+
+function printSimControl() {
+    simLeft = document.getElementById('simLeft');
+    simLeft.replaceChildren();
+    var simControl = document.createElement('div')
+    simControl.id = "simControl";
+
+    var a = document.createElement('a')
+    a.href = "javascript:startSim();"
+    a.appendChild(document.createTextNode(">>"));
+    simControl.appendChild(a);
+
+    var a = document.createElement('a')
+    a.href = "javascript:pauseSim();"
+    a.appendChild(document.createTextNode("||"));
+    simControl.appendChild(a);
+
+    var a = document.createElement('a')
+    a.href = "javascript:stepSim();"
+    a.appendChild(document.createTextNode(">|"));
+    simControl.appendChild(a);
+
+    var a = document.createElement('a')
+    a.href = "javascript:slower();"
+    a.appendChild(document.createTextNode("--"));
+    simControl.appendChild(a);
+
+    var a = document.createElement('a')
+    a.href = "javascript:faster();"
+    a.appendChild(document.createTextNode("++"));
+    simControl.appendChild(a);
+
+    var a = document.createElement('a')
+    a.id = "stepRate"
+    a.appendChild(document.createTextNode(timeStep));
+    simControl.appendChild(a);
+
+    simLeft.appendChild(simControl);
 }
 
 function updateDisplay() {
@@ -331,30 +383,6 @@ function printCustomer(id) {
     return customer;
 }
 
-function printSimControl() {
-    simLeft = document.getElementById('simLeft');
-    simLeft.replaceChildren();
-    var simControl = document.createElement('div')
-    simControl.id = "simControl";
-
-    var a = document.createElement('a')
-    a.href = "javascript:startSim();"
-    a.appendChild(document.createTextNode(">>"));
-    simControl.appendChild(a);
-
-    var a = document.createElement('a')
-    a.href = "javascript:pauseSim();"
-    a.appendChild(document.createTextNode("||"));
-    simControl.appendChild(a);
-
-    var a = document.createElement('a')
-    a.href = "javascript:stepSim();"
-    a.appendChild(document.createTextNode(">|"));
-    simControl.appendChild(a);
-
-    simLeft.appendChild(simControl);
-}
-
 function printSimData() { 
 
     simRight = document.getElementById('simRight');
@@ -365,5 +393,5 @@ function printSimData() {
     simRight.appendChild(document.createElement('div').appendChild(document.createTextNode(` Minutes: ${(time%60).toFixed(0)}`)))
 
 
-    simRight.appendChild(document.createElement('div').appendChild(document.createTextNode(`Elapsed Minutes: ${time.toFixed(0)}`)))
+    simRight.appendChild(document.createElement('div').appendChild(document.createTextNode(` Elapsed Minutes: ${time.toFixed(0)}`)))
 }
