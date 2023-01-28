@@ -37,10 +37,6 @@ canvas {
 	background-repeat: no-repeat;
 	display: none;
 }
-div#simControl {
-	border: 1px solid white;
-	float:left;
-}
 
 div#simLeft {
 	border: 1px solid white;
@@ -61,17 +57,18 @@ div#simRight {
 	text-align: left;
 }
 
-.simControl {
+div#simControl {
 /*	border: 1px solid white;*/
-	margin: 5px 5px 5px 5px;
-	padding: 5px 5px 5px 5px;;
+	margin: 5px 0px 5px 0px;
+	padding: 5px 0px 5px 0px;;
 	float: left;
 	min-width: 300px;	
 }
-.simControl a {
+div#simControl a {
 	font-size: 20px;
 	color: white;
 	border: 1px solid white;
+	margin: 5px 5px 5px 5px;
 	padding: 5px 5px 5px 5px;
 	text-decoration: none;
 }
