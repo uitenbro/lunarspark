@@ -4,6 +4,10 @@ body {
 	font:14px 'Courier';
 }
 
+div#all {
+	width: 1240px
+}
+
 div#top {
 /*	width: 20%;*/
 	display: flow-root;
@@ -29,7 +33,47 @@ div#middle {
 	display: block;
 }
 canvas {
-	/* border: 1px solid gray; */
+	border: 1px solid gray; 
+	background-repeat: no-repeat;
+	display: none;
+}
+div#simControl {
+	border: 1px solid white;
+	float:left;
+}
+
+div#simLeft {
+	border: 1px solid white;
+	float:left;
+	margin: 1px;
+	padding: 2px;
+	color: white;
+	width: 300px;
+	text-align: left;
+}
+div#simRight {
+	border: 1px solid white;
+	margin: 1px;
+	padding: 2px;
+	float:right;
+	color:white;
+	width: 300px;
+	text-align: left;
+}
+
+.simControl {
+/*	border: 1px solid white;*/
+	margin: 5px 5px 5px 5px;
+	padding: 5px 5px 5px 5px;;
+	float: left;
+	min-width: 300px;	
+}
+.simControl a {
+	font-size: 20px;
+	color: white;
+	border: 1px solid white;
+	padding: 5px 5px 5px 5px;
+	text-decoration: none;
 }
 
 /* table alignment */

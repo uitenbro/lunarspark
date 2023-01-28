@@ -1,15 +1,19 @@
 // Background image and canvas dimensions
-const desiredCanvasWidth = 540; // pixels
-const orbitDistanceOffset = 100; // pixels
-const orbitWidth = 250; // pixels
+const desiredCanvasWidth = 360; // pixels
+const orbitDistanceOffset = 60; // pixels
+const orbitWidth = 50; // pixels
 const orbitVisibilityLowerBound  = 50; // degrees
 const orbitVisibilityUpperBound = 310; // degrees
+const img = new Image(); // Create new img element
 //const imageFile = "labeled_lunar_south_pole.jpg"; // 80-90 degree south pole image with sites labeled
 const imageFile = "elphic_south_lunar_pole_ice.png"; // 80-90 degree south pole image with ice sites colored
+var initComplete = false;
 const minLatitude = 80; // minimum degrees of latitude in image
 const shadowTransparency = 0.4 
 var originX = 0; 
 var originY = 0;
+var canvas
+var context
 
 // Lunar constants
 const moonRadius = 1740; // km 
@@ -38,10 +42,11 @@ const orbitRadius = moonRadius + orbitAlititude; // km
 const orbitPeriod = 148; // min
 
 // Model parameters
-var time = 0 // msec
-const refreshRate = 50 // 50 msec (20Hz), 100 msec (10Hz);
-const timeScale = 1 // msec/min
-const timeStep = timeScale/refreshRate; // min/refresh
+const minPerDay = 60*24; // minutes per day
+var time = 0 // minuites
+const refreshRate = 100 // 50 msec (20Hz), 100 msec (10Hz);
+const timeStep = 1; // min/refresh
+var simState = "pause"
 
 function drawAll(time) {
 
@@ -76,38 +81,87 @@ function drawAll(time) {
 
 }
 
-function drawMoon(time) {
+function drawMoon() {
 
-    context.clearRect(0, 0, context.width, context.height);
+    moon = document.getElementById('simCanvas');
+    moon.style.backgroundImage = 'url('+imageFile+')';
+    moon.style.backgroundSize = desiredCanvasWidth+"px";
+    moon.style.backgroundPosition = orbitDistanceOffset+"px "+orbitDistanceOffset+"px";
+    moon.style.display = "inline";
+}
+
+function updateDisplay() {
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
     //const img = moon;
-    const img = new Image(); // Create new img element
-    img.src = imageFile; // Set source path
-    img.onload = function(){
+    // img.src = imageFile; // Set source path
+    // img.onload = function(){
 
         // Setup global canvas coordinates based on image scaling
-        imageScaleFactor = desiredCanvasWidth/img.width;
-        canvas.width = img.width*imageScaleFactor + 2*orbitDistanceOffset
-        canvas.height = img.height*imageScaleFactor + 2*orbitDistanceOffset;
-        originX = canvas.width/2; // intentionall global
-        originY = canvas.height/2; // intentionally global
+        // imageScaleFactor = desiredCanvasWidth/img.width;
+        // canvas.width = img.width*imageScaleFactor + 2*orbitDistanceOffset
+        // canvas.height = img.height*imageScaleFactor + 2*orbitDistanceOffset;     
+        // originX = canvas.width/2; // intentionall global
+        // originY = canvas.height/2; // intentionally global
 
         // Add moon image
-        context.drawImage(img, orbitDistanceOffset, orbitDistanceOffset, img.width*imageScaleFactor, img.height*imageScaleFactor)
+       //contextBG.drawImage(img, orbitDistanceOffset, orbitDistanceOffset, img.width*imageScaleFactor, img.height*imageScaleFactor)
 
-        // Add outline to moon
-        context.strokeStyle = "black";
-        context.lineWidth = 2.0;
-        context.beginPath();
-        context.arc(originX, originY, canvas.width/2, 0, 2*Math.PI)  
-        context.stroke();
+        // // Add outline to moon
+        // context.strokeStyle = "black";
+        // context.lineWidth = 2.0;
+        // context.beginPath();
+        // context.arc(originX, originY, (canvas.width-2*orbitDistanceOffset)/2, 0, 2*Math.PI)  
+        // context.stroke();
 
         // Once the moon is drawn then draw the overlays
         drawAll(time);
         printAll(time);
-        time = time+timeStep;
-        setTimeout(drawMoon(time), 10)
+
+        initComplete = true;
+
+        // time = time+timeStep;
+        // if (time < 29.5*minPerDay) {
+        //     //setTimeout(drawMoon(), 1)
+        //     drawMoon();
+        // }
+    // }
+}
+
+function initSim() {
+
+    canvas = document.querySelector('#simCanvas'); // canvas is intentionally global
+    context = canvas.getContext('2d'); // context is intentionally global
+    canvas.width = desiredCanvasWidth + 2*orbitDistanceOffset
+    canvas.height = desiredCanvasWidth + 2*orbitDistanceOffset;     
+    originX = canvas.width/2; // intentionall global
+    originY = canvas.height/2; // intentionally global
+
+    drawMoon();
+    printAll();  
+    printSimControl();
+}
+
+function stepSim() {
+    time = time+timeStep;
+    // updateModel();
+    updateDisplay();
+}
+
+function runSim() {
+    stepSim();
+    if ((time > 29.5*minPerDay) || (simState != "run")) {
+        clearInterval(simRun);
     }
 }
+function startSim() {
+    simState = "run"
+    simRun = setInterval(runSim, 50);
+}
+function pauseSim() {
+    simState = "pause"
+}
+
 
 function drawOrbit(sunAngle) {
     
@@ -125,13 +179,6 @@ function drawOrbit(sunAngle) {
 
 }
 
-function initSim() {
-
-    canvas = document.querySelector('#simCanvas'); // canvas is intentionally global
-    context = canvas.getContext('2d'); // context is intentionally global
-
-    drawMoon(0);
-}
 
 function drawSunIllumination (sunAngle) {
     var rad = (sunAngle)*(Math.PI / 180.0)
@@ -204,9 +251,9 @@ function drawCustomer(lat, long, id) {
 
 function drawLaser(satDeg, orbitAngle, laserNum, lat, long) {
     satDeg = (satDeg + 90)%360; // rotate so 0 degrees is the top of screen then CCW degrees around the orbit
-    if (satDeg >= orbitVisibilityLowerBound+10 && satDeg <= orbitVisibilityUpperBound-10) { 
+    if (satDeg >= orbitVisibilityLowerBound+40 && satDeg <= orbitVisibilityUpperBound-40) { 
 
-        var hyp = (90-lat)/(90-minLatitude) * ((canvas.width)-2*orbitDistanceOffset)/2; // pixel length of hypotenuse
+        var hyp = (90-lat)/(90-minLatitude) * ((canvas.width/2)-orbitDistanceOffset); // pixel length of hypotenuse
         var customerX1 = hyp*Math.sin((long) * (Math.PI / 180.0)); // pixels from central origin
         var customerY1 = hyp*Math.cos((long) * (Math.PI / 180.0)); // pixels from central origin
         var customerX = hyp*Math.sin((long - orbitAngle-90) * (Math.PI / 180.0)); // pixels from central origin
@@ -281,6 +328,7 @@ function clearCanvas() {
 function printAll() {
     printSatellites();
     printCustomers();
+    printSimData();
 }
 
 function printSatellites() {
@@ -557,4 +605,42 @@ function printCustomer(id) {
     customer.appendChild(label);
 
     return customer;
+}
+
+
+function printSimControl() {
+    simLeft = document.getElementById('simLeft');
+    simLeft.replaceChildren();
+    var simControl = document.createElement('div')
+    simControl.className = "simControl";
+
+    var a = document.createElement('a')
+    a.href = "javascript:startSim();"
+    a.appendChild(document.createTextNode(">"));
+    simControl.appendChild(a);
+
+    var a = document.createElement('a')
+    a.href = "javascript:pauseSim();"
+    a.appendChild(document.createTextNode("||"));
+    simControl.appendChild(a);
+
+    var a = document.createElement('a')
+    a.href = "javascript:stepSim();"
+    a.appendChild(document.createTextNode(">|"));
+    simControl.appendChild(a);
+
+    simLeft.appendChild(simControl);
+}
+
+function printSimData() { 
+
+    simRight = document.getElementById('simRight');
+    simRight.replaceChildren();
+    
+    simRight.appendChild(document.createElement('div').appendChild(document.createTextNode(`Days: ${Math.floor(time/(24*60))}`)))
+    simRight.appendChild(document.createElement('div').appendChild(document.createTextNode(` Hours: ${Math.floor((time/(60))%24)}`)))
+    simRight.appendChild(document.createElement('div').appendChild(document.createTextNode(` Minutes: ${(time%60).toFixed(0)}`)))
+
+
+    simRight.appendChild(document.createElement('div').appendChild(document.createTextNode(`Elapsed Minutes: ${time.toFixed(0)}`)))
 }
