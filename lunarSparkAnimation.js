@@ -18,13 +18,13 @@ var context
 // Satellite drawing constants
 const satelliteCrossWidth = 20; // pixels
 const satelliteCrossHeight = 40; // pixels
-const satelliteLaserOffset = 18; //pixels
-const laser0xOffset = 0;
-const laser1xOffset = 0; 
-const laser2xOffset = satelliteLaserOffset;
-const laser3xOffset = -satelliteLaserOffset;
-const laser0yOffset = -satelliteLaserOffset;
-const laser1yOffset = satelliteLaserOffset;
+const satelliteLaserOffset = 9; //pixels
+const laser0xOffset = 2*satelliteLaserOffset;
+const laser1xOffset = satelliteLaserOffset; 
+const laser2xOffset = -satelliteLaserOffset;
+const laser3xOffset = -2*satelliteLaserOffset;
+const laser0yOffset = 0;
+const laser1yOffset = 0;
 const laser2yOffset = 0;
 const laser3yOffset = 0;
 
@@ -37,8 +37,7 @@ function clearCanvas() {
 }
 
 function drawMoon() {
-
-    moon = document.getElementById('simCanvas');
+    var moon = document.getElementById('simCanvas');
     moon.style.backgroundImage = 'url('+imageFile+')';
     moon.style.backgroundSize = desiredCanvasWidth+"px";
     moon.style.backgroundPosition = orbitDistanceOffset+"px "+orbitDistanceOffset+"px";
@@ -46,71 +45,58 @@ function drawMoon() {
 }
 
 function drawAll(time) {
-    // TODO: Update to use model data
-    drawSunIllumination(lunarSpark.environment.sun_angle); 
+    drawSunIllumination(); 
 
     drawLaser((time+30)%360, time%360,0, 85, 30);
     drawLaser((time+60)%360, time%360,0, 85, -60);
     drawLaser((time+90)%360, time%360,0, 90, 10);
     drawLaser((time+120)%360, time%360,0, 82, 15);  
     drawLaser((time+150)%360, time%360,0, 86, 45); 
-
     drawLaser((time+30)%360, time%360,1, 85, 30)  
     drawLaser((time+30)%360, time%360,2, 85, -60)  
     drawLaser((time+30)%360, time%360,3, 82, 15)  
 
-    drawCustomer(85, 30, "1");
-    drawCustomer(85, -60, "2");
-    drawCustomer(90, 0, "3");
-    drawCustomer(82, 15, "4");
-    drawCustomer(84, 30, "5");
-    drawCustomer(86, 45, "6");
-    drawCustomer(88, -165, "7");
-    drawCustomer(82, -90, "8");
-
-    drawOrbit(lunarSpark.environment.orbit.ascending_node);
-    
-    drawSatellite((time+30)%360, "0", time%360);
-    drawSatellite((time+60)%360, "1", time%360);
-    drawSatellite((time+90)%360, "2", time%360);
-    drawSatellite((time+120)%360, "3", time%360);
-    drawSatellite((time+150)%360, "4", time%360);
-
+    drawCustomers();
+    drawOrbit();
+    drawSatellites();
 }
 
-function drawOrbit(sunAngle) {
-    
-    sunAngle = (sunAngle+90) * (Math.PI/180)
+function drawOrbit() {
+    var acendingNode = lunarSpark.environment.orbit.ascending_node
+    acendingNode = (acendingNode+90) * (Math.PI/180)
     context.strokeStyle = "black";
     context.lineWidth = 5.0;
     context.beginPath();
-    context.ellipse(originX, originY, orbitWidth/2, canvas.height/2, sunAngle, orbitVisibilityLowerBound*(Math.PI/180), orbitVisibilityUpperBound*(Math.PI/180));
+    context.ellipse(originX, originY, orbitWidth/2, canvas.height/2, acendingNode, orbitVisibilityLowerBound*(Math.PI/180), orbitVisibilityUpperBound*(Math.PI/180));
     context.stroke();
     context.strokeStyle = "yellow";
     context.lineWidth = 3.0;
     context.beginPath();
-    context.ellipse(originX, originY, orbitWidth/2, canvas.height/2, sunAngle, orbitVisibilityLowerBound*(Math.PI/180), orbitVisibilityUpperBound*(Math.PI/180));
+    context.ellipse(originX, originY, orbitWidth/2, canvas.height/2, acendingNode, orbitVisibilityLowerBound*(Math.PI/180), orbitVisibilityUpperBound*(Math.PI/180));
     context.stroke();
-
 }
 
-function drawSunIllumination (sunAngle) {
-    var rad = (sunAngle)*(Math.PI / 180.0)
-    
+function drawSunIllumination () {
+    var sunAngle = lunarSpark.environment.sun_angle;
+    sunAngle = (sunAngle)*(Math.PI / 180.0);
     context.beginPath();
-    context.arc(originX, originY, canvas.width/2, 0+rad, Math.PI+rad);
+    context.arc(originX, originY, canvas.width/2, 0+sunAngle, Math.PI+sunAngle);
     context.closePath();
     context.lineWidth = 1;
     context.fillStyle = "rgba(0,0,0,"+shadowTransparency+")";
     context.fill();
+}
 
+function drawSatellites() {
+    // TODO: Draw farthest away satelites first so layering is correct
+    for (var i=0;i<lunarSpark.satellites.length;i++) {
+        drawSatellite(lunarSpark.satellites[i].orbit_angle, i, lunarSpark.environment.orbit.ascending_node);
+    }
 }
 
 function drawSatellite(deg, id, orbitAngle) {
-    
-    // TODO: In the calling function draw farthest away satelites first so layering is correct
-    deg = (deg + 90)%360; // rotate so 0 degrees is the top of screen then CCW degrees around the orbit
-    if (deg >= orbitVisibilityLowerBound && deg <= orbitVisibilityUpperBound) {    
+    var deg = (deg + 90)%360; // rotate so 0 degrees is the top of screen then CCW degrees around the orbit
+    if (deg >= orbitVisibilityLowerBound+8 && deg <= orbitVisibilityUpperBound-8) {    
         var a = orbitWidth/2;
         var b = canvas.height/2;
         var t = (deg)*(Math.PI / 180.0)
@@ -126,8 +112,6 @@ function drawSatellite(deg, id, orbitAngle) {
         context.translate(-originX,-originY);
 
         context.fillStyle = "white";
-        // context.fillRect(x+9, y-1, satelliteCrossWidth+2, satelliteCrossHeight+2);
-        // context.fillRect(x-1, y+9, satelliteCrossHeight+2, satelliteCrossWidth+2);   
         context.fillRect(x-satelliteCrossWidth/2-1, y-satelliteCrossHeight/2-1, satelliteCrossWidth+2, satelliteCrossHeight+2);
         context.fillRect(x-satelliteCrossHeight/2-1, y-satelliteCrossWidth/2-1, satelliteCrossHeight+2, satelliteCrossWidth+2);    
         context.fillStyle = "blue";
@@ -142,6 +126,12 @@ function drawSatellite(deg, id, orbitAngle) {
         context.fillText(id, x-5, y+5);
 
         context.restore();
+    }
+}
+
+function drawCustomers() {
+    for (var i=0;i<lunarSpark.customers.length;i++) {
+        drawCustomer(lunarSpark.customers[i].location.lat, lunarSpark.customers[i].location.long, i);
     }
 }
 
@@ -178,12 +168,6 @@ function drawLaser(satDeg, orbitAngle, laserNum, lat, long) {
         customerX = originX+customerX; // pixels from canvas orgin
         customerY = originY-customerY; // pixels from canvas orgin
 
-        // console.log("xDelta: ", customerX - customerX1);
-        // console.log("yDelta: ", customerY - customerY1);
-        // customerX = customerX*Math.cos(orbitAngle); // account for orbit angle in in canvas rotations
-        // customerY = customerY*Math.sin(orbitAngle);// account for orbit angle in in canvas rotations
-
-        //satDeg = satDeg + 90; // rotate so 0 degrees is the top of screen then CCW degrees around the orbit
         var a = orbitWidth/2;
         var b = canvas.height/2;
         var t = (satDeg)*(Math.PI / 180.0)
