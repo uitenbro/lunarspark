@@ -33,7 +33,7 @@ function updateCustomers() {
 }
 function connectLasers() {
 	for (var i=0;i<lunarSpark.satellites.length;i++) {
-		for (var j=0;j<4;j++) { //TODO: j<lunarSpark.satellites[i].lasers.length++;j++) {
+		for (var j=0;j<lunarSpark.satellites[i].lasers.length;j++) {
 			var customer = (i+j)%8
 			// Algorithm for connections
 			connectLaser(i, j, customer);

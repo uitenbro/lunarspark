@@ -44,7 +44,7 @@ div#simLeft {
 	margin: 1px;
 	padding: 2px;
 	color: white;
-	width: 360px;
+	width: 365px;
 	text-align: left;
 }
 div#simRight {
@@ -53,15 +53,16 @@ div#simRight {
 	padding: 2px;
 	float:right;
 	color:white;
-	width: 360px;
+	width: 365px;
 	text-align: left;
 }
 
 div#simControl {
-/*	border: 1px solid white;*/
+	border: 1px solid white;
+	text-align: center;
 	margin: 5px 0px 5px 0px;
-	padding: 5px 0px 5px 0px;;
-	float: left;
+	padding: 10px 5px 10px 5px;;
+/*	float: left;*/
 /*	min-width: 350px;	*/
 }
 div#simControl a {
@@ -71,6 +72,10 @@ div#simControl a {
 	margin: 5px 5px 5px 5px;
 	padding: 5px 5px 5px 5px;
 	text-decoration: none;
+}
+div#simStatus {
+/*	padding-top:5px;*/
+
 }
 
 /* table alignment */

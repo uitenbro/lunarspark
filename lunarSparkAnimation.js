@@ -221,7 +221,7 @@ function drawLaser(satDeg, orbitAngle, laserNum, lat, long) {
         context.moveTo(satX, satY);
         context.lineTo(customerX, customerY);
         context.stroke();
-        context.strokeStyle = "purple";
+        context.strokeStyle = "Magenta";
         context.lineWidth = 3.0;
         context.beginPath();
         context.moveTo(satX, satY);

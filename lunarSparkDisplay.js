@@ -1,14 +1,15 @@
-
-
-
 // Model parameters
 const minPerDay = 60*24; // minutes per day
-const daysPerLunarCycle = 29.5 // days per lunar cycle with respect to sun
-const minPerLunarCycle = daysPerLunarCycle*minPerDay
+const daysPerLunarCycle = 29.5; // days per lunar cycle with respect to sun
+const minPerLunarCycle = daysPerLunarCycle*minPerDay;
 var time = 0 // minuites
-var refreshPeriod = 1 // 10msec (100Hz) 50 msec (20Hz), 100 msec (10Hz);
+var refreshPeriod = 10 // 10msec (100Hz) 50 msec (20Hz), 100 msec (10Hz);
 var timeStep = 1; // min/refresh
-var simState = "pause"
+var simState = "pause";
+var previousStartTime = Date.now();
+var elapsedTime = 0; // msec
+var execRate = 0; // Hz
+var frameCount = 0;
 
 
 function initSim() {
@@ -20,9 +21,9 @@ function initSim() {
     originX = canvas.width/2; // intentionall global
     originY = canvas.height/2; // intentionally global
 
+    printSimControl();
     drawMoon();
     printAll();  
-    printSimControl();
 }
 
 function stepSim() {
@@ -32,9 +33,15 @@ function stepSim() {
 }
 
 function runSim() {
+    document.getElementById('runButton').style.visibility = "hidden";
+    var startTime =  Date.now();
+    elapsedTime = startTime - previousStartTime; // msec
+    execRate = (1/(elapsedTime*1000)).toFixed(2); // Hz
+    previousStartTime = startTime;
     stepSim();
     if ((time >= minPerLunarCycle) || (simState != "run")) {
         clearInterval(simRun);
+        document.getElementById('runButton').style.visibility = "visible";
     }
 }
 function startSim() {
@@ -46,38 +53,38 @@ function pauseSim() {
 }
 
 function faster() {
-    if (refreshPeriod > 1) {
-        refreshPeriod = refreshPeriod/10;
-        clearInterval(simRun);
-        startSim();
-    }
-    else {
-        timeStep = timeStep+1
-    }
-    stepRate = document.getElementById('stepRate');
-    stepRate.innerHTML = timeStep+" min/step<br/>"+ refreshPeriod + " msec/step<br/>"+(timeStep/refreshPeriod*1000).toFixed(0)+" min/sec";
+    // if (refreshPeriod > 1) {
+    //     refreshPeriod = refreshPeriod/10;
+    //     clearInterval(simRun);
+    //     startSim();
+    // }
+    // else {
+    //     timeStep = timeStep+1
+    // }
+    timeStep = timeStep*2;
+    printSimData();
 }
 function slower() {
-    if (timeStep > 1) {
-        timeStep = timeStep-1
-    } 
-    else {    
-        refreshPeriod = refreshPeriod * 10;
-        clearInterval(simRun);
-        startSim();
-    }
-    stepRate = document.getElementById('stepRate');
-    stepRate.innerHTML = timeStep+" min/step<br/>"+ refreshPeriod + " msec/step<br/>"+(timeStep/refreshPeriod*1000).toFixed(0)+" min/sec";
+    // if (timeStep > 1) {
+    //     timeStep = timeStep-1
+    // } 
+    // else {    
+    //     refreshPeriod = refreshPeriod * 10;
+    //     clearInterval(simRun);
+    //     startSim();
+    // }
+    timeStep = timeStep/2;
+    printSimData();
 }
 
 function printSimControl() {
-    simLeft = document.getElementById('simLeft');
-    simLeft.replaceChildren();
+
     var simControl = document.createElement('div')
     simControl.id = "simControl";
 
     var a = document.createElement('a')
     a.href = "javascript:startSim();"
+    a.id = "runButton";
     a.appendChild(document.createTextNode(">>"));
     simControl.appendChild(a);
 
@@ -101,18 +108,23 @@ function printSimControl() {
     a.appendChild(document.createTextNode("++"));
     simControl.appendChild(a);
 
-    var a = document.createElement('div')
-    a.id = "stepRate"
-    a.innerHTML = timeStep+" min/step<br/>"+ refreshPeriod + " msec/step<br/>"+(timeStep/refreshPeriod*1000).toFixed(0)+" min/sec";
+    simLeft = document.getElementById('simLeft');
+    simLeft.replaceChildren(simControl);
 
-    simLeft.appendChild(simControl);
-    simLeft.appendChild(a);
+    var simStatus = document.createElement('div');
+    simStatus.id = "simStatus";
+
+    simLeft.appendChild(simStatus)
 }
 
 function updateDisplay() {
     clearCanvas();
     drawAll(time);
-    printAll(time);
+    // if stepping or every 0.5 second 
+    if (simState != "run" || (frameCount%(500/refreshPeriod))==0) {
+        printAll(time);
+    }
+    frameCount = frameCount+1;
 }
 
 function printAll() {
@@ -398,14 +410,112 @@ function printCustomer(id) {
 }
 
 function printSimData() { 
+    printSimLeft(); 
+    printSimRight();
+}
 
+function printSimLeft() {
+    var div = document.createElement('div');
+    div.id = "simStatus";
+
+    // var label =  document.createElement('div');
+    // label.appendChild(document.createTextNode('Step Period:'));
+    // label.className = "left";
+    // var measurement =  document.createElement('div');
+    // measurement.appendChild(document.createTextNode(refreshPeriod));
+    // measurement.className = "right";
+    // var unit =  document.createElement('div');
+    // unit.appendChild(document.createTextNode('msec'));
+    // unit.className = "unit right";
+    // div.appendChild(unit);
+    // div.appendChild(measurement);
+    // div.appendChild(label);
+
+    var label =  document.createElement('div');
+    label.appendChild(document.createTextNode('Min / Step:'));
+    label.className = "left";
+    var measurement =  document.createElement('div');
+    measurement.appendChild(document.createTextNode(timeStep));
+    measurement.className = "right";
+    var unit =  document.createElement('div');
+    unit.appendChild(document.createTextNode('min'));
+    unit.className = "unit right";
+    div.appendChild(unit);
+    div.appendChild(measurement);
+    div.appendChild(label);
+
+    var label =  document.createElement('div');
+    label.appendChild(document.createTextNode('Exec Rate:'));
+    label.className = "left";
+    var measurement =  document.createElement('div');
+    measurement.appendChild(document.createTextNode((1000/elapsedTime).toFixed(0)));
+    measurement.className = "right";
+    var unit =  document.createElement('div');
+    unit.appendChild(document.createTextNode('Hz'));
+    unit.className = "unit right";
+    div.appendChild(unit);
+    div.appendChild(measurement);
+    div.appendChild(label);   
+    
+    simStatus = document.getElementById('simStatus');
+    simStatus.replaceWith(div);
+
+}
+
+function printSimRight() {
     simRight = document.getElementById('simRight');
     simRight.replaceChildren();
-    
-    simRight.appendChild(document.createElement('div').appendChild(document.createTextNode(`Days: ${Math.floor(time/(24*60))}`)))
-    simRight.appendChild(document.createElement('div').appendChild(document.createTextNode(` Hours: ${Math.floor((time/(60))%24)}`)))
-    simRight.appendChild(document.createElement('div').appendChild(document.createTextNode(` Minutes: ${(time%60).toFixed(0)}`)))
+ 
+    var label =  document.createElement('div');
+    label.appendChild(document.createTextNode('Elapsed Time:'));
+    label.className = "left";
+    var measurement =  document.createElement('div');
+    measurement.appendChild(document.createTextNode((time).toFixed(0)));
+    measurement.className = "right";
+    var unit =  document.createElement('div');
+    unit.appendChild(document.createTextNode('min'));
+    unit.className = "unit right";
+    simRight.appendChild(unit);
+    simRight.appendChild(measurement);
+    simRight.appendChild(label);
 
+    var label =  document.createElement('div');
+    label.appendChild(document.createTextNode('Days:'));
+    label.className = "left";
+    var measurement =  document.createElement('div');
+    measurement.appendChild(document.createTextNode(Math.floor(time/(24*60))));
+    measurement.className = "right";
+    var unit =  document.createElement('div');
+    unit.appendChild(document.createTextNode('days'));
+    unit.className = "unit right";
+    simRight.appendChild(unit);
+    simRight.appendChild(measurement);
+    simRight.appendChild(label);
 
-    simRight.appendChild(document.createElement('div').appendChild(document.createTextNode(` Elapsed Minutes: ${time.toFixed(0)}`)))
+    var label =  document.createElement('div');
+    label.appendChild(document.createTextNode('Hours:'));
+    label.className = "left";
+    var measurement =  document.createElement('div');
+    measurement.appendChild(document.createTextNode(Math.floor(time/(60))%24));
+    measurement.className = "right";
+    var unit =  document.createElement('div');
+    unit.appendChild(document.createTextNode('hrs'));
+    unit.className = "unit right";
+    simRight.appendChild(unit);
+    simRight.appendChild(measurement);
+    simRight.appendChild(label);
+
+    var label =  document.createElement('div');
+    label.appendChild(document.createTextNode('Minutes:'));
+    label.className = "left";
+    var measurement =  document.createElement('div');
+    measurement.appendChild(document.createTextNode((time%60).toFixed(0)));
+    measurement.className = "right";
+    var unit =  document.createElement('div');
+    unit.appendChild(document.createTextNode('min'));
+    unit.className = "unit right";
+    simRight.appendChild(unit);
+    simRight.appendChild(measurement);
+    simRight.appendChild(label);
+
 }
