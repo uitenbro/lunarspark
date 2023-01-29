@@ -3,6 +3,8 @@
 
 // Model parameters
 const minPerDay = 60*24; // minutes per day
+const daysPerLunarCycle = 29.5 // days per lunar cycle with respect to sun
+const minPerLunarCycle = daysPerLunarCycle*minPerDay
 var time = 0 // minuites
 const refreshRate = 100 // 50 msec (20Hz), 100 msec (10Hz);
 var timeStep = 1; // min/refresh
@@ -25,13 +27,13 @@ function initSim() {
 
 function stepSim() {
     time = time+timeStep;
-    // updateModel();
+    stepModel();
     updateDisplay();
 }
 
 function runSim() {
     stepSim();
-    if ((time >= 29.5*minPerDay) || (simState != "run")) {
+    if ((time >= minPerLunarCycle) || (simState != "run")) {
         clearInterval(simRun);
     }
 }

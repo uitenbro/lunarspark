@@ -6,7 +6,7 @@ var lunarSparkInput =
     "orbit": {
       "period": 148,
       "altitude": 402000,
-      "right_ascention": 270
+      "ascending_node": 180
     },
     "sun_angle": 0
   },

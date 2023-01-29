@@ -47,7 +47,7 @@ function drawMoon() {
 
 function drawAll(time) {
     // TODO: Update to use model data
-    drawSunIllumination(time%360); 
+    drawSunIllumination(lunarSpark.environment.sun_angle); 
 
     drawLaser((time+30)%360, time%360,0, 85, 30);
     drawLaser((time+60)%360, time%360,0, 85, -60);
@@ -68,7 +68,8 @@ function drawAll(time) {
     drawCustomer(88, -165, "7");
     drawCustomer(82, -90, "8");
 
-    drawOrbit(time%360);
+    drawOrbit(lunarSpark.environment.orbit.ascending_node);
+    
     drawSatellite((time+30)%360, "0", time%360);
     drawSatellite((time+60)%360, "1", time%360);
     drawSatellite((time+90)%360, "2", time%360);
