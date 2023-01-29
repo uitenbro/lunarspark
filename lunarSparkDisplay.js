@@ -6,7 +6,7 @@ const minPerDay = 60*24; // minutes per day
 const daysPerLunarCycle = 29.5 // days per lunar cycle with respect to sun
 const minPerLunarCycle = daysPerLunarCycle*minPerDay
 var time = 0 // minuites
-const refreshRate = 100 // 50 msec (20Hz), 100 msec (10Hz);
+var refreshPeriod = 1 // 10msec (100Hz) 50 msec (20Hz), 100 msec (10Hz);
 var timeStep = 1; // min/refresh
 var simState = "pause"
 
@@ -39,23 +39,35 @@ function runSim() {
 }
 function startSim() {
     simState = "run"
-    simRun = setInterval(runSim, 50);
+    simRun = setInterval(runSim, refreshPeriod);
 }
 function pauseSim() {
     simState = "pause"
 }
 
 function faster() {
-    timeStep = timeStep+1
+    if (refreshPeriod > 1) {
+        refreshPeriod = refreshPeriod/10;
+        clearInterval(simRun);
+        startSim();
+    }
+    else {
+        timeStep = timeStep+1
+    }
     stepRate = document.getElementById('stepRate');
-    stepRate.innerHTML = timeStep;
+    stepRate.innerHTML = timeStep+" min/step<br/>"+ refreshPeriod + " msec/step<br/>"+(timeStep/refreshPeriod*1000).toFixed(0)+" min/sec";
 }
 function slower() {
     if (timeStep > 1) {
         timeStep = timeStep-1
+    } 
+    else {    
+        refreshPeriod = refreshPeriod * 10;
+        clearInterval(simRun);
+        startSim();
     }
     stepRate = document.getElementById('stepRate');
-    stepRate.innerHTML = timeStep;
+    stepRate.innerHTML = timeStep+" min/step<br/>"+ refreshPeriod + " msec/step<br/>"+(timeStep/refreshPeriod*1000).toFixed(0)+" min/sec";
 }
 
 function printSimControl() {
@@ -89,12 +101,12 @@ function printSimControl() {
     a.appendChild(document.createTextNode("++"));
     simControl.appendChild(a);
 
-    var a = document.createElement('a')
+    var a = document.createElement('div')
     a.id = "stepRate"
-    a.appendChild(document.createTextNode(timeStep));
-    simControl.appendChild(a);
+    a.innerHTML = timeStep+" min/step<br/>"+ refreshPeriod + " msec/step<br/>"+(timeStep/refreshPeriod*1000).toFixed(0)+" min/sec";
 
     simLeft.appendChild(simControl);
+    simLeft.appendChild(a);
 }
 
 function updateDisplay() {

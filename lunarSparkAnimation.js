@@ -47,15 +47,15 @@ function drawMoon() {
 function drawAll(time) {
     drawSunIllumination(); 
 
-    drawLaser((time+30)%360, time%360,0, 85, 30);
-    drawLaser((time+60)%360, time%360,0, 85, -60);
-    drawLaser((time+90)%360, time%360,0, 90, 10);
-    drawLaser((time+120)%360, time%360,0, 82, 15);  
-    drawLaser((time+150)%360, time%360,0, 86, 45); 
-    drawLaser((time+30)%360, time%360,1, 85, 30)  
-    drawLaser((time+30)%360, time%360,2, 85, -60)  
-    drawLaser((time+30)%360, time%360,3, 82, 15)  
-
+    // drawLaser((time+30)%360, time%360,0, 85, 30);
+    // drawLaser((time+60)%360, time%360,0, 85, -60);
+    // drawLaser((time+90)%360, time%360,0, 90, 10);
+    // drawLaser((time+120)%360, time%360,0, 82, 15);  
+    // drawLaser((time+150)%360, time%360,0, 86, 45); 
+    // drawLaser((time+30)%360, time%360,1, 85, 30)  
+    // drawLaser((time+30)%360, time%360,2, 85, -60)  
+    // drawLaser((time+30)%360, time%360,3, 82, 15)  
+    drawLasers();
     drawCustomers();
     drawOrbit();
     drawSatellites();
@@ -154,7 +154,18 @@ function drawCustomer(lat, long, id) {
     context.fillStyle = "black";
     context.fillText(id, x-5, y+5);
 }
-
+function drawLasers() {
+    for (var i=0;i<lunarSpark.satellites.length;i++) {
+        for (var j=0;j<lunarSpark.satellites[i].lasers.length;j++) {
+            var customer = lunarSpark.satellites[i].lasers[j].customer;
+            var lat = lunarSpark.customers[customer].location.lat;
+            var long = lunarSpark.customers[customer].location.long;
+            if (customer != null) {
+                drawLaser(lunarSpark.satellites[i].orbit_angle, lunarSpark.environment.orbit.ascending_node, j, lat, long);
+            }
+        }
+    }
+}
 function drawLaser(satDeg, orbitAngle, laserNum, lat, long) {
     satDeg = (satDeg + 90)%360; // rotate so 0 degrees is the top of screen then CCW degrees around the orbit
     if (satDeg >= orbitVisibilityLowerBound+40 && satDeg <= orbitVisibilityUpperBound-40) { 

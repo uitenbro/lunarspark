@@ -12,6 +12,8 @@ function stepModel() {
 	updateSunAngle();
 	updateOrbitAngle();
 	updateSatellitePosition();
+	updateCustomers();
+	connectLasers()
 }
 
 function updateSunAngle () {
@@ -25,4 +27,19 @@ function updateSatellitePosition () {
 		lunarSpark.satellites[i].orbit_min = (lunarSpark.satellites[i].orbit_min+timeStep)%lunarSpark.environment.orbit.period;
 		lunarSpark.satellites[i].orbit_angle = lunarSpark.satellites[i].orbit_min/lunarSpark.environment.orbit.period*360
 	}
+}
+function updateCustomers() {
+	null;
+}
+function connectLasers() {
+	for (var i=0;i<lunarSpark.satellites.length;i++) {
+		for (var j=0;j<4;j++) { //TODO: j<lunarSpark.satellites[i].lasers.length++;j++) {
+			var customer = (i+j)%8
+			// Algorithm for connections
+			connectLaser(i, j, customer);
+		}
+	}
+}
+function connectLaser(satellite, laser, customer) {
+	lunarSpark.satellites[satellite].lasers[laser].customer = customer
 }

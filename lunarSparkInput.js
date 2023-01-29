@@ -196,19 +196,23 @@ var lunarSparkInput =
       "lasers": [
         {
           "eff": 0.2,
-          "output_power": 1000
+          "output_power": 1000,
+          "customer": ""
         },
         {
           "eff": 0.2,
-          "output_power": 1000
+          "output_power": 1000,
+          "customer": ""
         },
         {
           "eff": 0.2,
-          "output_power": 1000
+          "output_power": 1000,
+          "customer": ""
         },
         {
           "eff": 0.2,
-          "output_power": 1000
+          "output_power": 1000,
+          "customer": ""
         }
       ]
     },
@@ -226,19 +230,23 @@ var lunarSparkInput =
       "lasers": [
         {
           "eff": 0.2,
-          "output_power": 1000
+          "output_power": 1000,
+          "customer": ""
         },
         {
           "eff": 0.2,
-          "output_power": 1000
+          "output_power": 1000,
+          "customer": ""
         },
         {
           "eff": 0.2,
-          "output_power": 1000
+          "output_power": 1000,
+          "customer": ""
         },
         {
           "eff": 0.2,
-          "output_power": 1000
+          "output_power": 1000,
+          "customer": ""
         }
       ]
     },
@@ -256,19 +264,23 @@ var lunarSparkInput =
       "lasers": [
         {
           "eff": 0.2,
-          "output_power": 1000
+          "output_power": 1000,
+          "customer": ""
         },
         {
           "eff": 0.2,
-          "output_power": 1000
+          "output_power": 1000,
+          "customer": ""
         },
         {
           "eff": 0.2,
-          "output_power": 1000
+          "output_power": 1000,
+          "customer": ""
         },
         {
           "eff": 0.2,
-          "output_power": 1000
+          "output_power": 1000,
+          "customer": ""
         }
       ]
     },
@@ -286,19 +298,23 @@ var lunarSparkInput =
       "lasers": [
         {
           "eff": 0.2,
-          "output_power": 1000
+          "output_power": 1000,
+          "customer": ""
         },
         {
           "eff": 0.2,
-          "output_power": 1000
+          "output_power": 1000,
+          "customer": ""
         },
         {
           "eff": 0.2,
-          "output_power": 1000
+          "output_power": 1000,
+          "customer": ""
         },
         {
           "eff": 0.2,
-          "output_power": 1000
+          "output_power": 1000,
+          "customer": ""
         }
       ]
     }

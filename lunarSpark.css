@@ -44,7 +44,7 @@ div#simLeft {
 	margin: 1px;
 	padding: 2px;
 	color: white;
-	width: 300px;
+	width: 360px;
 	text-align: left;
 }
 div#simRight {
@@ -53,7 +53,7 @@ div#simRight {
 	padding: 2px;
 	float:right;
 	color:white;
-	width: 300px;
+	width: 360px;
 	text-align: left;
 }
 
@@ -62,7 +62,7 @@ div#simControl {
 	margin: 5px 0px 5px 0px;
 	padding: 5px 0px 5px 0px;;
 	float: left;
-	min-width: 300px;	
+/*	min-width: 350px;	*/
 }
 div#simControl a {
 	font-size: 20px;
