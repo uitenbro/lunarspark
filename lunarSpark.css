@@ -99,6 +99,15 @@ div#simStatus {
 	float: right;
 	text-align: right;
 }
+.table-left {
+	display: block;
+	text-align: right;
+}
+.table-right {
+	float: right;
+	text-align: right;
+	width:66px;
+}
 .unit {
 	width: 4em;
 	text-align: right;

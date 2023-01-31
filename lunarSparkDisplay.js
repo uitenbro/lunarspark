@@ -155,6 +155,33 @@ function printRow(a, b, c) {
 
     return row
 }
+function printTable (a,b,c,d,e) {
+    var label =  document.createElement('div');
+    label.appendChild(document.createTextNode(" "+a));
+    label.className = "table-left";
+    var measurement =  document.createElement('div');
+    measurement.appendChild(document.createTextNode(" "+b));
+    measurement.className = "table-right";
+    var measurement2 =  document.createElement('div');
+    measurement2.appendChild(document.createTextNode(" "+c));
+    measurement2.className = "table-right";
+    var unit =  document.createElement('div');
+    unit.appendChild(document.createTextNode(" "+d));
+    unit.className = "table-right";
+    var unit2 =  document.createElement('div');
+    unit2.appendChild(document.createTextNode(" "+e));
+    unit2.className = "table-right";
+
+    var row = document.createElement('div')
+    row.appendChild(unit2);
+    row.appendChild(unit);
+    row.appendChild(measurement2);
+    row.appendChild(measurement);
+    row.appendChild(label);
+
+    return row
+}
+
 function printSatellite(id) {
     var satellite = document.createElement('div');
     if (id % 2) {
@@ -296,8 +323,8 @@ function printCustomer(id) {
     customer.appendChild(printRow("Solar Array (1.0m x 2.0m)", "2.0", "m2"));
     customer.appendChild(printRow("EPS Efficiency:", "50", "%"));
     customer.appendChild(printRow("Battery Capacity:", "50% 4.0/5.0", "kWhr"));
-    customer.appendChild(printRow("Beam", "Range Diameter Intensity", "Power"));
-    customer.appendChild(printRow("#", "km m W/m2", "W"));
+    customer.appendChild(printTable("Beam", "Range", "Diameter", "Intensity", "Power"));
+    customer.appendChild(printTable("#", "km", "m", "W/m2", "W"));
     customer.appendChild(printRow("Beam", "Rng(km) Diam(m) Intsty(W/m2)", "Pwr(W)"));
     customer.appendChild(printRow("Beam 1:", "1000 km 1.2", "m2"));
     customer.appendChild(printRow("Beam 1:", "1000 km 1.2", "m2"));
