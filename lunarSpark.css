@@ -106,13 +106,15 @@ div#simStatus {
 .table-right {
 	float: right;
 	text-align: right;
-	width:66px;
+	width: 68px;
 }
 .unit {
 	width: 4em;
 	text-align: right;
 }
-
+.underline {
+	text-decoration: underline;
+}
 /* satellite */
 .satellite {
 	border: 1px solid black;
