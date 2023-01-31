@@ -117,7 +117,7 @@ function drawSatellite(deg, id, orbitAngle) {
         context.fillStyle = "blue";
         context.fillRect(x-satelliteCrossWidth/2, y-satelliteCrossHeight/2, satelliteCrossWidth, satelliteCrossHeight);
         context.fillRect(x-satelliteCrossHeight/2, y-satelliteCrossWidth/2, satelliteCrossHeight, satelliteCrossWidth);
-        context.font = "16px Arial";
+        context.font = "16px Courier";
         context.fillStyle = "white";
 
         context.translate(x,y);
@@ -150,7 +150,7 @@ function drawCustomer(lat, long, id) {
     context.fill();
     context.strokeStyle = "black";
     context.stroke();
-    context.font = "16px Arial";
+    context.font = "16px Courier";
     context.fillStyle = "black";
     context.fillText(id, x-5, y+5);
 }

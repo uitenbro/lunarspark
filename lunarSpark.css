@@ -65,13 +65,25 @@ div#simControl {
 /*	float: left;*/
 /*	min-width: 350px;	*/
 }
-div#simControl a {
+div#simControl .button {
 	font-size: 20px;
+	text-align: center;
 	color: white;
 	border: 1px solid white;
 	margin: 5px 5px 5px 5px;
-	padding: 5px 5px 5px 5px;
+	padding: 5px 10px 5px 10px;
 	text-decoration: none;
+}
+div#simControl .buttonDisabled {
+	font-size: 20px;
+	text-align: center;
+	color: gray;
+	border: 1px solid darkgray;
+	margin: 5px 5px 5px 5px;
+	padding: 5px 10px 5px 10px;
+	text-decoration: none;
+	pointer-events: none;
+  	cursor: default;
 }
 div#simStatus {
 /*	padding-top:5px;*/
@@ -83,13 +95,12 @@ div#simStatus {
 	display: block;
 	text-align: left;
 }
-
 .right {
 	float: right;
 	text-align: right;
 }
 .unit {
-	width: 6em;
+	width: 4em;
 	text-align: right;
 }
 

@@ -2,17 +2,40 @@
 const minPerDay = 60*24; // minutes per day
 const daysPerLunarCycle = 29.5; // days per lunar cycle with respect to sun
 const minPerLunarCycle = daysPerLunarCycle*minPerDay;
+
+// Global simulation control parameters
 var time = 0 // minuites
-var refreshPeriod = 10 // 10msec (100Hz) 50 msec (20Hz), 100 msec (10Hz);
+var refreshPeriod = 10 // 10msec (100Hz)
 var timeStep = 1; // min/refresh
 var simState = "pause";
 var previousStartTime = Date.now();
 var elapsedTime = 0; // msec
-var execRate = 0; // Hz
+var prevAvgElapsedTime = 10; // msec
+var avgElapsedTime = 10; // msec
+var execRate = 100; // Hz
 var frameCount = 0;
 
 
 function initSim() {
+    // Stop running if running
+    if (simState == "run") {
+        clearInterval(simRun);
+    }
+
+    // TODO: load configuration from config file
+    lunarSpark = lunarSparkInput;
+
+    // Reset globals to initial state
+    time = 0 // minuites
+    refreshPeriod = 10 // 10msec (100Hz)
+    timeStep = 1; // min/refresh
+    simState = "pause";
+    previousStartTime = Date.now();
+    elapsedTime = 0; // msec
+    prevAvgElapsedTime = 10; // msec
+    avgElapsedTime = 10; // msec
+    execRate = 100; // Hz
+    frameCount = 0;
 
     canvas = document.querySelector('#simCanvas'); // canvas is intentionally global
     context = canvas.getContext('2d'); // context is intentionally global
@@ -33,15 +56,17 @@ function stepSim() {
 }
 
 function runSim() {
-    document.getElementById('runButton').style.visibility = "hidden";
+    document.getElementById('runButton').className = "buttonDisabled"
     var startTime =  Date.now();
     elapsedTime = startTime - previousStartTime; // msec
-    execRate = (1/(elapsedTime*1000)).toFixed(2); // Hz
+    avgElapsedTime = (prevAvgElapsedTime*99 + elapsedTime)/100; // moving average over 100 samples - 1 sec
+    execRate = (1000/(avgElapsedTime)); // Hz
     previousStartTime = startTime;
+    prevAvgElapsedTime = avgElapsedTime;
     stepSim();
     if ((time >= minPerLunarCycle) || (simState != "run")) {
         clearInterval(simRun);
-        document.getElementById('runButton').style.visibility = "visible";
+        document.getElementById('runButton').className = "button"
     }
 }
 function startSim() {
@@ -53,67 +78,38 @@ function pauseSim() {
 }
 
 function faster() {
-    // if (refreshPeriod > 1) {
-    //     refreshPeriod = refreshPeriod/10;
-    //     clearInterval(simRun);
-    //     startSim();
-    // }
-    // else {
-    //     timeStep = timeStep+1
-    // }
     timeStep = timeStep*2;
     printSimData();
 }
 function slower() {
-    // if (timeStep > 1) {
-    //     timeStep = timeStep-1
-    // } 
-    // else {    
-    //     refreshPeriod = refreshPeriod * 10;
-    //     clearInterval(simRun);
-    //     startSim();
-    // }
     timeStep = timeStep/2;
     printSimData();
 }
 
+function printButton(label, action, id) {
+    var a = document.createElement('a')
+    a.href = action; 
+    a.className = "button";
+    a.id = id;
+    a.appendChild(document.createTextNode(label));
+    return a    
+}
 function printSimControl() {
 
     var simControl = document.createElement('div')
     simControl.id = "simControl";
 
-    var a = document.createElement('a')
-    a.href = "javascript:startSim();"
-    a.id = "runButton";
-    a.appendChild(document.createTextNode(">>"));
-    simControl.appendChild(a);
-
-    var a = document.createElement('a')
-    a.href = "javascript:pauseSim();"
-    a.appendChild(document.createTextNode("||"));
-    simControl.appendChild(a);
-
-    var a = document.createElement('a')
-    a.href = "javascript:stepSim();"
-    a.appendChild(document.createTextNode(">|"));
-    simControl.appendChild(a);
-
-    var a = document.createElement('a')
-    a.href = "javascript:slower();"
-    a.appendChild(document.createTextNode("--"));
-    simControl.appendChild(a);
-
-    var a = document.createElement('a')
-    a.href = "javascript:faster();"
-    a.appendChild(document.createTextNode("++"));
-    simControl.appendChild(a);
-
-    simLeft = document.getElementById('simLeft');
-    simLeft.replaceChildren(simControl);
+    simControl.appendChild(printButton("\u2699", "javascript:initSim();", "configButton")); // TODO: Add load configuration
+    simControl.appendChild(printButton("\u25B6","javascript:startSim();", "runButton"));
+    simControl.appendChild(printButton("\u23FD\u23FD", "javascript:pauseSim();", "pauseButton"));
+    simControl.appendChild(printButton("\u20D5", "javascript:stepSim();", "stepButton"));
+    simControl.appendChild(printButton("\u21CA", "javascript:slower();", "slowerButton"));    
+    simControl.appendChild(printButton("\u21C8", "javascript:faster();", "fasterButton"));
+    simControl.appendChild(printButton("\u21BA", "javascript:initSim();", "recycleButton"));
+    simLeft.replaceChildren(simControl)
 
     var simStatus = document.createElement('div');
     simStatus.id = "simStatus";
-
     simLeft.appendChild(simStatus)
 }
 
@@ -141,7 +137,24 @@ function printSatellites() {
     }
     // top.appendChild(document.createElement('div').appendChild(document.createTextNode("&nbsp;")));
 }
+function printRow(a, b, c) {
+    var label =  document.createElement('div');
+    label.appendChild(document.createTextNode(a));
+    label.className = "left";
+    var measurement =  document.createElement('div');
+    measurement.appendChild(document.createTextNode(b));
+    measurement.className = "right";
+    var unit =  document.createElement('div');
+    unit.appendChild(document.createTextNode(c));
+    unit.className = "unit right";
 
+    var row = document.createElement('div')
+    row.appendChild(unit);
+    row.appendChild(measurement);
+    row.appendChild(label);
+
+    return row
+}
 function printSatellite(id) {
     var satellite = document.createElement('div');
     if (id % 2) {
@@ -150,16 +163,14 @@ function printSatellite(id) {
     else {
         satellite.className = "satellite inview";
     }
-    var header =  document.createElement('div');
-    header.appendChild(document.createTextNode('Satellite: '+id));
-    header.className = "left"
-    satellite.appendChild(header);
+
+    satellite.appendChild(printRow("Sattelite["+id+"]:", "VIPER", "-"));
 
     var label =  document.createElement('div');
     label.appendChild(document.createTextNode('Orbit:'));
     label.className = "left";
     var measurement =  document.createElement('div');
-    measurement.appendChild(document.createTextNode('120/148'));
+    measurement.appendChild(document.createTextNode('#8999 120/148'));
     measurement.className = "right";
     var unit =  document.createElement('div');
     unit.appendChild(document.createTextNode('min'));
@@ -252,10 +263,10 @@ function printSatellite(id) {
     label.appendChild(document.createTextNode('Lasers:'));
     label.className = "left";
     var measurement =  document.createElement('div');
-    measurement.appendChild(document.createTextNode('(1)   (2)'));
+    measurement.appendChild(document.createTextNode('(1)(2)'));
     measurement.className = "right";
     var unit =  document.createElement('div');
-    unit.appendChild(document.createTextNode('(3)   (4)'));
+    unit.appendChild(document.createTextNode('(3)(4)'));
     unit.className = "unit right";
     satellite.appendChild(unit);
     satellite.appendChild(measurement);
@@ -267,16 +278,8 @@ function printCustomers() {
     var bottom = document.getElementById('bottom');
     bottom.replaceChildren(); // start with empty div
     for (i=0;i<8;i++) {
-        // if (i % 2) {
-        //     var right = document.getElementById('right2');
-        // }
-        // else {
-        //     var right = document.getElementById('right1');
-        // }
         bottom.appendChild(printCustomer(i));
     }
-    // bottom.appendChild(document.createElement('div').appendChild(document.createTextNode("&nbsp;")));
-
 }
 
 function printCustomer(id) {
@@ -287,124 +290,18 @@ function printCustomer(id) {
     else {
         customer.className = "customer notinshadow";
     }
-    var header =  document.createElement('div');
-    header.appendChild(document.createTextNode('Customer: '+id));
-    header.className = "left";
-    customer.appendChild(header);
 
-    var label =  document.createElement('div');
-    label.appendChild(document.createTextNode('Location:'));
-    label.className = "left";
-    var measurement =  document.createElement('div');
-    measurement.appendChild(document.createTextNode('88/40'));
-    measurement.className = "right";
-    var unit =  document.createElement('div');
-    unit.appendChild(document.createTextNode('lat/lng'));
-    unit.className = "unit right";
-
-    customer.appendChild(unit);
-    customer.appendChild(measurement);
-    customer.appendChild(label);
-
-    var label =  document.createElement('div');
-    label.appendChild(document.createTextNode('Solar Array:'));
-    label.className = "left";
-    var measurement =  document.createElement('div');
-    measurement.appendChild(document.createTextNode('1.2'));
-    measurement.className = "right";
-    var unit =  document.createElement('div');
-    unit.appendChild(document.createTextNode('m2'));
-    unit.className = "unit right";
-
-    customer.appendChild(unit);
-    customer.appendChild(measurement);
-    customer.appendChild(label);
-
-    var label =  document.createElement('div');
-    label.appendChild(document.createTextNode('EPS Efficiency:'));
-    label.className = "left";
-    var measurement =  document.createElement('div');
-    measurement.appendChild(document.createTextNode('50'));
-    measurement.className = "right";
-    var unit =  document.createElement('div');
-    unit.appendChild(document.createTextNode('%'));
-    unit.className = "unit right";
-    customer.appendChild(unit);
-    customer.appendChild(measurement);
-    customer.appendChild(label);
-
-    var label =  document.createElement('div');
-    label.appendChild(document.createTextNode('Battery:'));
-    label.className = "left";
-    var measurement =  document.createElement('div');
-    measurement.appendChild(document.createTextNode('40% 4.0/5.0'));
-    measurement.className = "right";
-    var unit =  document.createElement('div');
-    unit.appendChild(document.createTextNode('kWhr'));
-    unit.className = "unit right";
-    customer.appendChild(unit);
-    customer.appendChild(measurement);
-    customer.appendChild(label);
-
-    var label =  document.createElement('div');
-    label.appendChild(document.createTextNode('Beam 1:'));
-    label.className = "left";
-    var measurement =  document.createElement('div');
-    measurement.appendChild(document.createTextNode('1000 km'));
-    measurement.className = "right";
-    var unit =  document.createElement('div');
-    unit.appendChild(document.createTextNode('1.7 m2'));
-    unit.className = "unit right";
-    customer.appendChild(unit);
-    customer.appendChild(measurement);
-    customer.appendChild(label);
-
-
-
-    var label =  document.createElement('div');
-    label.appendChild(document.createTextNode('Beam 2:'));
-    label.className = "left";
-    var measurement =  document.createElement('div');
-    measurement.appendChild(document.createTextNode('1000 km'));
-    measurement.className = "right";
-    var unit =  document.createElement('div');
-    unit.appendChild(document.createTextNode('1.7 m2'));
-    unit.className = "unit right";
-    customer.appendChild(unit);
-    customer.appendChild(measurement);
-    customer.appendChild(label);
-
-    var label =  document.createElement('div');
-    label.appendChild(document.createTextNode('Beam 3:'));
-    label.className = "left";
-    var measurement =  document.createElement('div');
-    measurement.appendChild(document.createTextNode('1000 km'));
-    measurement.className = "right";
-    var unit =  document.createElement('div');
-    unit.appendChild(document.createTextNode('1.7 m2'));
-    unit.className = "unit right";
-    customer.appendChild(unit);
-    customer.appendChild(measurement);
-    customer.appendChild(label);
-    var label =  document.createElement('div');
-    label.appendChild(document.createTextNode('Beam 4:'));
-    label.className = "left";
-    var measurement =  document.createElement('div');
-    measurement.appendChild(document.createTextNode('1000 km'));
-    measurement.className = "right";
-    var unit =  document.createElement('div');
-    unit.appendChild(document.createTextNode('1.7 m2'));
-    unit.className = "unit right";
-    customer.appendChild(unit);
-    customer.appendChild(measurement);
-    customer.appendChild(label);
-    var unit2 =  document.createElement('div');
-    unit2.appendChild(document.createTextNode('2.0 W/m2'));
-    unit2.className = "unit right";
-    customer.appendChild(unit2);    
-    customer.appendChild(unit);
-    customer.appendChild(measurement);
-    customer.appendChild(label);
+    customer.appendChild(printRow("Customer["+id+"]:", "VIPER", "-"));
+    customer.appendChild(printRow("Location (lat/long):", "88/80", "deg"));
+    customer.appendChild(printRow("Solar Array (1.0m x 2.0m)", "2.0", "m2"));
+    customer.appendChild(printRow("EPS Efficiency:", "50", "%"));
+    customer.appendChild(printRow("Battery Capacity:", "50% 4.0/5.0", "kWhr"));
+    customer.appendChild(printRow("Beam", "Range Diameter Intensity", "Power"));
+    customer.appendChild(printRow("#", "km m W/m2", "W"));
+    customer.appendChild(printRow("Beam", "Rng(km) Diam(m) Intsty(W/m2)", "Pwr(W)"));
+    customer.appendChild(printRow("Beam 1:", "1000 km 1.2", "m2"));
+    customer.appendChild(printRow("Beam 1:", "1000 km 1.2", "m2"));
+    customer.appendChild(printRow("Beam 1:", "1000 km 1.2", "W/m2"));
 
     return customer;
 }
@@ -432,7 +329,7 @@ function printSimLeft() {
     // div.appendChild(label);
 
     var label =  document.createElement('div');
-    label.appendChild(document.createTextNode('Min / Step:'));
+    label.appendChild(document.createTextNode('Step Duration:'));
     label.className = "left";
     var measurement =  document.createElement('div');
     measurement.appendChild(document.createTextNode(timeStep));
@@ -448,7 +345,7 @@ function printSimLeft() {
     label.appendChild(document.createTextNode('Exec Rate:'));
     label.className = "left";
     var measurement =  document.createElement('div');
-    measurement.appendChild(document.createTextNode((1000/elapsedTime).toFixed(0)));
+    measurement.appendChild(document.createTextNode(execRate.toFixed(0)));
     measurement.className = "right";
     var unit =  document.createElement('div');
     unit.appendChild(document.createTextNode('Hz'));
