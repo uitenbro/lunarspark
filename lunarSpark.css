@@ -5,13 +5,13 @@ body {
 }
 
 div#all {
-	width: 1240px
+	width: 1438px
 }
 
 div#top {
 /*	width: 20%;*/
 	display: flow-root;
-	min-width: 350px;
+/*	min-width: 350px;*/
 	border: 1px solid white;
 	padding: 2px;
 }
@@ -29,41 +29,37 @@ div#middle {
 /*	width: 59%;*/
 	text-align:center;
 	border: 1px solid white;
-	min-width: 540px;
 	display: block;
 }
 canvas {
-	border: 1px solid gray; 
+/*	border: 1px solid gray; */
 	background-repeat: no-repeat;
 	display: none;
 }
 
 div#simLeft {
-	border: 1px solid white;
+/*	border: 1px solid white;*/
 	float:left;
-	margin: 1px;
-	padding: 2px;
+	margin: 2px, 2px 2px 2px;
+	padding: 2px 2px 2px 2px;
 	color: white;
-	width: 365px;
 	text-align: left;
 }
 div#simRight {
 	border: 1px solid white;
-	margin: 1px;
+	margin: 2px 2px 2px 2px;
 	padding: 2px;
 	float:right;
 	color:white;
-	width: 365px;
+	width: 350px;
 	text-align: left;
 }
-
 div#simControl {
+	width: 344px;
 	border: 1px solid white;
 	text-align: center;
-	margin: 5px 0px 5px 0px;
+	margin: 0px 5px 5px 0px;
 	padding: 10px 5px 10px 5px;;
-/*	float: left;*/
-/*	min-width: 350px;	*/
 }
 div#simControl .button {
 	font-size: 20px;
@@ -86,8 +82,9 @@ div#simControl .buttonDisabled {
   	cursor: default;
 }
 div#simStatus {
-/*	padding-top:5px;*/
-
+	width: 350px;
+	border: 1px solid white;
+	padding: 2px;
 }
 
 /* table alignment */
@@ -99,18 +96,18 @@ div#simStatus {
 	float: right;
 	text-align: right;
 }
+.unit {
+	width: 50px;
+	text-align: right;
+}
 .table-left {
 	display: block;
-	text-align: right;
+	text-align: center;
 }
 .table-right {
 	float: right;
 	text-align: right;
-	width: 68px;
-}
-.unit {
-	width: 4em;
-	text-align: right;
+	width: 77px;
 }
 .underline {
 	text-decoration: underline;
@@ -121,7 +118,7 @@ div#simStatus {
 	margin: 1px;
 	padding: 2px;
 	float: left;
-	min-width: 300px;
+	min-width: 350px;
 }
 .notinview {
 	background-color: cornflowerblue;
@@ -132,12 +129,12 @@ div#simStatus {
 	color: black;
 }
 
-/* customer */
-.customer {
+/* vehicle */
+.vehicle {
 	border: 1px solid black;
 	margin: 1px;	
 	padding: 2px;
-	min-width: 300px;
+	min-width: 350px;
 	float: left;
 }
 .inshadow {

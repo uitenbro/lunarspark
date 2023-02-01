@@ -1,9 +1,10 @@
 // Background image and canvas dimensions
-const desiredCanvasWidth = 360; // pixels
-const orbitDistanceOffset = 60; // pixels
-const orbitWidth = 50; // pixels
-const orbitVisibilityLowerBound  = 50; // degrees
-const orbitVisibilityUpperBound = 310; // degrees
+const desiredCanvasWidth = 511; // pixels
+const orbitDistanceOffset = 100; // pixels
+const orbitWidth = 100; // pixels
+const orbitVisibilityLowerBound  = 46; // degrees
+const orbitVisibilityUpperBound = 314; // degrees
+const satelliteVisibilityOffset = 5 //degrees
 const img = new Image(); // Create new img element
 //const imageFile = "labeled_lunar_south_pole.jpg"; // 80-90 degree south pole image with sites labeled
 const imageFile = "elphic_south_lunar_pole_ice.png"; // 80-90 degree south pole image with ice sites colored
@@ -29,8 +30,8 @@ const laser2yOffset = 0;
 const laser3yOffset = 0;
 
 
-// Customer drawing constants
-const customerRadius = 10; // pixels
+// Vehicle drawing constants
+const vehicleRadius = 10; // pixels
 
 function clearCanvas() {
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -46,17 +47,8 @@ function drawMoon() {
 
 function drawAll(time) {
     drawSunIllumination(); 
-
-    // drawLaser((time+30)%360, time%360,0, 85, 30);
-    // drawLaser((time+60)%360, time%360,0, 85, -60);
-    // drawLaser((time+90)%360, time%360,0, 90, 10);
-    // drawLaser((time+120)%360, time%360,0, 82, 15);  
-    // drawLaser((time+150)%360, time%360,0, 86, 45); 
-    // drawLaser((time+30)%360, time%360,1, 85, 30)  
-    // drawLaser((time+30)%360, time%360,2, 85, -60)  
-    // drawLaser((time+30)%360, time%360,3, 82, 15)  
     drawLasers();
-    drawCustomers();
+    drawVehicles();
     drawOrbit();
     drawSatellites();
 }
@@ -90,16 +82,16 @@ function drawSunIllumination () {
 function drawSatellites() {
     // TODO: Draw farthest away satelites first so layering is correct
     for (var i=0;i<lunarSpark.satellites.length;i++) {
-        drawSatellite(lunarSpark.satellites[i].orbit_angle, i, lunarSpark.environment.orbit.ascending_node);
+        drawSatellite(lunarSpark.satellites[i].orbit.anomoly, i, lunarSpark.environment.orbit.ascending_node);
     }
 }
 
-function drawSatellite(deg, id, orbitAngle) {
-    var deg = (deg + 90)%360; // rotate so 0 degrees is the top of screen then CCW degrees around the orbit
-    if (deg >= orbitVisibilityLowerBound+8 && deg <= orbitVisibilityUpperBound-8) {    
+function drawSatellite(anomaly, id, orbitAngle) {
+    var anomaly = (anomaly + 90)%360; // rotate so 0 degrees is the top of screen then CCW degrees around the orbit
+    if (anomaly >= orbitVisibilityLowerBound+satelliteVisibilityOffset && anomaly <= orbitVisibilityUpperBound-satelliteVisibilityOffset) {    
         var a = orbitWidth/2;
         var b = canvas.height/2;
-        var t = (deg)*(Math.PI / 180.0)
+        var t = (anomaly)*(Math.PI / 180.0)
         var x = a*Math.cos(t); // pixels from central origin
         var y = b*Math.sin(t); // pixels from central origin
         x = originX+x; // pixels from canvas orgin
@@ -129,13 +121,13 @@ function drawSatellite(deg, id, orbitAngle) {
     }
 }
 
-function drawCustomers() {
-    for (var i=0;i<lunarSpark.customers.length;i++) {
-        drawCustomer(lunarSpark.customers[i].location.lat, lunarSpark.customers[i].location.long, i);
+function drawVehicles() {
+    for (var i=0;i<lunarSpark.vehicles.length;i++) {
+        drawVehicle(lunarSpark.vehicles[i].location.lat, lunarSpark.vehicles[i].location.long, i);
     }
 }
 
-function drawCustomer(lat, long, id) {
+function drawVehicle(lat, long, id) {
     var hyp = (90-lat)/(90-minLatitude) * (canvas.width-(2*orbitDistanceOffset))/2; // pixel length of hypotenuse
     var x = hyp*Math.sin(long * (Math.PI / 180.0)); // pixels from central origin
     var y = hyp*Math.cos(long * (Math.PI / 180.0)); // pixels from central origin
@@ -143,7 +135,7 @@ function drawCustomer(lat, long, id) {
     y = originY-y; // pixels from canvas orgin
 
     context.beginPath();
-    context.arc(x, y, customerRadius, 0, 2*Math.PI);
+    context.arc(x, y, vehicleRadius, 0, 2*Math.PI);
     context.closePath();
     context.lineWidth = 1;
     context.fillStyle = "white";
@@ -157,31 +149,31 @@ function drawCustomer(lat, long, id) {
 function drawLasers() {
     for (var i=0;i<lunarSpark.satellites.length;i++) {
         for (var j=0;j<lunarSpark.satellites[i].lasers.length;j++) {
-            var customer = lunarSpark.satellites[i].lasers[j].customer;
-            var lat = lunarSpark.customers[customer].location.lat;
-            var long = lunarSpark.customers[customer].location.long;
-            if (customer != null) {
-                drawLaser(lunarSpark.satellites[i].orbit_angle, lunarSpark.environment.orbit.ascending_node, j, lat, long);
+            var vehicle = lunarSpark.satellites[i].lasers[j].vehicle;
+            var lat = lunarSpark.vehicles[vehicle].location.lat;
+            var long = lunarSpark.vehicles[vehicle].location.long;
+            if (vehicle != null) {
+                drawLaser(lunarSpark.satellites[i].orbit.anomoly, lunarSpark.environment.orbit.ascending_node, j, lat, long);
             }
         }
     }
 }
-function drawLaser(satDeg, orbitAngle, laserNum, lat, long) {
-    satDeg = (satDeg + 90)%360; // rotate so 0 degrees is the top of screen then CCW degrees around the orbit
-    if (satDeg >= orbitVisibilityLowerBound+40 && satDeg <= orbitVisibilityUpperBound-40) { 
+function drawLaser(anomaly, orbitAngle, laserNum, lat, long) {
+    anomaly = (anomaly + 90)%360; // rotate so 0 degrees is the top of screen then CCW degrees around the orbit
+    if (anomaly >= orbitVisibilityLowerBound+40 && anomaly <= orbitVisibilityUpperBound-40) { 
 
         var hyp = (90-lat)/(90-minLatitude) * ((canvas.width/2)-orbitDistanceOffset); // pixel length of hypotenuse
-        var customerX1 = hyp*Math.sin((long) * (Math.PI / 180.0)); // pixels from central origin
-        var customerY1 = hyp*Math.cos((long) * (Math.PI / 180.0)); // pixels from central origin
-        var customerX = hyp*Math.sin((long - orbitAngle-90) * (Math.PI / 180.0)); // pixels from central origin
-        var customerY = hyp*Math.cos((long -  orbitAngle-90) * (Math.PI / 180.0)); // pixels from central origin
+        var vehicleX1 = hyp*Math.sin((long) * (Math.PI / 180.0)); // pixels from central origin
+        var vehicleY1 = hyp*Math.cos((long) * (Math.PI / 180.0)); // pixels from central origin
+        var vehicleX = hyp*Math.sin((long - orbitAngle-90) * (Math.PI / 180.0)); // pixels from central origin
+        var vehicleY = hyp*Math.cos((long -  orbitAngle-90) * (Math.PI / 180.0)); // pixels from central origin
 
-        customerX = originX+customerX; // pixels from canvas orgin
-        customerY = originY-customerY; // pixels from canvas orgin
+        vehicleX = originX+vehicleX; // pixels from canvas orgin
+        vehicleY = originY-vehicleY; // pixels from canvas orgin
 
         var a = orbitWidth/2;
         var b = canvas.height/2;
-        var t = (satDeg)*(Math.PI / 180.0)
+        var t = (anomaly)*(Math.PI / 180.0)
         var satX = a*Math.cos(t); // pixels from central origin
         var satY = b*Math.sin(t); // pixels from central origin
         satX = originX+satX; // pixels from canvas orgin
@@ -219,13 +211,13 @@ function drawLaser(satDeg, orbitAngle, laserNum, lat, long) {
         context.lineWidth = 5.0;
         context.beginPath();
         context.moveTo(satX, satY);
-        context.lineTo(customerX, customerY);
+        context.lineTo(vehicleX, vehicleY);
         context.stroke();
         context.strokeStyle = "Magenta";
         context.lineWidth = 3.0;
         context.beginPath();
         context.moveTo(satX, satY);
-        context.lineTo(customerX, customerY);
+        context.lineTo(vehicleX, vehicleY);
         context.stroke();
     
         context.restore();

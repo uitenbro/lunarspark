@@ -8,7 +8,7 @@ var time = 0 // minuites
 var refreshPeriod = 10 // 10msec (100Hz)
 var timeStep = 1; // min/refresh
 var simState = "pause";
-var previousStartTime = Date.now();
+var previousStartTime = 0;
 var elapsedTime = 0; // msec
 var prevAvgElapsedTime = 10; // msec
 var avgElapsedTime = 10; // msec
@@ -22,15 +22,15 @@ function initSim() {
         clearInterval(simRun);
     }
 
-    // TODO: load configuration from config file
-    lunarSpark = lunarSparkInput;
+    // Set initial values from input configuration file
+    lunarSpark =  JSON.parse(localStorage.getItem("lunarSparkInput"));
 
     // Reset globals to initial state
     time = 0 // minuites
     refreshPeriod = 10 // 10msec (100Hz)
     timeStep = 1; // min/refresh
     simState = "pause";
-    previousStartTime = Date.now();
+    previousStartTime = 0;
     elapsedTime = 0; // msec
     prevAvgElapsedTime = 10; // msec
     avgElapsedTime = 10; // msec
@@ -58,7 +58,12 @@ function stepSim() {
 function runSim() {
     document.getElementById('runButton').className = "buttonDisabled"
     var startTime =  Date.now();
-    elapsedTime = startTime - previousStartTime; // msec
+    if (previousStartTime == 0) {
+        elapsedTime = 10; // set initial elapsed time 
+    }
+    else {
+        elapsedTime = startTime - previousStartTime; // msec
+    }
     avgElapsedTime = (prevAvgElapsedTime*99 + elapsedTime)/100; // moving average over 100 samples - 1 sec
     execRate = (1000/(avgElapsedTime)); // Hz
     previousStartTime = startTime;
@@ -66,7 +71,9 @@ function runSim() {
     stepSim();
     if ((time >= minPerLunarCycle) || (simState != "run")) {
         clearInterval(simRun);
-        document.getElementById('runButton').className = "button"
+        document.getElementById('runButton').className = "button";
+        previousStartTime = 0; // reset start time for exec rate
+        printAll(); // ensure final step data has been printed to display
     }
 }
 function startSim() {
@@ -106,11 +113,9 @@ function printSimControl() {
     simControl.appendChild(printButton("\u21CA", "javascript:slower();", "slowerButton"));    
     simControl.appendChild(printButton("\u21C8", "javascript:faster();", "fasterButton"));
     simControl.appendChild(printButton("\u21BA", "javascript:initSim();", "recycleButton"));
-    simLeft.replaceChildren(simControl)
+    
+    document.getElementById("simControl").replaceWith(simControl);
 
-    var simStatus = document.createElement('div');
-    simStatus.id = "simStatus";
-    simLeft.appendChild(simStatus)
 }
 
 function updateDisplay() {
@@ -125,7 +130,7 @@ function updateDisplay() {
 
 function printAll() {
     printSatellites();
-    printCustomers();
+    printVehicles();
     printSimData();
 }
 
@@ -191,25 +196,26 @@ function printSatellites() {
         top.appendChild(printSatellite(i));
     }
 }
-function printSatellite(id) {
+function printSatellite(index) {
     var satellite = document.createElement('div');
-    if (id % 2) {
+    if (index % 2) {
         satellite.className = "satellite notinview";
     }
     else {
         satellite.className = "satellite inview";
     }
 
-    satellite.appendChild(printRow("Sattelite["+id+"]:", "VIPER", "-", true));
-    satellite.appendChild(printRow("Orbit(num min):", "89999 124/148", "min"));
-    satellite.appendChild(printRow("Solar Array:", "80.0", "m2"));
-    satellite.appendChild(printRow("EPS Efficiency:", "50%", "-"));
-    satellite.appendChild(printRow("Battery Charge:", "(20%) 4.0/5.0", "kWhr"));
-    satellite.appendChild(printRow("Vehicle Pwr Draw", "10.0", "kW"));
+    sat = lunarSpark.satellites[index]
+    satellite.appendChild(printRow("Satellite["+index+"]:", sat.id, "-", true));
+    satellite.appendChild(printRow("Orbit(time/period):", sat.orbit.min.toFixed(0)+"/"+lunarSpark.environment.orbit.period, "min"));
+    satellite.appendChild(printRow("Solar Panel Pwr Output:", sat.solar_panel.power_output.toFixed(2), "kW"));
+    //TODO: Color battery charge based on level
+    satellite.appendChild(printRow("Battery Charge:", (sat.battery.charge/sat.battery.capacity*100).toFixed(0)+"% "+ sat.battery.charge.toFixed(2)+"/"+sat.battery.capacity.toFixed(2), "kWhr"));
+    satellite.appendChild(printRow("Satellite Pwr Draw:", sat.veh_power_draw, "kW"));
+
     satellite.appendChild(printRow("Laser Pwr Draw:", "4.0", "kW"));
     satellite.appendChild(printRow("Laser Pwr Output:", "(20%) 4.0", "kW"));
-
-    satellite.appendChild(printTable("Cus", "Rng(km)", "Dia(m)", "(W/m2)", "Pwr(W)", true));
+    satellite.appendChild(printTable("Veh", "Rng(km)", "Dia(m)", "(W/m2)", "Pwr(W)", true));
     satellite.appendChild(printTable("1", "1000", "1.2", "2.1", "1.0"));
     satellite.appendChild(printTable("2", "1000", "1.2", "2.1", "1.0"));
     satellite.appendChild(printTable("3", "1000", "1.2", "2.1", "1.0"));
@@ -218,49 +224,51 @@ function printSatellite(id) {
     return satellite;
 }
 
-function printCustomers() {
+function printVehicles() {
     var bottom = document.getElementById('bottom');
     bottom.replaceChildren(); // start with empty div
     for (i=0;i<8;i++) {
-        bottom.appendChild(printCustomer(i));
+        bottom.appendChild(printVehicle(i));
     }
 }
 
-function printCustomer(id) {
-    var customer = document.createElement('div');
-    if (id % 2) {
-        customer.className = "customer inshadow";
+function printVehicle(index) {
+    var veh = lunarSpark.vehicles[index];
+    var vehicle = document.createElement('div');
+
+    if (veh.location.in_night) {
+        vehicle.className = "vehicle inshadow";
     }
     else {
-        customer.className = "customer notinshadow";
+        vehicle.className = "vehicle notinshadow";
     }
 
-    customer.appendChild(printRow("Customer["+id+"]:", "VIPER", "-", true));
-    customer.appendChild(printRow("Location (lat/long):", "88/80", "deg"));
-    customer.appendChild(printRow("Solar Array: (1.0m x 2.0m)", "2.0", "m2"));
-    customer.appendChild(printRow("EPS Efficiency:", "50%", "-"));
-    customer.appendChild(printRow("Battery Charge:", "(50%) 2.5/5.0", "kWhr"));
-    customer.appendChild(printRow("Laser Panel:", "(1.0x1.0) 1.0", "m2"));
-    customer.appendChild(printTable("Sat", "Rng(km)", "Dia(m)", "(W/m2)", "Pwr(W)", true));
-    customer.appendChild(printTable("1", "1000", "1.2", "2.1", "1.0"));
-    customer.appendChild(printTable("2", "1000", "1.2", "2.1", "1.0"));
-    customer.appendChild(printTable("3", "1000", "1.2", "2.1", "1.0"));
-    customer.appendChild(printTable("4", "1000", "1.2", "2.1", "1.0"));
+    vehicle.appendChild(printRow("Vehicle["+index+"]:", veh.id, "-", true));
+    vehicle.appendChild(printRow("Location (lat/long):", veh.location.lat+"/"+veh.location.long, "deg"));
+    vehicle.appendChild(printRow("Solar Panel Pwr Output:", veh.solar_panel.power_output.toFixed(2), "kW"));
+    vehicle.appendChild(printRow("Battery Charge:", (veh.battery.charge/veh.battery.capacity*100).toFixed(0)+"% "+ veh.battery.charge.toFixed(2)+"/"+veh.battery.capacity.toFixed(2), "kWhr"));
+    
+    vehicle.appendChild(printRow("Laser Panel:", "(1.0x1.0) 1.0", "m2"));
+    vehicle.appendChild(printTable("Laser", "Rng(km)", "Dia(m)", "(W/m2)", "Pwr(W)", true));
+    vehicle.appendChild(printTable("1.1", "1000", "1.2", "2.1", "1.0"));
+    vehicle.appendChild(printTable("2.2", "1000", "1.2", "2.1", "1.0"));
+    vehicle.appendChild(printTable("3.3", "1000", "1.2", "2.1", "1.0"));
+    vehicle.appendChild(printTable("4.4", "1000", "1.2", "2.1", "1.0"));
 
-    return customer;
+    return vehicle;
 }
 
 function printSimData() { 
-    printSimLeft(); 
+    printSimStatus(); 
     printSimRight();
 }
 
-function printSimLeft() {
+function printSimStatus() {
     var div = document.createElement('div');
     div.id = "simStatus";
 
-    div.appendChild(printRow("Step Duration:", timeStep, "min"));
-    div.appendChild(printRow("Exec Rate:", execRate.toFixed(0), "Hz"));
+    div.appendChild(printRow("Step Duration:", timeStep.toFixed(3), "min"));
+    div.appendChild(printRow("Exec Rate:", execRate.toFixed(1), "Hz"));
     
     simStatus = document.getElementById('simStatus');
     simStatus.replaceWith(div);
@@ -275,5 +283,7 @@ function printSimRight() {
     simRight.appendChild(printRow("Days:", Math.floor(time/(24*60)), "days"));
     simRight.appendChild(printRow("Hrs:", Math.floor(time/60)%24, "hrs"));
     simRight.appendChild(printRow("Min:", (time%60).toFixed(0), "min"));
+    simRight.appendChild(printRow("Orbit Count:", (lunarSpark.environment.orbit.count), "-"));
+    simRight.appendChild(printRow("Sun Angle:", (lunarSpark.environment.sun_angle).toFixed(2), "deg"));
 
 }
