@@ -29,7 +29,7 @@ var lunarSparkInput =
       },
       "eps_efficiency": 0.5,
       "battery": {
-        "capacity": 5.0,
+        "capacity": 5.0,  // Li ion 100-265 Wh/kg
         "charge": 1
       },
       "power_draw": 0.080,
@@ -385,7 +385,7 @@ var lunarSparkInput =
         "capacity": 5.0,
         "charge": 1
       },
-      "veh_power_draw": 2.80,
+      "veh_power_draw": 2.60,
       "lasers": [
         {
           "eff": 0.2,

@@ -150,10 +150,16 @@ div#simStatus2  {
 	float: left;
 }
 .inshadow {
-	background-color: darkgray;
+	background-color: #404040;
 	color: white;
 }
 .notinshadow {
 	background-color: lightgray;
 	color: black;
+}
+.orange {
+	background-color: orange;
+}
+.red {
+	background-color: red;
 }

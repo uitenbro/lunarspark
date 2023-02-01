@@ -15,6 +15,9 @@ var avgElapsedTime = 10; // msec
 var execRate = 100; // Hz
 var frameCount = 0;
 
+// Display thresholds
+const battRedThreshold = 0 // %
+const battOrangeThreshold = 10 // %
 
 function initSim() {
     // Stop running if running
@@ -209,8 +212,17 @@ function printSatellite(index) {
     satellite.appendChild(printRow("Satellite["+index+"]:", sat.id, "-", true));
     satellite.appendChild(printRow("Orbit(time/period):", sat.orbit.min.toFixed(0)+"/"+lunarSpark.environment.orbit.period, "min"));
     satellite.appendChild(printRow("Solar Panel Pwr Output:", sat.solar_panel.power_output.toFixed(2), "kW"));
-    //TODO: Color battery charge based on level
-    satellite.appendChild(printRow("Battery Charge:", (sat.battery.charge/sat.battery.capacity*100).toFixed(0)+"% "+ sat.battery.charge.toFixed(2)+"/"+sat.battery.capacity.toFixed(2), "kWhr"));
+    var sat_batt_percent = (sat.battery.charge/sat.battery.capacity*100);
+    var row = printRow("Battery Charge:", sat_batt_percent.toFixed(0)+"% "+ sat.battery.charge.toFixed(2)+"/"+sat.battery.capacity.toFixed(2), "kWh");
+    if (sat_batt_percent <= battOrangeThreshold) {
+        row.className = "orange";
+    }
+    if (sat_batt_percent <= battRedThreshold) {
+        row.className = "red";
+    }
+    satellite.appendChild(row);    
+    //satellite.appendChild(printRow("Battery Charge:", (sat.battery.charge/sat.battery.capacity*100).toFixed(0)+"% "+ sat.battery.charge.toFixed(2)+"/"+sat.battery.capacity.toFixed(2), "kWh"));
+    
     satellite.appendChild(printRow("Satellite Pwr Draw:", sat.veh_power_draw, "kW"));
 
     satellite.appendChild(printRow("Laser Pwr Draw:", "4.0", "kW"));
@@ -254,7 +266,15 @@ function printVehicle(index) {
     vehicle.appendChild(printRow("Vehicle["+index+"]:", veh.id, "-", true));
     vehicle.appendChild(printRow("Location (lat/long):", veh.location.lat+"/"+veh.location.long, "deg"));
     vehicle.appendChild(printRow("Solar Panel Pwr Output:", veh.solar_panel.power_output.toFixed(2), "kW"));
-    vehicle.appendChild(printRow("Battery Charge:", (veh.battery.charge/veh.battery.capacity*100).toFixed(0)+"% "+ veh.battery.charge.toFixed(2)+"/"+veh.battery.capacity.toFixed(2), "kWhr"));
+    var veh_batt_percent = (veh.battery.charge/veh.battery.capacity*100);
+    var row = printRow("Battery Charge:", veh_batt_percent.toFixed(0)+"% "+ veh.battery.charge.toFixed(2)+"/"+veh.battery.capacity.toFixed(2), "kWh");
+    if (veh_batt_percent <= battOrangeThreshold) {
+        row.className = "orange";
+    }
+    if (veh_batt_percent <= battRedThreshold) {
+        row.className = "red";
+    }
+    vehicle.appendChild(row);
     
     vehicle.appendChild(printRow("Laser Panel:", "(1.0x1.0) 1.0", "m2"));
     vehicle.appendChild(printTable("Laser", "Rng(km)", "Dia(m)", "(W/m2)", "Pwr(W)", true));

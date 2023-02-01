@@ -45,7 +45,7 @@ function updateSatellites () {
 			// if charge is less than full
 			if (sat.battery.charge < sat.battery.capacity) {
 				// add the power provided for this time step to the battery (include eps efficiency)
-				sat.battery.charge = sat.battery.charge + (sat.solar_panel.power_output * timeStep/60 * sat.eps_efficiency); // kWhr
+				sat.battery.charge = sat.battery.charge + (sat.solar_panel.power_output * timeStep/60 * sat.eps_efficiency); // kWh
 				// limit charge to maximum capacity
 				if (sat.battery.charge > sat.battery.capacity) {
 					sat.battery.charge = sat.battery.capacity;
@@ -55,7 +55,7 @@ function updateSatellites () {
 
 		// Update Satellite Power Draw (Laser Power Draw is updated after laser connections are calculated)
 		// draw the power for this time step from the battery (eps efficiency taken on the way into the battery)
-		sat.battery.charge = sat.battery.charge - (sat.veh_power_draw*timeStep/60); // kWhr		
+		sat.battery.charge = sat.battery.charge - (sat.veh_power_draw*timeStep/60); // kWh		
 		// if battery charge is negative set to zero
 		if (sat.battery.charge < 0) {
 			sat.battery.charge = 0;
@@ -66,20 +66,28 @@ function updateVehicles() {
 	for (var i=0;i<lunarSpark.vehicles.length;i++) {
 		var veh = lunarSpark.vehicles[i];
 
+		// Set lunar night input parameters based on vehicle location
 		setInNight(veh);
 
 		// TODO: nShadow(veh)
 		
-		// Update Solar Panel Power Production
-		veh.solar_panel.power_output = veh.solar_panel.height*veh.solar_panel.width * veh.solar_panel.efficiency * solarFluxInLunarOrbit / 1000; // kW 
+		// If the vehicle is not in lunar night
+		if (!veh.location.in_night) {
+			// Update solar panel power production
+			veh.solar_panel.power_output = veh.solar_panel.height*veh.solar_panel.width * veh.solar_panel.efficiency * solarFluxInLunarOrbit / 1000; // kW 
+		}
+		else {
+			// In lunar night so no solar panel power output
+			veh.solar_panel.power_output = 0;
+		}
 
-		// Update Power Storage (Laser Power storage is updated after laser connections are calculated)
+		// Update solar power storage 
 		// if the solar panel is producing power
 		if (veh.solar_panel.power_output>0) {
 			// if charge is less than full
 			if (veh.battery.charge < veh.battery.capacity) {
 				// add the power provided for this time step to the battery (include eps efficiency)
-				veh.battery.charge = veh.battery.charge + (veh.solar_panel.power_output * timeStep/60 * veh.eps_efficiency); // kWhr
+				veh.battery.charge = veh.battery.charge + (veh.solar_panel.power_output * timeStep/60 * veh.eps_efficiency); // kWh
 				// limit charge to maximum capacity
 				if (veh.battery.charge > veh.battery.capacity) {
 					veh.battery.charge = veh.battery.capacity;
@@ -87,9 +95,12 @@ function updateVehicles() {
 			}
 		}
 
+		// Update laser power storage
+
+
 		// Update Vehicle Power Draw 
 		// draw the power for this time step from the battery (eps efficiency taken on the way into the battery)
-		veh.battery.charge = veh.battery.charge - (veh.power_draw*timeStep/60); // kWhr		
+		veh.battery.charge = veh.battery.charge - (veh.power_draw*timeStep/60); // kWh		
 		// if battery charge is negative set to zero
 		if (veh.battery.charge < 0) {
 			veh.battery.charge = 0;
