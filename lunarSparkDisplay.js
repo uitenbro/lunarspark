@@ -225,11 +225,19 @@ function printSatellite(index) {
 }
 
 function printVehicles() {
-    var bottom = document.getElementById('bottom');
-    bottom.replaceChildren(); // start with empty div
-    for (i=0;i<8;i++) {
-        bottom.appendChild(printVehicle(i));
+    var left = document.createElement('div');
+    left.id = "vehLeft";
+    for (i=0;i<lunarSpark.vehicles.length/2;i++) {
+        left.appendChild(printVehicle(i));
     }
+    document.getElementById("vehLeft").replaceWith(left);
+
+    var right = document.createElement('div');
+    right.id = "vehRight";
+    for (i=lunarSpark.vehicles.length/2;i<lunarSpark.vehicles.length;i++) {
+        right.appendChild(printVehicle(i));
+    }
+    document.getElementById("vehRight").replaceWith(right);
 }
 
 function printVehicle(index) {
@@ -260,30 +268,31 @@ function printVehicle(index) {
 
 function printSimData() { 
     printSimStatus(); 
-    printSimRight();
 }
 
 function printSimStatus() {
+    // Left sim status
     var div = document.createElement('div');
-    div.id = "simStatus";
+    div.id = "simStatus1";
 
     div.appendChild(printRow("Step Duration:", timeStep.toFixed(3), "min"));
     div.appendChild(printRow("Exec Rate:", execRate.toFixed(1), "Hz"));
     
-    simStatus = document.getElementById('simStatus');
+    simStatus = document.getElementById('simStatus1');
     simStatus.replaceWith(div);
 
-}
+    // Right sim status
+    var div = document.createElement('div');
+    div.id = "simStatus2";
 
-function printSimRight() {
-    simRight = document.getElementById('simRight');
-    simRight.replaceChildren();
- 
-    simRight.appendChild(printRow("Elapsed Time:", time.toFixed(0), "min"));
-    simRight.appendChild(printRow("Days:", Math.floor(time/(24*60)), "days"));
-    simRight.appendChild(printRow("Hrs:", Math.floor(time/60)%24, "hrs"));
-    simRight.appendChild(printRow("Min:", (time%60).toFixed(0), "min"));
-    simRight.appendChild(printRow("Orbit Count:", (lunarSpark.environment.orbit.count), "-"));
-    simRight.appendChild(printRow("Sun Angle:", (lunarSpark.environment.sun_angle).toFixed(2), "deg"));
+    div.appendChild(printRow("Elapsed Time:", time.toFixed(0), "min"));
+    div.appendChild(printRow("Days:", Math.floor(time/(24*60)), "days"));
+    div.appendChild(printRow("Hrs:", Math.floor(time/60)%24, "hrs"));
+    div.appendChild(printRow("Min:", (time%60).toFixed(0), "min"));
+    div.appendChild(printRow("Orbit Count:", (lunarSpark.environment.orbit.count), "-"));
+    div.appendChild(printRow("Sun Angle:", (lunarSpark.environment.sun_angle).toFixed(2), "deg"));
+
+    simRight = document.getElementById('simStatus2');
+    simRight.replaceWith(div);
 
 }

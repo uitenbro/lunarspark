@@ -5,7 +5,9 @@ body {
 }
 
 div#all {
-	width: 1438px
+	width: 1438px;
+/*	border: 1px solid white;*/
+
 }
 
 div#top {
@@ -21,7 +23,7 @@ div#bottom {
 /*	min-width: 550px;*/
 	display: flow-root;
 	text-align:center;
-	border: 1px solid white;
+/*	border: 1px solid white;*/
 	padding: 2px;
 }
 
@@ -30,6 +32,8 @@ div#middle {
 	text-align:center;
 	border: 1px solid white;
 	display: block;
+	padding: 2px;
+	display: flow-root;
 }
 canvas {
 /*	border: 1px solid gray; */
@@ -40,15 +44,16 @@ canvas {
 div#simLeft {
 /*	border: 1px solid white;*/
 	float:left;
-	margin: 2px, 2px 2px 2px;
-	padding: 2px 2px 2px 2px;
+/*	margin: 2px, 2px 2px 2px;*/
+/*	padding: 2px 2px 2px 2px;*/
 	color: white;
 	text-align: left;
+	width: 350px;
 }
 div#simRight {
-	border: 1px solid white;
-	margin: 2px 2px 2px 2px;
-	padding: 2px;
+/*	border: 1px solid white;*/
+	margin: 0px 5px 0px 0px;
+/*	padding: 2px 2px 2px 2px;*/
 	float:right;
 	color:white;
 	width: 350px;
@@ -81,9 +86,16 @@ div#simControl .buttonDisabled {
 	pointer-events: none;
   	cursor: default;
 }
-div#simStatus {
+div#simStatus1  {
 	width: 350px;
 	border: 1px solid white;
+	margin: 0px 1px 1px 0px;
+	padding: 2px;
+}
+div#simStatus2  {
+	width: 350px;
+	border: 1px solid white;
+	margin: 0px 1px 1px 0px;
 	padding: 2px;
 }
 
@@ -132,7 +144,7 @@ div#simStatus {
 /* vehicle */
 .vehicle {
 	border: 1px solid black;
-	margin: 1px;	
+	margin: 0px;	
 	padding: 2px;
 	min-width: 350px;
 	float: left;
