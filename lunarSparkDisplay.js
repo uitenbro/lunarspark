@@ -54,6 +54,7 @@ function initSim() {
 
     printSimControl();
     drawMoon();
+    drawAll();
     printAll();  
 }
 

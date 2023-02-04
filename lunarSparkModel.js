@@ -15,7 +15,7 @@ const orbitRadius = moonRadius + lunarSpark.environment.orbit.altitude; // meter
 
 function stepModel() {
 	updateSunAngle();
-	updateOrbitAngle();
+	updateascendingNode();
 	updateSatellites();
 	updateVehicles();
 	connectLasers();
@@ -24,7 +24,7 @@ function stepModel() {
 function updateSunAngle () {
 	lunarSpark.environment.sun_angle = lunarSpark.environment.sun_angle+(timeStep*sunAngleDegreesPerMinute);
 }
-function updateOrbitAngle () {
+function updateascendingNode () {
 	lunarSpark.environment.orbit.ascending_node = lunarSpark.environment.orbit.ascending_node+(timeStep*ascendingNodeDegreesPerMinute);
 	lunarSpark.environment.orbit.count = Math.floor(time/lunarSpark.environment.orbit.period);
 }
@@ -34,7 +34,7 @@ function updateSatellites () {
 
 		// Update orbit position
 		sat.orbit.min = (sat.orbit.min+timeStep)%lunarSpark.environment.orbit.period;
-		sat.orbit.anomoly = sat.orbit.min/lunarSpark.environment.orbit.period*360;
+		sat.orbit.anomaly = sat.orbit.min/lunarSpark.environment.orbit.period*360;
 
 		// Update Power Production
 		sat.solar_panel.power_output = sat.solar_panel.area * sat.solar_panel.efficiency * solarFluxInLunarOrbit / 1000; // kW TODO: inEclipse(sat)
@@ -154,7 +154,7 @@ function connectLasers() {
 				if (lunarSpark.vehicles[k].active) {
 					// Determine if vehicle is in view
 					// TODO: perform line sight calculation
-					if (lunarSpark.satellites[i].orbit.anomoly > 15 && lunarSpark.satellites[i].orbit.anomoly < 165) {
+					if (lunarSpark.satellites[i].orbit.anomaly > 15 && lunarSpark.satellites[i].orbit.anomaly < 165) {
 							// Determine if vehicle can recieve another beam 
 							// if (current beam intensity + new beam intesity) < max intensity {
 								potentialVehicles.push(k);

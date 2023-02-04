@@ -83,28 +83,37 @@ function drawSatellites() {
     // TODO: Draw farthest away satelites first so layering is correct
     for (var i=0;i<lunarSpark.satellites.length;i++) {
         if (lunarSpark.satellites[i].active) {
-            drawSatellite(lunarSpark.satellites[i].orbit.anomoly, i, lunarSpark.environment.orbit.ascending_node);
+            drawSatellite(lunarSpark.satellites[i].orbit.anomaly, i, lunarSpark.environment.orbit.ascending_node);
         }
     }
 }
 
-function drawSatellite(anomaly, id, orbitAngle) {
-    var anomaly = (anomaly + 90)%360; // rotate so 0 degrees is the top/back of screen (north pole) then CCW degrees around the orbit
+function drawSatellite(anomaly, id, ascendingNode) {
+    // TODO: anomaly (set in model?) and ascending node (should be ascending node) don't seem to be aligned with animation (offset 180 deg and moving CCW)
+    var anomaly = (anomaly + 90)%360; // rotate so 0 degrees is the back of screen (north pole) then CW degrees around the orbit
     if (anomaly >= orbitVisibilityLowerBound+satelliteVisibilityOffset && anomaly <= orbitVisibilityUpperBound-satelliteVisibilityOffset) {    
+        
+        // Calculate pixel distances along the ellipse (a=major axis, b=minor axis, t=angle to the satellite location on the ellipse)
         var a = orbitWidth/2;
         var b = canvas.height/2;
         var t = (anomaly)*(Math.PI / 180.0)
-        var x = a*Math.cos(t); // pixels from central origin
-        var y = b*Math.sin(t); // pixels from central origin
+        // x = a cos(t), y = b(cos(t) in pixels
+        var x = a*Math.cos(t); // pixels from center of ellipse
+        var y = b*Math.sin(t); // pixels from center of ellipse
+        // calculate pixel location from canvas origin
         x = originX+x; // pixels from canvas orgin
         y = originY-y; // pixels from canvas orgin
 
-        orbitAngle = (orbitAngle+90) * (Math.PI/180)
+        // Save the context then translate to the center of the satellite on the ellipse
         context.save();
         context.translate(originX,originY)
-        context.rotate(orbitAngle);
+        // Convert ascending node to radians and rotate the canvas to align with the orbit ellipse
+        ascendingNode = (ascendingNode+90) * (Math.PI/180)
+        context.rotate(ascendingNode);
+        // Translate back to the original canvas origin (still rotated)
         context.translate(-originX,-originY);
 
+        // Draw satellite background and foregroud crosses (still rotated)
         context.fillStyle = "white";
         context.fillRect(x-satelliteCrossWidth/2-1, y-satelliteCrossHeight/2-1, satelliteCrossWidth+2, satelliteCrossHeight+2);
         context.fillRect(x-satelliteCrossHeight/2-1, y-satelliteCrossWidth/2-1, satelliteCrossHeight+2, satelliteCrossWidth+2);    
@@ -114,11 +123,13 @@ function drawSatellite(anomaly, id, orbitAngle) {
         context.font = "16px Courier";
         context.fillStyle = "white";
 
+        // Translate back to the center of satellite on the ellipse and rotate to horizontal
         context.translate(x,y);
-        context.rotate(-orbitAngle);
-        context.translate(-x,-y)
-        context.fillText(id, x-5, y+5);
+        context.rotate(-ascendingNode);
+        // Draw id text with offset to align in the center of cross
+        context.fillText(id, -5, 5);
 
+        // Restore origin context
         context.restore();
     }
 }
@@ -158,21 +169,21 @@ function drawLasers() {
                 if (vehicle != null && vehicle != "---") {  //TODO change to if typeof vehicle then "---" check 
                     var lat = lunarSpark.vehicles[vehicle].location.lat;
                     var long = lunarSpark.vehicles[vehicle].location.long;
-                    drawLaser(lunarSpark.satellites[i].orbit.anomoly, lunarSpark.environment.orbit.ascending_node, j, lat, long);
+                    drawLaser(lunarSpark.satellites[i].orbit.anomaly, lunarSpark.environment.orbit.ascending_node, j, lat, long);
                 }
             }
         }
     }
 }
-function drawLaser(anomaly, orbitAngle, laserNum, lat, long) {
+function drawLaser(anomaly, ascendingNode, laserNum, lat, long) {
     anomaly = (anomaly + 90)%360; // rotate so 0 degrees is the top of screen then CCW degrees around the orbit
     //if (anomaly >= orbitVisibilityLowerBound+40 && anomaly <= orbitVisibilityUpperBound-40) { 
 
         var hyp = (90-lat)/(90-minLatitude) * ((canvas.width/2)-orbitDistanceOffset); // pixel length of hypotenuse
         var vehicleX1 = hyp*Math.sin((long) * (Math.PI / 180.0)); // pixels from central origin
         var vehicleY1 = hyp*Math.cos((long) * (Math.PI / 180.0)); // pixels from central origin
-        var vehicleX = hyp*Math.sin((long - orbitAngle-90) * (Math.PI / 180.0)); // pixels from central origin
-        var vehicleY = hyp*Math.cos((long -  orbitAngle-90) * (Math.PI / 180.0)); // pixels from central origin
+        var vehicleX = hyp*Math.sin((long - ascendingNode-90) * (Math.PI / 180.0)); // pixels from central origin
+        var vehicleY = hyp*Math.cos((long -  ascendingNode-90) * (Math.PI / 180.0)); // pixels from central origin
 
         vehicleX = originX+vehicleX; // pixels from canvas orgin
         vehicleY = originY-vehicleY; // pixels from canvas orgin
@@ -206,10 +217,10 @@ function drawLaser(anomaly, orbitAngle, laserNum, lat, long) {
           default:
         }
 
-        orbitAngle = (orbitAngle+90) * (Math.PI/180)
+        ascendingNode = (ascendingNode+90) * (Math.PI/180)
         context.save();
         context.translate(originX,originY)
-        context.rotate(orbitAngle);
+        context.rotate(ascendingNode);
         context.translate(-originX,-originY);
 
         // Draw laser

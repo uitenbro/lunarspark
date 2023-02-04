@@ -269,7 +269,7 @@ var lunarSparkInput = {
       "id": "Spark1",
       "orbit": {
         "min": 37,
-        "anamoly": 0
+        "anomaly": 90
       },
       "solar_panel": {
         "area": 25,
@@ -293,7 +293,6 @@ var lunarSparkInput = {
       "id": "Spark2",
       "orbit": {
         "min": 74,
-        "anamoly": 0
       },
       "solar_panel": {
         "area": 12.5,
@@ -317,7 +316,6 @@ var lunarSparkInput = {
       "id": "Spark3",
       "orbit": {
         "min": 111,
-        "anamoly": 0
       },
       "solar_panel": {
         "area": 25,
@@ -341,7 +339,6 @@ var lunarSparkInput = {
       "id": "Spark4",
       "orbit": {
         "min": 0,
-        "anamoly": 0
       },
       "solar_panel": {
         "area": 12.5,
