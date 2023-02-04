@@ -152,45 +152,58 @@ function connectLasers() {
 			// Determine if vehicle is in view
 			// TODO: perform line sight calculation
 			if (lunarSpark.satellites[i].orbit.anomoly > 15 && lunarSpark.satellites[i].orbit.anomoly < 165) {
-				// Determine if a vehicle needs/requests more power
-				if (lunarSpark.vehicles[k].battery.percent<50) {
 					// Determine if vehicle can recieve another beam 
 					// if (current beam intensity + new beam intesity) < max intensity {
 						potentialVehicles.push(k);
 					//}
-				}
 			}
 		}
 		var chosenVehicles = [];
-		// // If there are potential vehicles to connect this satellites lasers to
-		// if (potentialVehicles.length) {
-			// If potential vehicles exceeds number of lasers
-			if (potentialVehicles.length > lunarSpark.satellites[i].laser_count) {
-				//TODO: add algorithm or sort to prioritize low power vehicles
-				//TODO: consider existing beam intensity to spread power more
-				
-				// Choose which vehicles to connect to
-				chosenVehicles = potentialVehicles.slice(0,lunarSpark.satellites[i].laser_count); 
-			}
-			else {
-				chosenVehicles = potentialVehicles;
-			}
-			// Loop through lasers
-			var laserConnectCount = 0;
-			for (var j=0;j<lunarSpark.satellites[i].laser_count;j++) {
-				// if there is a chosen vehicle
-				if (j<chosenVehicles.length) {
-					// connect the laser to the vehicle
-					connectLaser(i, j, chosenVehicles[j], 1111, 0.7, 2591, (0.7*2591));  // TODO: calculate beam stats using trade report
-					laserConnectCount++;
+		// If potential vehicles exceeds number of lasers
+		if (potentialVehicles.length > lunarSpark.satellites[i].laser_count) {
+			//TODO: add algorithm or sort to prioritize low power vehicles
+			//TODO: consider existing beam intensity to spread power more
+			
+			for (l=0;l<potentialVehicles.length;l++) {
+				var potVeh = potentialVehicles[l];
+				// Prefer vehicles who are already charging but not yet 100%
+				if (lunarSpark.vehicles[potVeh].beams.length && lunarSpark.vehicles[potVeh].battery.percent < 99) {
+					chosenVehicles.push(potVeh)
 				}
 				else {
-					// otherwise disconnect the laser
-					disconnectLaser(i,j);
+					// Determine if a vehicle is low on power
+					if (lunarSpark.vehicles[potVeh].battery.percent<50) {  //TODO: use global threshold
+						// This will out prioritize already charging vehicles // TODO: prioritize low charges
+						chosenVehicles.push(potVeh)
+					}
 				}
 			}
-			lunarSpark.satellites[i].laser_power_draw = laserConnectCount*1/0.2; // TODO: confirm 20% efficiency to produce 1kW
-		// }	
+			// Down select to number of available lasers
+			chosenVehicles = chosenVehicles.slice(0,lunarSpark.satellites[i].laser_count); 
+		}
+		else {
+			// All potential vehicles can be chosen
+			chosenVehicles = potentialVehicles;
+		}
+		// Loop through lasers to update connections
+		var laserConnectCount = 0;
+		for (var j=0;j<lunarSpark.satellites[i].laser_count;j++) {
+			// if there is a chosen vehicle
+			if (j<chosenVehicles.length>0) {
+				var chosenVeh = chosenVehicles[0];  // set the chosen vehicle to the first entry because % won't work on zero
+				if (chosenVehicles.length > 1) {
+					chosenVeh = chosenVehicles[j%(chosenVehicles.length-1)]; 
+				}
+				// connect the laser to the vehicle (allow multiple lasers to single vehicle)
+				connectLaser(i, j, chosenVeh, 1111, 0.7, 2591, (0.7*2591));  // TODO: calculate beam stats using trade report
+				laserConnectCount++;
+			}
+			else {
+				// otherwise disconnect the laser
+				disconnectLaser(i,j);
+			}
+		}
+		lunarSpark.satellites[i].laser_power_draw = laserConnectCount*1/0.2; // TODO: confirm 20% efficiency to produce 1kW
 	}
 }
 function connectLaser(satellite, laser, vehicle, range, diameter, intensity, power) {
