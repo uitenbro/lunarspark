@@ -208,6 +208,7 @@ function connectLasers() {
 }
 function connectLaser(satellite, laser, vehicle, range, diameter, intensity, power) {
 	//TODO: how many beams allowed per vehicles should be a function of intensity not arbitary max number
+	// TODO: error connecting if satellite is too low on power
 	//  if this laser is currently connected disconnect it
 	//if (typeof(lunarSpark.satellites[satellite].lasers[laser]) != "undefined") {
 		//if (lunarSpark.satellites[satellite].lasers[laser].vehicle != vehicle) {
