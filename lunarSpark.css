@@ -163,3 +163,7 @@ div#simStatus2  {
 .red {
 	background-color: red;
 }
+.inactive {
+	color: #e3e3e3;
+	background-color: lightgray;
+}

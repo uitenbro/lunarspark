@@ -82,7 +82,9 @@ function drawSunIllumination () {
 function drawSatellites() {
     // TODO: Draw farthest away satelites first so layering is correct
     for (var i=0;i<lunarSpark.satellites.length;i++) {
-        drawSatellite(lunarSpark.satellites[i].orbit.anomoly, i, lunarSpark.environment.orbit.ascending_node);
+        if (lunarSpark.satellites[i].active) {
+            drawSatellite(lunarSpark.satellites[i].orbit.anomoly, i, lunarSpark.environment.orbit.ascending_node);
+        }
     }
 }
 
@@ -123,7 +125,9 @@ function drawSatellite(anomaly, id, orbitAngle) {
 
 function drawVehicles() {
     for (var i=0;i<lunarSpark.vehicles.length;i++) {
-        drawVehicle(lunarSpark.vehicles[i].location.lat, lunarSpark.vehicles[i].location.long, i);
+        if (lunarSpark.vehicles[i].active) {
+            drawVehicle(lunarSpark.vehicles[i].location.lat, lunarSpark.vehicles[i].location.long, i);
+        }
     }
 }
 
@@ -148,12 +152,14 @@ function drawVehicle(lat, long, id) {
 }
 function drawLasers() {
     for (var i=0;i<lunarSpark.satellites.length;i++) {
-        for (var j=0;j<lunarSpark.satellites[i].lasers.length;j++) {
-            var vehicle = lunarSpark.satellites[i].lasers[j].vehicle;
-            if (vehicle != null && vehicle != "---") {  //TODO change to if typeof vehicle then "---" check 
-                var lat = lunarSpark.vehicles[vehicle].location.lat;
-                var long = lunarSpark.vehicles[vehicle].location.long;
-                drawLaser(lunarSpark.satellites[i].orbit.anomoly, lunarSpark.environment.orbit.ascending_node, j, lat, long);
+        if (lunarSpark.satellites[i].active) {
+            for (var j=0;j<lunarSpark.satellites[i].lasers.length;j++) {
+                var vehicle = lunarSpark.satellites[i].lasers[j].vehicle;
+                if (vehicle != null && vehicle != "---") {  //TODO change to if typeof vehicle then "---" check 
+                    var lat = lunarSpark.vehicles[vehicle].location.lat;
+                    var long = lunarSpark.vehicles[vehicle].location.long;
+                    drawLaser(lunarSpark.satellites[i].orbit.anomoly, lunarSpark.environment.orbit.ascending_node, j, lat, long);
+                }
             }
         }
     }

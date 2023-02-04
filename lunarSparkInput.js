@@ -11,6 +11,7 @@ var lunarSparkInput = {
   },
   "vehicles": [
     {
+      "active": true,
       "id": "VIPER0",
       "location": {
         "lat": 88,
@@ -41,6 +42,7 @@ var lunarSparkInput = {
       "beams": []
     },
     {
+      "active": false,
       "id": "SMALL1",
       "location": {
         "lat": 88,
@@ -71,6 +73,7 @@ var lunarSparkInput = {
       "beams": []
     },
     {
+      "active": true,
       "id": "VIPER2",
       "location": {
         "lat": 86,
@@ -101,6 +104,7 @@ var lunarSparkInput = {
       "beams": []
     },
     {
+      "active": true,
       "id": "SMALL3",
       "location": {
         "lat": 85,
@@ -132,6 +136,7 @@ var lunarSparkInput = {
       ]
     }, 
     {
+      "active": true,
       "id": "SMALL4",
       "location": {
         "lat": 84,
@@ -163,6 +168,7 @@ var lunarSparkInput = {
       ]
     },
     {
+      "active": true,
       "id": "SMALL5",
       "location": {
         "lat": 90,
@@ -194,6 +200,7 @@ var lunarSparkInput = {
       ]
     },
     {
+      "active": true,
       "id": "SMALL6",
       "location": {
         "lat": 86,
@@ -225,6 +232,7 @@ var lunarSparkInput = {
       ]
     },
     {
+      "active": true,
       "id": "SMALL7",
       "location": {
         "lat": 84,
@@ -257,6 +265,7 @@ var lunarSparkInput = {
   ],
   "satellites": [
     {
+      "active": true,
       "id": "Spark1",
       "orbit": {
         "min": 37,
@@ -270,7 +279,7 @@ var lunarSparkInput = {
       "eps_efficiency": 0.5,
       "battery": {
         "capacity": 5.0,
-        "charge": 1,
+        "charge": 5.0,
         "percent": 0
       },
       "veh_power_draw": 1.8,
@@ -280,6 +289,7 @@ var lunarSparkInput = {
       "lasers": []
     },
     {
+      "active": false,
       "id": "Spark2",
       "orbit": {
         "min": 74,
@@ -293,7 +303,7 @@ var lunarSparkInput = {
       "eps_efficiency": 0.5,
       "battery": {
         "capacity": 5.0,
-        "charge": 1,
+        "charge": 5.0,
         "percent": 0
       },
       "veh_power_draw": 1.8,
@@ -303,6 +313,7 @@ var lunarSparkInput = {
       "lasers": []
     },
     {
+      "active": false,
       "id": "Spark3",
       "orbit": {
         "min": 111,
@@ -316,7 +327,7 @@ var lunarSparkInput = {
       "eps_efficiency": 0.5,
       "battery": {
         "capacity": 5.0,
-        "charge": 1,
+        "charge": 5.0,
         "percent": 0
       },
       "veh_power_draw": 1.8,
@@ -326,6 +337,7 @@ var lunarSparkInput = {
       "lasers": []
     },
     {
+      "active": false,
       "id": "Spark4",
       "orbit": {
         "min": 0,
@@ -339,7 +351,7 @@ var lunarSparkInput = {
       "eps_efficiency": 0.5,
       "battery": {
         "capacity": 5.0,
-        "charge": 1,
+        "charge": 5.0,
         "percent": 0
       },
       "veh_power_draw": 1.8,
