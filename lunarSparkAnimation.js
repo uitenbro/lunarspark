@@ -87,7 +87,7 @@ function drawSatellites() {
 }
 
 function drawSatellite(anomaly, id, orbitAngle) {
-    var anomaly = (anomaly + 90)%360; // rotate so 0 degrees is the top of screen then CCW degrees around the orbit
+    var anomaly = (anomaly + 90)%360; // rotate so 0 degrees is the top/back of screen (north pole) then CCW degrees around the orbit
     if (anomaly >= orbitVisibilityLowerBound+satelliteVisibilityOffset && anomaly <= orbitVisibilityUpperBound-satelliteVisibilityOffset) {    
         var a = orbitWidth/2;
         var b = canvas.height/2;
@@ -150,9 +150,9 @@ function drawLasers() {
     for (var i=0;i<lunarSpark.satellites.length;i++) {
         for (var j=0;j<lunarSpark.satellites[i].lasers.length;j++) {
             var vehicle = lunarSpark.satellites[i].lasers[j].vehicle;
-            var lat = lunarSpark.vehicles[vehicle].location.lat;
-            var long = lunarSpark.vehicles[vehicle].location.long;
-            if (vehicle != null) {
+            if (vehicle != null && vehicle != "---") {  //TODO change to if typeof vehicle then "---" check 
+                var lat = lunarSpark.vehicles[vehicle].location.lat;
+                var long = lunarSpark.vehicles[vehicle].location.long;
                 drawLaser(lunarSpark.satellites[i].orbit.anomoly, lunarSpark.environment.orbit.ascending_node, j, lat, long);
             }
         }
@@ -160,7 +160,7 @@ function drawLasers() {
 }
 function drawLaser(anomaly, orbitAngle, laserNum, lat, long) {
     anomaly = (anomaly + 90)%360; // rotate so 0 degrees is the top of screen then CCW degrees around the orbit
-    if (anomaly >= orbitVisibilityLowerBound+40 && anomaly <= orbitVisibilityUpperBound-40) { 
+    //if (anomaly >= orbitVisibilityLowerBound+40 && anomaly <= orbitVisibilityUpperBound-40) { 
 
         var hyp = (90-lat)/(90-minLatitude) * ((canvas.width/2)-orbitDistanceOffset); // pixel length of hypotenuse
         var vehicleX1 = hyp*Math.sin((long) * (Math.PI / 180.0)); // pixels from central origin
@@ -221,5 +221,5 @@ function drawLaser(anomaly, orbitAngle, laserNum, lat, long) {
         context.stroke();
     
         context.restore();
-    }
+    //}
 }

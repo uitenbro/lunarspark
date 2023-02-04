@@ -1,6 +1,4 @@
-var lunarSparkInput = 
-
-{
+var lunarSparkInput = {
   "environment": {
     "time": 0,
     "orbit": {
@@ -29,17 +27,18 @@ var lunarSparkInput =
       },
       "eps_efficiency": 0.5,
       "battery": {
-        "capacity": 5.0,  // Li ion 100-265 Wh/kg
-        "charge": 1
+        "capacity": 5.0,
+        "charge": 1,
+        "percent": 0
       },
       "power_draw": 0.080,
       "laser_panel": {
         "height": 1,
         "width": 2,
+        "efficiency": 0.3,
         "power_output": 0
       },
-      "beams": [
-      ],
+      "beams": []
     },
     {
       "id": "SMALL1",
@@ -59,16 +58,17 @@ var lunarSparkInput =
       "eps_efficiency": 0.5,
       "battery": {
         "capacity": 3.0,
-        "charge": 1
+        "charge": 1,
+        "percent": 0
       },
       "power_draw": 0.010,
       "laser_panel": {
         "height": 1,
         "width": 2,
+        "efficiency": 0.3,
         "power_output": 0
       },
-      "beams": [
-      ],
+      "beams": []
     },
     {
       "id": "VIPER2",
@@ -88,16 +88,17 @@ var lunarSparkInput =
       "eps_efficiency": 0.5,
       "battery": {
         "capacity": 5.0,
-        "charge": 1
+        "charge": 1,
+        "percent": 0
       },
       "power_draw": 0.230,
       "laser_panel": {
         "height": 1,
-        "width": 2,
+        "width": 2,        
+        "efficiency": 0.3,
         "power_output": 0
       },
-      "beams": [
-      ],
+      "beams": []
     },
     {
       "id": "SMALL3",
@@ -117,12 +118,14 @@ var lunarSparkInput =
       "eps_efficiency": 0.5,
       "battery": {
         "capacity": 5.0,
-        "charge": 1
+        "charge": 1,
+        "percent": 0
       },
       "power_draw": 0.080,
       "laser_panel": {
         "height": 1,
         "width": 2,
+        "efficiency": 0.3,
         "power_output": 0
       },
       "beams": [
@@ -146,12 +149,14 @@ var lunarSparkInput =
       "eps_efficiency": 0.5,
       "battery": {
         "capacity": 5.0,
-        "charge": 1
+        "charge": 1,
+        "percent": 0
       },
       "power_draw": 0.10,
       "laser_panel": {
         "height": 1,
         "width": 2,
+        "efficiency": 0.3,
         "power_output": 0
       },
       "beams": [
@@ -175,7 +180,8 @@ var lunarSparkInput =
       "eps_efficiency": 0.5,
       "battery": {
         "capacity": 5.0,
-        "charge": 1
+        "charge": 1,
+        "percent": 0
       },
       "power_draw": 0.080,
       "laser_panel": {
@@ -205,7 +211,8 @@ var lunarSparkInput =
       "eps_efficiency": 0.5,
       "battery": {
         "capacity": 5.0,
-        "charge": 1
+        "charge": 1,
+        "percent": 0
       },
       "power_draw": 0.080,
       "laser_panel": {
@@ -235,7 +242,8 @@ var lunarSparkInput =
       "eps_efficiency": 0.5,
       "battery": {
         "capacity": 5.0,
-        "charge": 1
+        "charge": 1,
+        "percent": 0
       },
       "power_draw": 0.080,
       "laser_panel": {
@@ -244,8 +252,7 @@ var lunarSparkInput =
         "efficiency": 0.3,
         "power_output": 0
       },
-      "beams": [
-      ],
+      "beams": []
     }
   ],
   "satellites": [
@@ -253,7 +260,7 @@ var lunarSparkInput =
       "id": "Spark1",
       "orbit": {
         "min": 37,
-        "anamoly": 0,
+        "anamoly": 0
       },
       "solar_panel": {
         "area": 25,
@@ -263,37 +270,20 @@ var lunarSparkInput =
       "eps_efficiency": 0.5,
       "battery": {
         "capacity": 5.0,
-        "charge": 1
+        "charge": 1,
+        "percent": 0
       },
       "veh_power_draw": 1.8,
-      "lasers": [
-        {
-          "eff": 0.2,
-          "output_power": 1000,
-          "vehicle": ""
-        },
-        {
-          "eff": 0.2,
-          "output_power": 1000,
-          "vehicle": ""
-        },
-        {
-          "eff": 0.2,
-          "output_power": 1000,
-          "vehicle": ""
-        },
-        {
-          "eff": 0.2,
-          "output_power": 1000,
-          "vehicle": ""
-        }
-      ]
+      "laser_efficiency": 0.2,
+      "laser_count": 4,
+      "laser_power_draw": 0,
+      "lasers": []
     },
     {
       "id": "Spark2",
       "orbit": {
         "min": 74,
-        "anamoly": 0,
+        "anamoly": 0
       },
       "solar_panel": {
         "area": 12.5,
@@ -303,37 +293,20 @@ var lunarSparkInput =
       "eps_efficiency": 0.5,
       "battery": {
         "capacity": 5.0,
-        "charge": 1
+        "charge": 1,
+        "percent": 0
       },
-      "veh_power_draw": 0.80,
-      "lasers": [
-        {
-          "eff": 0.2,
-          "output_power": 1000,
-          "vehicle": ""
-        },
-        {
-          "eff": 0.2,
-          "output_power": 1000,
-          "vehicle": ""
-        },
-        {
-          "eff": 0.2,
-          "output_power": 1000,
-          "vehicle": ""
-        },
-        {
-          "eff": 0.2,
-          "output_power": 1000,
-          "vehicle": ""
-        }
-      ]
+      "veh_power_draw": 1.8,
+      "laser_efficiency": 0.2,
+      "laser_count": 4,
+      "laser_power_draw": 0,
+      "lasers": []
     },
     {
       "id": "Spark3",
       "orbit": {
         "min": 111,
-        "anamoly": 0,
+        "anamoly": 0
       },
       "solar_panel": {
         "area": 25,
@@ -343,37 +316,20 @@ var lunarSparkInput =
       "eps_efficiency": 0.5,
       "battery": {
         "capacity": 5.0,
-        "charge": 1
+        "charge": 1,
+        "percent": 0
       },
-      "veh_power_draw": 2.80,
-      "lasers": [
-        {
-          "eff": 0.2,
-          "output_power": 1000,
-          "vehicle": ""
-        },
-        {
-          "eff": 0.2,
-          "output_power": 1000,
-          "vehicle": ""
-        },
-        {
-          "eff": 0.2,
-          "output_power": 1000,
-          "vehicle": ""
-        },
-        {
-          "eff": 0.2,
-          "output_power": 1000,
-          "vehicle": ""
-        }
-      ]
+      "veh_power_draw": 1.8,
+      "laser_efficiency": 0.2,
+      "laser_count": 4,
+      "laser_power_draw": 0,
+      "lasers": []
     },
     {
       "id": "Spark4",
       "orbit": {
         "min": 0,
-        "anamoly": 0,
+        "anamoly": 0
       },
       "solar_panel": {
         "area": 12.5,
@@ -383,31 +339,14 @@ var lunarSparkInput =
       "eps_efficiency": 0.5,
       "battery": {
         "capacity": 5.0,
-        "charge": 1
+        "charge": 1,
+        "percent": 0
       },
-      "veh_power_draw": 2.60,
-      "lasers": [
-        {
-          "eff": 0.2,
-          "output_power": 1000,
-          "vehicle": ""
-        },
-        {
-          "eff": 0.2,
-          "output_power": 1000,
-          "vehicle": ""
-        },
-        {
-          "eff": 0.2,
-          "output_power": 1000,
-          "vehicle": ""
-        },
-        {
-          "eff": 0.2,
-          "output_power": 1000,
-          "vehicle": ""
-        }
-      ]
+      "veh_power_draw": 1.8,
+      "laser_efficiency": 0.2,
+      "laser_count": 4,
+      "laser_power_draw": 0,
+      "lasers": []
     }
   ]
 }

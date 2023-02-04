@@ -19,6 +19,10 @@ var frameCount = 0;
 const battRedThreshold = 0 // %
 const battOrangeThreshold = 10 // %
 
+
+const maxLasersPerSatellite = 4;
+const maxBeamsPerVehicle = 4;
+
 function initSim() {
     // Stop running if running
     if (simState == "run") {
@@ -39,6 +43,7 @@ function initSim() {
     avgElapsedTime = 10; // msec
     execRate = 100; // Hz
     frameCount = 0;
+    disconnectAllLasers();
 
     canvas = document.querySelector('#simCanvas'); // canvas is intentionally global
     context = canvas.getContext('2d'); // context is intentionally global
@@ -195,7 +200,7 @@ function printTable (a,b,c,d,e, header=false) {
 function printSatellites() {
     var top = document.getElementById('top');
     top.replaceChildren()
-    for (i=0;i<4;i++) {
+    for (i=0;i<maxLasersPerSatellite;i++) {
         top.appendChild(printSatellite(i));
     }
 }
@@ -208,31 +213,35 @@ function printSatellite(index) {
         satellite.className = "satellite inview";
     }
 
-    sat = lunarSpark.satellites[index]
+    var sat = lunarSpark.satellites[index]
     satellite.appendChild(printRow("Satellite["+index+"]:", sat.id, "-", true));
     satellite.appendChild(printRow("Orbit(time/period):", sat.orbit.min.toFixed(0)+"/"+lunarSpark.environment.orbit.period, "min"));
     satellite.appendChild(printRow("Solar Panel Pwr Output:", sat.solar_panel.power_output.toFixed(2), "kW"));
-    var sat_batt_percent = (sat.battery.charge/sat.battery.capacity*100);
-    var row = printRow("Battery Charge:", sat_batt_percent.toFixed(0)+"% "+ sat.battery.charge.toFixed(2)+"/"+sat.battery.capacity.toFixed(2), "kWh");
-    if (sat_batt_percent <= battOrangeThreshold) {
+    var row = printRow("Battery Charge:", sat.battery.percent.toFixed(1)+"% "+ sat.battery.charge.toFixed(2)+"/"+sat.battery.capacity.toFixed(2), "kWh");
+    if (sat.battery.percent <= battOrangeThreshold) {
         row.className = "orange";
     }
-    if (sat_batt_percent <= battRedThreshold) {
+    if (sat.battery.percent <= battRedThreshold) {
         row.className = "red";
     }
     satellite.appendChild(row);    
     //satellite.appendChild(printRow("Battery Charge:", (sat.battery.charge/sat.battery.capacity*100).toFixed(0)+"% "+ sat.battery.charge.toFixed(2)+"/"+sat.battery.capacity.toFixed(2), "kWh"));
     
-    satellite.appendChild(printRow("Satellite Pwr Draw:", sat.veh_power_draw, "kW"));
+    satellite.appendChild(printRow("Satellite Pwr Draw:", sat.veh_power_draw.toFixed(2), "kW"));
 
-    satellite.appendChild(printRow("Laser Pwr Draw:", "4.0", "kW"));
-    satellite.appendChild(printRow("Laser Pwr Output:", "(20%) 4.0", "kW"));
+    satellite.appendChild(printRow("Laser Pwr Draw:", sat.laser_power_draw.toFixed(2), "kW")); 
+    satellite.appendChild(printRow("Laser Pwr Output:", (sat.laser_power_draw*0.2).toFixed(2),"kW")); // TODO: fix hardcoded eff 20%
+
     satellite.appendChild(printTable("Veh", "Rng(km)", "Dia(m)", "(W/m2)", "Pwr(W)", true));
-    satellite.appendChild(printTable("1", "1000", "1.2", "2.1", "1.0"));
-    satellite.appendChild(printTable("2", "1000", "1.2", "2.1", "1.0"));
-    satellite.appendChild(printTable("3", "1000", "1.2", "2.1", "1.0"));
-    satellite.appendChild(printTable("4", "1000", "1.2", "2.1", "1.0"));
-   
+    for (var i=0;i<maxLasersPerSatellite;i++) {
+        if (i<sat.lasers.length) {
+            satellite.appendChild(printTable(sat.lasers[i].vehicle, sat.lasers[i].range.toFixed(2), sat.lasers[i].diameter.toFixed(2), sat.lasers[i].intensity.toFixed(0), sat.lasers[i].power.toFixed(0)));
+        }
+          else {
+            satellite.appendChild(printTable("---", "---", "---", "---", "---")); 
+        }
+    }
+
     return satellite;
 }
 
@@ -266,22 +275,25 @@ function printVehicle(index) {
     vehicle.appendChild(printRow("Vehicle["+index+"]:", veh.id, "-", true));
     vehicle.appendChild(printRow("Location (lat/long):", veh.location.lat+"/"+veh.location.long, "deg"));
     vehicle.appendChild(printRow("Solar Panel Pwr Output:", veh.solar_panel.power_output.toFixed(2), "kW"));
-    var veh_batt_percent = (veh.battery.charge/veh.battery.capacity*100);
-    var row = printRow("Battery Charge:", veh_batt_percent.toFixed(0)+"% "+ veh.battery.charge.toFixed(2)+"/"+veh.battery.capacity.toFixed(2), "kWh");
-    if (veh_batt_percent <= battOrangeThreshold) {
+    var row = printRow("Battery Charge:", veh.battery.percent.toFixed(1)+"% "+ veh.battery.charge.toFixed(2)+"/"+veh.battery.capacity.toFixed(2), "kWh");
+    if (veh.battery.percent <= battOrangeThreshold) {
         row.className = "orange";
     }
-    if (veh_batt_percent <= battRedThreshold) {
+    if (veh.battery.percent <= battRedThreshold) {
         row.className = "red";
     }
     vehicle.appendChild(row);
     
-    vehicle.appendChild(printRow("Laser Panel:", "(1.0x1.0) 1.0", "m2"));
+    vehicle.appendChild(printRow("Laser Panel Pwr Output:", (veh.laser_panel.power_output).toFixed(2), "kW"));
     vehicle.appendChild(printTable("Laser", "Rng(km)", "Dia(m)", "(W/m2)", "Pwr(W)", true));
-    vehicle.appendChild(printTable("1.1", "1000", "1.2", "2.1", "1.0"));
-    vehicle.appendChild(printTable("2.2", "1000", "1.2", "2.1", "1.0"));
-    vehicle.appendChild(printTable("3.3", "1000", "1.2", "2.1", "1.0"));
-    vehicle.appendChild(printTable("4.4", "1000", "1.2", "2.1", "1.0"));
+    for (var i=0;i<maxBeamsPerVehicle;i++) {
+        if (i<veh.beams.length) {
+            vehicle.appendChild(printTable(veh.beams[i].satellite+"."+veh.beams[i].laser, veh.beams[i].range.toFixed(2), veh.beams[i].diameter.toFixed(2), veh.beams[i].intensity.toFixed(0), veh.beams[i].power.toFixed(0))); 
+        }
+        else {
+            vehicle.appendChild(printTable("-.-", "---", "---", "---", "---")); 
+        }
+    }
 
     return vehicle;
 }
