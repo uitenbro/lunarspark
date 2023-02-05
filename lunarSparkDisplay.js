@@ -1,8 +1,3 @@
-// Model parameters
-const minPerDay = 60*24; // minutes per day
-const daysPerLunarCycle = 29.5; // days per lunar cycle with respect to sun
-const minPerLunarCycle = daysPerLunarCycle*minPerDay;
-
 // Global simulation control parameters
 var time = 0 // minuites
 var refreshPeriod = 10 // 10msec (100Hz)

@@ -4,7 +4,7 @@ const orbitDistanceOffset = 100; // pixels
 const orbitWidth = 200; // pixels
 const orbitVisibilityLowerBound  = 46; // degrees
 const orbitVisibilityUpperBound = 314; // degrees
-const satelliteVisibilityOffset = 5 //degrees
+const satelliteVisibilityOffset = 2 //degrees
 const img = new Image(); // Create new img element
 //const imageFile = "labeled_lunar_south_pole.jpg"; // 80-90 degree south pole image with sites labeled
 const imageFile = "elphic_south_lunar_pole_ice.png"; // 80-90 degree south pole image with ice sites colored
@@ -55,7 +55,8 @@ function drawAll(time) {
 
 function drawOrbit() {
     var acendingNode = lunarSpark.environment.orbit.ascending_node
-    acendingNode = (acendingNode+90) * (Math.PI/180)
+    // rotate ascending node to aligh 0 with north pole (hidden back side of the display)
+    acendingNode = (acendingNode + 90) * (Math.PI/180)
     context.strokeStyle = "black";
     context.lineWidth = 5.0;
     context.beginPath();
@@ -89,8 +90,7 @@ function drawSatellites() {
 }
 
 function drawSatellite(anomaly, id, ascendingNode) {
-    // TODO: anomaly (set in model?) and ascending node (should be ascending node) don't seem to be aligned with animation (offset 180 deg and moving CCW)
-    var anomaly = (anomaly + 90)%360; // rotate so 0 degrees is the back of screen (north pole) then CW degrees around the orbit
+    // Only draw a satellite if it is visible in this portion of its orbit
     if (anomaly >= orbitVisibilityLowerBound+satelliteVisibilityOffset && anomaly <= orbitVisibilityUpperBound-satelliteVisibilityOffset) {    
         
         // Calculate pixel distances along the ellipse (a=major axis, b=minor axis, t=angle to the satellite location on the ellipse)
@@ -106,9 +106,13 @@ function drawSatellite(anomaly, id, ascendingNode) {
 
         // Save the context then translate to the center of the satellite on the ellipse
         context.save();
-        context.translate(originX,originY)
-        // Convert ascending node to radians and rotate the canvas to align with the orbit ellipse
-        ascendingNode = (ascendingNode+90) * (Math.PI/180)
+        context.translate(originX,originY);
+
+        // Rotate ascending node to aligh 0 with north pole (hidden back side of the display)
+        ascendingNode = (ascendingNode + 90)
+        // Convert ascending node to radians 
+        ascendingNode = ascendingNode * (Math.PI/180)
+        // Rotate the canvas to align with the orbit ellipse
         context.rotate(ascendingNode);
         // Translate back to the original canvas origin (still rotated)
         context.translate(-originX,-originY);
@@ -176,67 +180,64 @@ function drawLasers() {
     }
 }
 function drawLaser(anomaly, ascendingNode, laserNum, lat, long) {
-    anomaly = (anomaly + 90)%360; // rotate so 0 degrees is the top of screen then CCW degrees around the orbit
-    //if (anomaly >= orbitVisibilityLowerBound+40 && anomaly <= orbitVisibilityUpperBound-40) { 
+    // Assume every connected laser needs to be drawn
+    var hyp = (90-lat)/(90-minLatitude) * ((canvas.width/2)-orbitDistanceOffset); // pixel length of hypotenuse
+    var vehicleX1 = hyp*Math.sin((long) * (Math.PI / 180.0)); // pixels from central origin
+    var vehicleY1 = hyp*Math.cos((long) * (Math.PI / 180.0)); // pixels from central origin
+    var vehicleX = hyp*Math.sin((long - ascendingNode-90) * (Math.PI / 180.0)); // pixels from central origin // TODO: check subtraction
+    var vehicleY = hyp*Math.cos((long -  ascendingNode-90) * (Math.PI / 180.0)); // pixels from central origin // TODO: check subtraction
 
-        var hyp = (90-lat)/(90-minLatitude) * ((canvas.width/2)-orbitDistanceOffset); // pixel length of hypotenuse
-        var vehicleX1 = hyp*Math.sin((long) * (Math.PI / 180.0)); // pixels from central origin
-        var vehicleY1 = hyp*Math.cos((long) * (Math.PI / 180.0)); // pixels from central origin
-        var vehicleX = hyp*Math.sin((long - ascendingNode-90) * (Math.PI / 180.0)); // pixels from central origin
-        var vehicleY = hyp*Math.cos((long -  ascendingNode-90) * (Math.PI / 180.0)); // pixels from central origin
+    vehicleX = originX+vehicleX; // pixels from canvas orgin
+    vehicleY = originY-vehicleY; // pixels from canvas orgin
 
-        vehicleX = originX+vehicleX; // pixels from canvas orgin
-        vehicleY = originY-vehicleY; // pixels from canvas orgin
+    var a = orbitWidth/2;
+    var b = canvas.height/2;
+    var t = (anomaly)*(Math.PI / 180.0)
+    var satX = a*Math.cos(t); // pixels from central origin
+    var satY = b*Math.sin(t); // pixels from central origin
+    satX = originX+satX; // pixels from canvas orgin
+    satY = originY-satY; // pixels from canvas orgin
 
-        var a = orbitWidth/2;
-        var b = canvas.height/2;
-        var t = (anomaly)*(Math.PI / 180.0)
-        var satX = a*Math.cos(t); // pixels from central origin
-        var satY = b*Math.sin(t); // pixels from central origin
-        satX = originX+satX; // pixels from canvas orgin
-        satY = originY-satY; // pixels from canvas orgin
+    // Set laser offset
+    switch(laserNum) {
+      case 0:
+        satX = satX + laser0xOffset;
+        satY = satY + laser0yOffset
+        break;
+      case 1:
+        satX = satX + laser1xOffset;
+        satY = satY + laser1yOffset        
+        break;
+      case 2:
+        satX = satX + laser2xOffset;
+        satY = satY + laser2yOffset
+        break;
+      case 3:
+        satX = satX + laser3xOffset;
+        satY = satY + laser3yOffset        
+        break;
+      default:
+    }
+    // Rotate ascending node to aligh 0 with north pole (hidden back side of the display)
+    ascendingNode = (ascendingNode + 90) * (Math.PI/180)
+    context.save();
+    context.translate(originX,originY)
+    context.rotate(ascendingNode);
+    context.translate(-originX,-originY);
 
-        // Set laser offset
-        switch(laserNum) {
-          case 0:
-            satX = satX + laser0xOffset;
-            satY = satY + laser0yOffset
-            break;
-          case 1:
-            satX = satX + laser1xOffset;
-            satY = satY + laser1yOffset        
-            break;
-          case 2:
-            satX = satX + laser2xOffset;
-            satY = satY + laser2yOffset
-            break;
-          case 3:
-            satX = satX + laser3xOffset;
-            satY = satY + laser3yOffset        
-            break;
-          default:
-        }
+    // Draw laser
+    context.strokeStyle = "white";
+    context.lineWidth = 5.0;
+    context.beginPath();
+    context.moveTo(satX, satY);
+    context.lineTo(vehicleX, vehicleY);
+    context.stroke();
+    context.strokeStyle = "Magenta";
+    context.lineWidth = 3.0;
+    context.beginPath();
+    context.moveTo(satX, satY);
+    context.lineTo(vehicleX, vehicleY);
+    context.stroke();
 
-        ascendingNode = (ascendingNode+90) * (Math.PI/180)
-        context.save();
-        context.translate(originX,originY)
-        context.rotate(ascendingNode);
-        context.translate(-originX,-originY);
-
-        // Draw laser
-        context.strokeStyle = "white";
-        context.lineWidth = 5.0;
-        context.beginPath();
-        context.moveTo(satX, satY);
-        context.lineTo(vehicleX, vehicleY);
-        context.stroke();
-        context.strokeStyle = "Magenta";
-        context.lineWidth = 3.0;
-        context.beginPath();
-        context.moveTo(satX, satY);
-        context.lineTo(vehicleX, vehicleY);
-        context.stroke();
-    
-        context.restore();
-    //}
+    context.restore();
 }

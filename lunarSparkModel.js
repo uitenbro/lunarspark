@@ -5,10 +5,15 @@ localStorage.setItem("lunarSparkInput", JSON.stringify(lunarSparkInput));
 var lunarSpark =  JSON.parse(localStorage.getItem("lunarSparkInput"));
 
 // Lunar constants
-const moonRadius = 1740000; // meters
+const minPerDay = 60*24; // minutes per day (earth)
+const daysPerLunarCycle = 29.5; // earth days per lunar cycle with respect to sun
+
+const minPerLunarCycle = daysPerLunarCycle*minPerDay;
 const sunAngleDegreesPerMinute = 360/minPerLunarCycle; // deg per min
 const ascendingNodeDegreesPerMinute = 360/minPerLunarCycle; // deg per min
+
 const solarFluxInLunarOrbit = 1373; // W/m2
+const moonRadius = 1740000; // meters
 
 // Orbit inputs
 const orbitRadius = moonRadius + lunarSpark.environment.orbit.altitude; // meters
@@ -154,7 +159,7 @@ function connectLasers() {
 				if (lunarSpark.vehicles[k].active) {
 					// Determine if vehicle is in view
 					// TODO: perform line sight calculation
-					if (lunarSpark.satellites[i].orbit.anomaly > 15 && lunarSpark.satellites[i].orbit.anomaly < 165) {
+					if (lunarSpark.satellites[i].orbit.anomaly > 105 && lunarSpark.satellites[i].orbit.anomaly < 255) {
 							// Determine if vehicle can recieve another beam 
 							// if (current beam intensity + new beam intesity) < max intensity {
 								potentialVehicles.push(k);
