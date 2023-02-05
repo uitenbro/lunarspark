@@ -151,13 +151,14 @@ function setInNight(veh) {
 
 function connectLasers() {
 	var veh = -1;
-	// Loop through satellites and vehicle and 
+	// Loop through satellites and vehicle and
 	for (var i=0;i<lunarSpark.satellites.length;i++) {
 		if (lunarSpark.satellites[i].active) {
 			var potentialVehicles = [];
 			for (var k=0;k<lunarSpark.vehicles.length;k++) {
 				if (lunarSpark.vehicles[k].active) {
-					// Determine if vehicle is in view
+					// Determine beam characteristics for this vehicle
+					{veh, azimuth, elevation, range, diameter, intensity, power} = getBeamCharacteristics(i,k);
 					// TODO: perform line sight calculation
 					if (lunarSpark.satellites[i].orbit.anomaly > 105 && lunarSpark.satellites[i].orbit.anomaly < 255) {
 							// Determine if vehicle can recieve another beam 
@@ -308,4 +309,20 @@ function disconnectAllLasers() {
 			// }
 		//}
 	}
+}
+
+function getBeamCharacteristics(sat, veh) {
+	var azimuth = 0;
+	var elevation = 0;
+	var range = 0;
+	var diameter = 0;
+	var intensity = 0;
+	var power = 0;
+
+	var sat = lunarSpark.satellites[sat];
+	var veh = lunarSpark.vehicles[veh];
+
+	
+
+	return {veh, azimuth, elevation, range, diameter, intensity, power} 
 }
