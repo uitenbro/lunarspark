@@ -73,7 +73,7 @@ var lunarSparkInput = {
       "beams": []
     },
     {
-      "active": true,
+      "active": false,
       "id": "VIPER2",
       "location": {
         "lat": 86,
@@ -104,7 +104,7 @@ var lunarSparkInput = {
       "beams": []
     },
     {
-      "active": true,
+      "active": false,
       "id": "SMALL3",
       "location": {
         "lat": 85,
@@ -136,7 +136,7 @@ var lunarSparkInput = {
       ]
     }, 
     {
-      "active": true,
+      "active": false,
       "id": "SMALL4",
       "location": {
         "lat": 84,
@@ -168,7 +168,7 @@ var lunarSparkInput = {
       ]
     },
     {
-      "active": true,
+      "active": false,
       "id": "SMALL5",
       "location": {
         "lat": 90,
@@ -200,7 +200,7 @@ var lunarSparkInput = {
       ]
     },
     {
-      "active": true,
+      "active": false,
       "id": "SMALL6",
       "location": {
         "lat": 86,
@@ -232,7 +232,7 @@ var lunarSparkInput = {
       ]
     },
     {
-      "active": true,
+      "active": false,
       "id": "SMALL7",
       "location": {
         "lat": 84,

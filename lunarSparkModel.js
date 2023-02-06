@@ -18,6 +18,13 @@ const moonRadius = 1740000; // meters
 // Orbit inputs
 const orbitRadius = moonRadius + lunarSpark.environment.orbit.altitude; // meters
 
+// Laser Constants
+const laserBeamWavelength = 1070; // nanometers (not used)
+const laserBeamOutputPower = 1000; // Watts
+const laserBeamDivergence = 0.0005/1000 // milli-radians/2/1000 = radians
+const laserBeamDivergenceHalfAngle = laserBeamDivergence/2 // radians
+const laserBeamInitialDiameter = .50 // meters
+
 function stepModel() {
 	updateSunAngle();
 	updateascendingNode();
@@ -158,12 +165,12 @@ function connectLasers() {
 			for (var k=0;k<lunarSpark.vehicles.length;k++) {
 				if (lunarSpark.vehicles[k].active) {
 					// Determine beam characteristics for this vehicle
-					{veh, azimuth, elevation, range, diameter, intensity, power} = getBeamCharacteristics(i,k);
+					var {vehIndex, azimuth, elevation, range, diameter, intensity, power} = getBeamCharacteristics(i,k);
 					// TODO: perform line sight calculation
 					if (lunarSpark.satellites[i].orbit.anomaly > 105 && lunarSpark.satellites[i].orbit.anomaly < 255) {
 							// Determine if vehicle can recieve another beam 
 							// if (current beam intensity + new beam intesity) < max intensity {
-								potentialVehicles.push(k);
+								potentialVehicles.push({vehIndex, azimuth, elevation, range, diameter, intensity, power});
 							//}
 					}
 				}
@@ -175,14 +182,14 @@ function connectLasers() {
 				//TODO: consider existing beam intensity to spread power more
 				
 				for (l=0;l<potentialVehicles.length;l++) {
-					var potVeh = potentialVehicles[l];
+					var potVeh = potentialVehicles[l]
 					// Prefer vehicles who are already charging but not yet 100%
-					if (lunarSpark.vehicles[potVeh].beams.length && lunarSpark.vehicles[potVeh].battery.percent < 99) {
+					if (lunarSpark.vehicles[potVeh.vehIndex].beams.length && lunarSpark.vehicles[potVeh.vehIndex].battery.percent < 99) {
 						chosenVehicles.push(potVeh)
 					}
 					else {
 						// Determine if a vehicle is low on power
-						if (lunarSpark.vehicles[potVeh].battery.percent<50) {  //TODO: use global threshold
+						if (lunarSpark.vehicles[potVeh.vehIndex].battery.percent<50) {  //TODO: use global threshold
 							// This will out prioritize already charging vehicles // TODO: prioritize low charges
 							chosenVehicles.push(potVeh)
 						}
@@ -205,7 +212,7 @@ function connectLasers() {
 						chosenVeh = chosenVehicles[j%(chosenVehicles.length-1)]; 
 					}
 					// connect the laser to the vehicle (allow multiple lasers to single vehicle)
-					connectLaser(i, j, chosenVeh, 1111, 0.7, 2591, (0.7*2591));  // TODO: calculate beam stats using trade report
+					connectLaser(i, j, chosenVeh.vehIndex, chosenVeh.range, chosenVeh.diameter, chosenVeh.intensity, chosenVeh.power);  
 					laserConnectCount++;
 				}
 				else {
@@ -311,7 +318,7 @@ function disconnectAllLasers() {
 	}
 }
 
-function getBeamCharacteristics(sat, veh) {
+function getBeamCharacteristics(satIndex, vehIndex) {
 	var azimuth = 0;
 	var elevation = 0;
 	var range = 0;
@@ -319,10 +326,17 @@ function getBeamCharacteristics(sat, veh) {
 	var intensity = 0;
 	var power = 0;
 
-	var sat = lunarSpark.satellites[sat];
-	var veh = lunarSpark.vehicles[veh];
+	var sat = lunarSpark.satellites[satIndex];
+	var veh = lunarSpark.vehicles[vehIndex];
 
-	
+	// TODO: calculate beam stats using trade report
 
-	return {veh, azimuth, elevation, range, diameter, intensity, power} 
+	range = 402; // km
+	diameter = 2*range*1000 * Math.tan(laserBeamDivergenceHalfAngle) + laserBeamInitialDiameter; // meters
+	// var radius = ; console.log(radius)
+	var areaBeam = Math.PI*((diameter/2)**2); 
+	intensity = laserBeamOutputPower/(areaBeam); // TODO: 1kW laser constant
+	power = areaBeam*intensity; // TODO: handle case where beam diameter exceed laser panel dimensions
+
+	return {vehIndex, azimuth, elevation, range, diameter, intensity, power} 
 }
