@@ -4,18 +4,18 @@ var lunarSparkInput = {
     "orbit": {
       "period": 148,
       "altitude": 402000,
-      "ascending_node": 180,
+      "ascending_node": 90,
       "count":0
     },
     "sun_angle": 0
   },
   "vehicles": [
     {
-      "active": true,
+      "active": false,
       "id": "VIPER0",
       "location": {
-        "lat": 88,
-        "long": 20,
+        "lat": -80,
+        "long": 30,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -45,7 +45,7 @@ var lunarSparkInput = {
       "active": false,
       "id": "SMALL1",
       "location": {
-        "lat": 88,
+        "lat": -80,
         "long": -120,
         "shadow_model": [],
         "in_night": false,
@@ -73,11 +73,11 @@ var lunarSparkInput = {
       "beams": []
     },
     {
-      "active": false,
+      "active": true,
       "id": "VIPER2",
       "location": {
-        "lat": 86,
-        "long": 80,
+        "lat": -80,
+        "long": -0,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -104,11 +104,11 @@ var lunarSparkInput = {
       "beams": []
     },
     {
-      "active": false,
+      "active": true,
       "id": "SMALL3",
       "location": {
-        "lat": 85,
-        "long": 170,
+        "lat": -80,
+        "long": 180,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -136,11 +136,11 @@ var lunarSparkInput = {
       ]
     }, 
     {
-      "active": false,
+      "active": true,
       "id": "SMALL4",
       "location": {
-        "lat": 84,
-        "long": 100,
+        "lat": -80,
+        "long": 90,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -168,10 +168,10 @@ var lunarSparkInput = {
       ]
     },
     {
-      "active": false,
+      "active": true,
       "id": "SMALL5",
       "location": {
-        "lat": 90,
+        "lat": -90,
         "long": 0,
         "shadow_model": [],
         "in_night": false,
@@ -203,8 +203,8 @@ var lunarSparkInput = {
       "active": false,
       "id": "SMALL6",
       "location": {
-        "lat": 86,
-        "long": -40,
+        "lat": -80,
+        "long": -60,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -235,8 +235,8 @@ var lunarSparkInput = {
       "active": false,
       "id": "SMALL7",
       "location": {
-        "lat": 84,
-        "long": -60,
+        "lat": -80,
+        "long": 120,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false

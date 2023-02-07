@@ -141,13 +141,13 @@ function updateVehicles() {
 	}
 }
 function setInNight(veh) {
-	// Convert longitude to 360 coordinates  // sun angles 90-180 not working
-	var vehLong = (veh.location.long+360)%360
+	// Convert longitude (+/- 0-180) to 360 coordinates
+	var vehLong = convert180to360(veh.location.long)
 
 	// Calculate the difference between sun angle and long angle
 	var diffInVehAndSunAngle = Math.abs(lunarSpark.environment.sun_angle-vehLong);
 
-	// if the andgle difference is greater than 90 deg then vehicle location is on the dark side of the sun angle it is in a lunar night
+	// if the angle difference is greater than 90 deg then vehicle location is on the dark side of the sun angle it is in a lunar night
 	if (diffInVehAndSunAngle > 90 && diffInVehAndSunAngle < 270) {
 		veh.location.in_night = true;
 	}
@@ -165,12 +165,12 @@ function connectLasers() {
 			for (var k=0;k<lunarSpark.vehicles.length;k++) {
 				if (lunarSpark.vehicles[k].active) {
 					// Determine beam characteristics for this vehicle
-					var {vehIndex, azimuth, elevation, range, diameter, intensity, power} = getBeamCharacteristics(i,k);
+					var {vehIndex, range, azimuth, elevation, diameter, intensity, power} = calculateBeamCharacteristics(i,k);
 					// TODO: perform line sight calculation
-					if (lunarSpark.satellites[i].orbit.anomaly > 105 && lunarSpark.satellites[i].orbit.anomaly < 255) {
+					if (elevation > 12) { // TODO: consider shadow model (needs azimuth)
 							// Determine if vehicle can recieve another beam 
 							// if (current beam intensity + new beam intesity) < max intensity {
-								potentialVehicles.push({vehIndex, azimuth, elevation, range, diameter, intensity, power});
+								potentialVehicles.push({vehIndex, range, azimuth, elevation, diameter, intensity, power});
 							//}
 					}
 				}
@@ -184,81 +184,58 @@ function connectLasers() {
 				for (l=0;l<potentialVehicles.length;l++) {
 					var potVeh = potentialVehicles[l]
 					// Prefer vehicles who are already charging but not yet 100%
-					if (lunarSpark.vehicles[potVeh.vehIndex].beams.length && lunarSpark.vehicles[potVeh.vehIndex].battery.percent < 99) {
+					// if (lunarSpark.vehicles[potVeh.vehIndex].beams.length && lunarSpark.vehicles[potVeh.vehIndex].battery.percent < 99) {
 						chosenVehicles.push(potVeh)
-					}
-					else {
-						// Determine if a vehicle is low on power
-						if (lunarSpark.vehicles[potVeh.vehIndex].battery.percent<50) {  //TODO: use global threshold
-							// This will out prioritize already charging vehicles // TODO: prioritize low charges
-							chosenVehicles.push(potVeh)
-						}
-					}
+					// }
+					// else {
+					// 	// Determine if a vehicle is low on power
+					// 	if (lunarSpark.vehicles[potVeh.vehIndex].battery.percent<50) {  //TODO: use global threshold
+					// 		// This will out prioritize already charging vehicles // TODO: prioritize low charges
+					// 		chosenVehicles.push(potVeh)
+					// 	}
+					// }
 				}
 				// Down select to number of available lasers
 				chosenVehicles = chosenVehicles.slice(0,lunarSpark.satellites[i].laser_count); 
 			}
 			else {
-				// All potential vehicles can be chosen
+				// All potential vehicles can be chosen so allocate lasers in order
+
 				chosenVehicles = potentialVehicles;
 			}
 			// Loop through lasers to update connections
 			var laserConnectCount = 0;
 			for (var j=0;j<lunarSpark.satellites[i].laser_count;j++) {
 				// if there is a chosen vehicle
-				if (j<chosenVehicles.length>0) {
+				//if (j<chosenVehicles.length>0) {
 					var chosenVeh = chosenVehicles[0];  // set the chosen vehicle to the first entry because % won't work on zero
 					if (chosenVehicles.length > 1) {
 						chosenVeh = chosenVehicles[j%(chosenVehicles.length-1)]; 
+					
+						// connect the laser to the vehicle (allow multiple lasers to single vehicle)
+						connectLaser(i, j, chosenVeh.vehIndex, chosenVeh.range, chosenVeh.azimuth, chosenVeh.elevation, chosenVeh.diameter, chosenVeh.intensity, chosenVeh.power);  
+						laserConnectCount++;
 					}
-					// connect the laser to the vehicle (allow multiple lasers to single vehicle)
-					connectLaser(i, j, chosenVeh.vehIndex, chosenVeh.range, chosenVeh.diameter, chosenVeh.intensity, chosenVeh.power);  
-					laserConnectCount++;
-				}
-				else {
-					// otherwise disconnect the laser
-					disconnectLaser(i,j);
-				}
+					else {
+						// otherwise disconnect the laser
+						disconnectLaser(i,j);
+					}
 			}
 			lunarSpark.satellites[i].laser_power_draw = laserConnectCount*1/0.2; // TODO: confirm 20% efficiency to produce 1kW
 		}
 	}
 }
-function connectLaser(satellite, laser, vehicle, range, diameter, intensity, power) {
+function connectLaser(satellite, laser, vehicle, range, azimuth, elevation, diameter, intensity, power) {
 	//TODO: how many beams allowed per vehicles should be a function of intensity not arbitary max number
 	// TODO: error connecting if satellite is too low on power
-	//  if this laser is currently connected disconnect it
-	//if (typeof(lunarSpark.satellites[satellite].lasers[laser]) != "undefined") {
-		//if (lunarSpark.satellites[satellite].lasers[laser].vehicle != vehicle) {
-			// disconnect laser from old vehicle
-			disconnectLaser(satellite, laser);
-		//}
-	//}
+
+	// disconnect laser from old vehicle
+	disconnectLaser(satellite, laser);
+
 	// Update satellite data store
-	//lunarSpark.satellites[satellite].lasers.push({"vehicle": vehicle, "range": range, "diameter": diameter, "intensity": intensity, "power": power });
-	lunarSpark.satellites[satellite].lasers.push({"laser": laser, "vehicle": vehicle, "range": range, "diameter": diameter, "intensity": intensity, "power": power });
-	// // Scan beams to determine if this laser is already connected to this vehicle
-	// var updatedExistingLaser = false;
-	// for (var i=0;i<lunarSpark.vehicles[vehicle].beams.length;i++) {
-	// 	// if found replace entry with new data
-	// 	if (lunarSpark.vehicles[vehicle].beams[i].satellite == satellite && lunarSpark.vehicles[vehicle].beams[i].laser == laser) {
-	// 		lunarSpark.vehicles[vehicle].beams[i] = {"satellite": satellite, "laser": laser, "range": range, "diameter": diameter, "intensity": intensity, "power": power }
-	// 		updatedExistingLaser = true;
-	// 		break;
-	// 	}
-	// }
-	// // if an existing laser was not updated connect a new one 
-	// if (!updatedExistingLaser) {
-	// 	var connectedNewLaser = true;
-		lunarSpark.vehicles[vehicle].beams.push({"satellite": satellite, "laser": laser, "range": range, "diameter": diameter, "intensity": intensity, "power": power});
-		// for (var j=0;j<lunarSpark.vehicles[vehicle].beams.length;j++) {
-		// 	if (lunarSpark.vehicles[vehicle].beams[j].satellite == "-" && lunarSpark.vehicles[vehicle].beams[j].laser == "-") {
-		// 		lunarSpark.vehicles[vehicle].beams[j] = {"satellite": satellite, "laser": laser, "range": range, "diameter": diameter, "intensity": intensity, "power": power }
-		// 		connectedNewLaser = true;
-		// 		break;
-		// 	}
-		// }
-	// }
+	lunarSpark.satellites[satellite].lasers.push({"laser": laser, "vehicle": vehicle, "range": range, "azimuth":azimuth , "elevation": elevation, "diameter": diameter, "intensity": intensity, "power": power });
+	// Update vehicle data store
+	lunarSpark.vehicles[vehicle].beams.push({"satellite": satellite, "laser": laser, "range": range, "diameter": diameter, "azimuth":azimuth , "elevation": elevation, "intensity": intensity, "power": power});
 
 	// if more than maxBeamsPerVehicle report a message TODO: reword error message
 	if (lunarSpark.vehicles[vehicle].beams.length > maxBeamsPerVehicle) {
@@ -291,52 +268,83 @@ function disconnectLaser(satellite, laser) {
 			}
 		}
 	}
-	// remove the vehicle from the satellite datastore
-	//lunarSpark.satellites[satellite].lasers.splice(laser,1); 
-	// lunarSpark.satellites[satellite].lasers[laser] = {"vehicle": "---", "laser": "---", "range": "---", "diameter": "---", "intensity": "---", "power": "---" }
 }
 function disconnectAllLasers() {
 	// For all satellites
 	for (var i=0;i<lunarSpark.satellites.length;i++) {
-		//if (lunarSpark.satellites[i].active) {
-			// for all lasers
-			lunarSpark.satellites[i].lasers = [];
-			// for (var j=0;j<maxLasersPerSatellite;j++) {
-			// 	lunarSpark.satellites[i].lasers[j] = {"vehicle": "---", "laser": "---", "range": "---", "diameter": "---", "intensity": "---", "power": "---" }
-			// }
-		//}
+		// for all lasers
+		lunarSpark.satellites[i].lasers = [];
 	}
 	// For all vehicles
 	for (var i=0;i<lunarSpark.vehicles.length;i++) {
-		//if (lunarSpark.vehicles[i].active) {
-			// for all beams
-			lunarSpark.vehicles[i].beams = []; // empty beams array
-			// for (var j=0;j<maxBeamsPerVehicle;j++) {
-			// 	lunarSpark.vehicles[i].beams[j] = {"satellite": "-", "laser": "-", "range": "---", "diameter": "---", "intensity": "---", "power": "---" }
-			// }
-		//}
+		// for all beams
+		lunarSpark.vehicles[i].beams = []; // empty beams array
 	}
 }
 
-function getBeamCharacteristics(satIndex, vehIndex) {
-	var azimuth = 0;
-	var elevation = 0;
-	var range = 0;
-	var diameter = 0;
-	var intensity = 0;
-	var power = 0;
-
+function calculateBeamCharacteristics(satIndex, vehIndex) {
 	var sat = lunarSpark.satellites[satIndex];
 	var veh = lunarSpark.vehicles[vehIndex];
 
-	// TODO: calculate beam stats using trade report
-
-	range = 402; // km
-	diameter = 2*range*1000 * Math.tan(laserBeamDivergenceHalfAngle) + laserBeamInitialDiameter; // meters
-	// var radius = ; console.log(radius)
+	// Calculate beam characteristics
+	var {range, azimuth, elevation} = calculateRangeAzimuthElevation(satIndex, vehIndex); // meters deg deg
+	var diameter = 2*range * Math.tan(laserBeamDivergenceHalfAngle) + laserBeamInitialDiameter; // meters
 	var areaBeam = Math.PI*((diameter/2)**2); 
-	intensity = laserBeamOutputPower/(areaBeam); // TODO: 1kW laser constant
-	power = areaBeam*intensity; // TODO: handle case where beam diameter exceed laser panel dimensions
+	var intensity = laserBeamOutputPower/(areaBeam); // TODO: 1kW laser constant
+	var power = areaBeam*intensity; // TODO: handle case where beam diameter exceed laser panel dimensions
 
 	return {vehIndex, azimuth, elevation, range, diameter, intensity, power} 
+}
+
+function calculateRangeAzimuthElevation(satIndex, vehIndex) {
+	var sat = lunarSpark.satellites[satIndex];
+	var veh = lunarSpark.vehicles[vehIndex];
+
+	// Calculate satellite coordinates in moon centered inertial frame (x,y,z)
+	var satLong = convert360to90(lunarSpark.environment.orbit.ascending_node)*Math.PI/180; // satellite long is related to the ascending node given its in a 90 deg polar orbit
+	var satLat = convert360to90(sat.orbit.anomaly)*Math.PI/180; // satellite lat is related to the current position in the orbit (anomaly)
+	var satRadius = orbitRadius; // meter
+	var satVector = {"x": Math.cos(satLat)*Math.cos(satLong)*satRadius, "y": Math.cos(satLat)*Math.sin(satLong)*satRadius, "z": Math.sin(satLat)*satRadius}
+
+	// Calculate vehicle coordinates in moon centered inertial frame (x,y,z)
+	var vehLat = veh.location.lat*Math.PI/180;
+	var vehLong = veh.location.long*Math.PI/180;
+	var vehRadius = moonRadius; // meters
+	var vehVector = {"x": Math.cos(vehLat)*Math.cos(vehLong)*vehRadius, "y": Math.cos(vehLat)*Math.sin(vehLong)*vehRadius, "z": Math.sin(vehLat)*vehRadius}
+
+	// Calculate the vehicle to satellite vector in moon centered inertial frame (x,y,z)
+	var rangeVector = {"x": vehVector.x - satVector.x, "y": vehVector.y - satVector.y, "z": vehVector.z - satVector.z,};
+	// Calculate the range from vehicle to satellite
+	var range = Math.sqrt(rangeVector.x**2 + rangeVector.y**2 + rangeVector.z**2); // meters
+	
+	// Calculate azimuth and elevation from vehicle to satellite (unit vector)
+	var azimuth = Math.atan(rangeVector.y/rangeVector.x)*180/Math.PI; // deg
+	var elevation = Math.asin(rangeVector.z/range)*180/Math.PI; // deg
+
+	//console.log("vehIndex:"+vehIndex+" vehLat:"+veh.location.lat+" vehLong:"+veh.location.long+" vehVect x:"+vehVector.x.toFixed(0)+" y:"+vehVector.y.toFixed(0)+" z:"+vehVector.z.toFixed(0));
+	//console.log("satIndex:"+satIndex+" satLat:"+convert360to90(sat.orbit.anomaly)+" satLong:"+convert360to90(lunarSpark.environment.orbit.ascending_node)+" satVect x:"+satVector.x.toFixed(0)+" y:"+satVector.y.toFixed(0)+" z:"+satVector.z.toFixed(0));
+	console.log("vehIndex:"+vehIndex+" az:"+azimuth.toFixed(2)+" el:"+elevation.toFixed(2)+" range:" + range + " x:"+rangeVector.x.toFixed(0)+" y:"+rangeVector.y.toFixed(0)+" z:"+rangeVector.z.toFixed(0))
+	console.log();
+
+	return {range, azimuth, elevation}
+}
+function convert360to90(angle360) {
+	var angle90 = 0;
+	if (angle360>=0 && angle360<180) {
+		angle90 = 90-angle360;
+	}
+	else if (angle360>=180 && angle360<360) {
+		angle90 = -90+(angle360%180)
+	}
+	return angle90
+}
+function convert180to360(angle180) {
+	var angle360 = 0;
+	if (angle180>=0 && angle180<=180) {
+		angle360 = angle180;
+	}
+	else if (angle180>=-180 && angle180<0) {
+		angle360 = (180-angle180)%360
+	}
+	return angle360
 }

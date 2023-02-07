@@ -9,7 +9,7 @@ const img = new Image(); // Create new img element
 //const imageFile = "labeled_lunar_south_pole.jpg"; // 80-90 degree south pole image with sites labeled
 const imageFile = "elphic_south_lunar_pole_ice.png"; // 80-90 degree south pole image with ice sites colored
 var initComplete = false;
-const minLatitude = 80; // minimum degrees of latitude in image
+const minLatitude = -80; // minimum degrees of latitude in image
 const shadowTransparency = 0.4 
 var originX = 0; 
 var originY = 0;
@@ -55,8 +55,8 @@ function drawAll(time) {
 
 function drawOrbit() {
     var acendingNode = lunarSpark.environment.orbit.ascending_node
-    // rotate ascending node to aligh 0 with north pole (hidden back side of the display)
-    acendingNode = (acendingNode + 90) * (Math.PI/180)
+    // rotate ascending node to aligh 0 with 0 lat, 0 longitude (hidden back side of the display)
+    acendingNode = (acendingNode) * (Math.PI/180)
     context.strokeStyle = "black";
     context.lineWidth = 5.0;
     context.beginPath();
@@ -73,7 +73,7 @@ function drawSunIllumination () {
     var sunAngle = lunarSpark.environment.sun_angle;
     sunAngle = (sunAngle)*(Math.PI / 180.0);
     context.beginPath();
-    context.arc(originX, originY, canvas.width/2, 0+sunAngle, Math.PI+sunAngle);
+    context.arc(originX, originY, canvas.width/2, sunAngle, Math.PI+sunAngle);
     context.closePath();
     context.lineWidth = 1;
     context.fillStyle = "rgba(0,0,0,"+shadowTransparency+")";
@@ -109,7 +109,7 @@ function drawSatellite(anomaly, id, ascendingNode) {
         context.translate(originX,originY);
 
         // Rotate ascending node to aligh 0 with north pole (hidden back side of the display)
-        ascendingNode = (ascendingNode + 90)
+        ascendingNode = (ascendingNode)
         // Convert ascending node to radians 
         ascendingNode = ascendingNode * (Math.PI/180)
         // Rotate the canvas to align with the orbit ellipse
@@ -147,7 +147,7 @@ function drawVehicles() {
 }
 
 function drawVehicle(lat, long, id) {
-    var hyp = (90-lat)/(90-minLatitude) * (canvas.width-(2*orbitDistanceOffset))/2; // pixel length of hypotenuse
+    var hyp = (-90-lat)/(-90-minLatitude) * (canvas.width-(2*orbitDistanceOffset))/2; // pixel length of hypotenuse
     var x = hyp*Math.sin(long * (Math.PI / 180.0)); // pixels from central origin
     var y = hyp*Math.cos(long * (Math.PI / 180.0)); // pixels from central origin
     x = originX+x; // pixels from canvas orgin
@@ -181,11 +181,11 @@ function drawLasers() {
 }
 function drawLaser(anomaly, ascendingNode, laserNum, lat, long) {
     // Assume every connected laser needs to be drawn
-    var hyp = (90-lat)/(90-minLatitude) * ((canvas.width/2)-orbitDistanceOffset); // pixel length of hypotenuse
-    var vehicleX1 = hyp*Math.sin((long) * (Math.PI / 180.0)); // pixels from central origin
-    var vehicleY1 = hyp*Math.cos((long) * (Math.PI / 180.0)); // pixels from central origin
-    var vehicleX = hyp*Math.sin((long - ascendingNode-90) * (Math.PI / 180.0)); // pixels from central origin // TODO: check subtraction
-    var vehicleY = hyp*Math.cos((long -  ascendingNode-90) * (Math.PI / 180.0)); // pixels from central origin // TODO: check subtraction
+    var hyp = (-90-lat)/(-90-minLatitude) * ((canvas.width/2)-orbitDistanceOffset); // pixel length of hypotenuse is based on veh lat vs total moon width in pixels
+    // var vehicleX1 = hyp*Math.sin((long) * (Math.PI / 180.0)); // pixels from central origin
+    // var vehicleY1 = hyp*Math.cos((long) * (Math.PI / 180.0)); // pixels from central origin
+    var vehicleX = hyp*Math.sin((long - ascendingNode) * (Math.PI / 180.0)); // pixels from central origin 
+    var vehicleY = hyp*Math.cos((long -  ascendingNode) * (Math.PI / 180.0)); // pixels from central origin 
 
     vehicleX = originX+vehicleX; // pixels from canvas orgin
     vehicleY = originY-vehicleY; // pixels from canvas orgin
@@ -219,7 +219,7 @@ function drawLaser(anomaly, ascendingNode, laserNum, lat, long) {
       default:
     }
     // Rotate ascending node to aligh 0 with north pole (hidden back side of the display)
-    ascendingNode = (ascendingNode + 90) * (Math.PI/180)
+    ascendingNode = (ascendingNode) * (Math.PI/180)
     context.save();
     context.translate(originX,originY)
     context.rotate(ascendingNode);

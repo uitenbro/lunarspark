@@ -162,7 +162,7 @@ function printRow(a, b, c, header=false) {
 
     return row
 }
-function printTable (a,b,c,d,e, header=false) {
+function printTable (a,b,c,d,e,f,g, header=false) {
     var underline = "";
     if (header) {
         underline = " underline";
@@ -182,9 +182,17 @@ function printTable (a,b,c,d,e, header=false) {
     unit.className = "table-right"+underline;
     var unit2 =  document.createElement('div');
     unit2.appendChild(document.createTextNode(" "+e));
-    unit2.className = "table-right"+underline;
+    unit2.className = "table-right"+underline;    
+    var unit3 =  document.createElement('div');
+    unit3.appendChild(document.createTextNode(" "+f));
+    unit3.className = "table-right"+underline;
+    var unit4 =  document.createElement('div');
+    unit4.appendChild(document.createTextNode(" "+g));
+    unit4.className = "table-right"+underline;
 
     var row = document.createElement('div')
+    row.appendChild(unit4);   
+    row.appendChild(unit3);   
     row.appendChild(unit2);
     row.appendChild(unit);
     row.appendChild(measurement2);
@@ -230,13 +238,14 @@ function printSatellite(index) {
         satellite.appendChild(printRow("Laser Pwr Draw:", sat.laser_power_draw.toFixed(2), "kW")); 
         satellite.appendChild(printRow("Laser Pwr Output:", (sat.laser_power_draw*0.2).toFixed(2),"kW")); // TODO: fix hardcoded eff 20%
 
-        satellite.appendChild(printTable("Veh", "Rng(km)", "Dia(m)", "(W/m2)", "Pwr(W)", true));
+        satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "Dia", "Int", "Pwr", true));
+        satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
         for (var i=0;i<maxLasersPerSatellite;i++) {
             if (i<sat.lasers.length) {
-                satellite.appendChild(printTable(sat.lasers[i].vehicle, sat.lasers[i].range.toFixed(2), sat.lasers[i].diameter.toFixed(2), sat.lasers[i].intensity.toFixed(0), sat.lasers[i].power.toFixed(0)));
+                satellite.appendChild(printTable(sat.lasers[i].vehicle, (sat.lasers[i].range/1000).toFixed(0), sat.lasers[i].azimuth.toFixed(0), sat.lasers[i].elevation.toFixed(0), (sat.lasers[i].diameter*100).toFixed(0), sat.lasers[i].intensity.toFixed(0), sat.lasers[i].power.toFixed(0)));
             }
               else {
-                satellite.appendChild(printTable("---", "---", "---", "---", "---")); 
+                satellite.appendChild(printTable("---", "---", "---", "---", "---", "---", "---")); 
             }
         }
     }
@@ -249,9 +258,10 @@ function printSatellite(index) {
         satellite.appendChild(printRow("Satellite Pwr Draw:", "---", "-"));
         satellite.appendChild(printRow("Laser Pwr Draw:", "---", "-")); 
         satellite.appendChild(printRow("Laser Pwr Output:", "---", "-")); // TODO: fix hardcoded eff 20%
-        satellite.appendChild(printTable("Veh", "Rng(km)", "Dia(m)", "(W/m2)", "Pwr(W)", true));
+        satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "Dia", "Int", "Pwr", true));
+        satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
         for (var i=0;i<maxLasersPerSatellite;i++) {
-            satellite.appendChild(printTable("---", "---", "---", "---", "---")); 
+            satellite.appendChild(printTable("---", "---", "---", "---", "---", "---", "---")); 
         }
 
     }
@@ -298,13 +308,14 @@ function printVehicle(index) {
         vehicle.appendChild(row);
         
         vehicle.appendChild(printRow("Laser Panel Pwr Output:", (veh.laser_panel.power_output).toFixed(2), "kW"));
-        vehicle.appendChild(printTable("Laser", "Rng(km)", "Dia(m)", "(W/m2)", "Pwr(W)", true));
+        vehicle.appendChild(printTable("Lsr", "Rng", "Azm", "Elv", "Dia", "Int", "Pwr", true));
+        vehicle.appendChild(printTable("#.#", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
         for (var i=0;i<maxBeamsPerVehicle;i++) {
             if (i<veh.beams.length) {
-                vehicle.appendChild(printTable(veh.beams[i].satellite+"."+veh.beams[i].laser, veh.beams[i].range.toFixed(2), veh.beams[i].diameter.toFixed(2), veh.beams[i].intensity.toFixed(0), veh.beams[i].power.toFixed(0))); 
+                vehicle.appendChild(printTable(veh.beams[i].satellite+"."+veh.beams[i].laser, (veh.beams[i].range/1000).toFixed(0), veh.beams[i].azimuth.toFixed(0), veh.beams[i].elevation.toFixed(0), (veh.beams[i].diameter*100).toFixed(0), veh.beams[i].intensity.toFixed(0), veh.beams[i].power.toFixed(0))); 
             }
             else {
-                vehicle.appendChild(printTable("-.-", "---", "---", "---", "---")); 
+                vehicle.appendChild(printTable("-.-", "---", "---", "---", "---", "---", "---")); 
             }
         }
     }
@@ -315,9 +326,10 @@ function printVehicle(index) {
         vehicle.appendChild(printRow("Solar Panel Pwr Output:", "---", "-"));
         vehicle.appendChild(printRow("Battery Charge:", "--- ---/---", "-"));
         vehicle.appendChild(printRow("Laser Panel Pwr Output:", "---", "-"));
-        vehicle.appendChild(printTable("Laser", "Rng(km)", "Dia(m)", "(W/m2)", "Pwr(W)", true));
+        vehicle.appendChild(printTable("Lsr", "Rng", "Azm", "Elv", "Dia", "Int", "Pwr", true));
+        vehicle.appendChild(printTable("#.#", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
         for (var i=0;i<maxBeamsPerVehicle;i++) {
-            vehicle.appendChild(printTable("-.-", "---", "---", "---", "---")); 
+            vehicle.appendChild(printTable("-.-", "---", "---", "---", "---", "---", "---")); 
         }
     }
 

@@ -118,8 +118,8 @@ div#simStatus2  {
 }
 .table-right {
 	float: right;
-	text-align: right;
-	width: 77px;
+	text-align: center;
+	width: 54px;
 }
 .underline {
 	text-decoration: underline;
