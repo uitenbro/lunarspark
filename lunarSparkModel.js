@@ -27,16 +27,16 @@ const laserBeamInitialDiameter = .50 // meters
 
 function stepModel() {
 	updateSunAngle();
-	updateascendingNode();
-	updateSatellites();
+	updateAscendingNode();
 	updateVehicles();
+	updateSatellites();
 	connectLasers();
 }
 
 function updateSunAngle () {
 	lunarSpark.environment.sun_angle = lunarSpark.environment.sun_angle+(timeStep*sunAngleDegreesPerMinute);
 }
-function updateascendingNode () {
+function updateAscendingNode () {
 	lunarSpark.environment.orbit.ascending_node = lunarSpark.environment.orbit.ascending_node+(timeStep*ascendingNodeDegreesPerMinute);
 	lunarSpark.environment.orbit.count = Math.floor(time/lunarSpark.environment.orbit.period);
 }
@@ -47,6 +47,16 @@ function updateSatellites () {
 		// Update orbit position
 		sat.orbit.min = (sat.orbit.min+timeStep)%lunarSpark.environment.orbit.period;
 		sat.orbit.anomaly = sat.orbit.min/lunarSpark.environment.orbit.period*360;
+
+		// TODO: add orbit count, satLat, satLong
+
+		// TODO: add range/az/elev to each vehicle 
+		// TODO: add current batt %, prev batt %, in_night?, in_shadow?, priority, solar charging?, laser charging?, laser assigned
+		// for (var k=0;k<lunarSpark.vehicles.length;k++) {
+		// 	if (lunarSpark.vehicles[k].active) {
+		// 		var {vehIndex, range, azimuth, elevation, diameter, intensity, power} = calculateBeamCharacteristics(i,k);
+		// 	}
+		// }	
 
 		// Update Power Production
 		sat.solar_panel.power_output = sat.solar_panel.area * sat.solar_panel.efficiency * solarFluxInLunarOrbit / 1000; // kW TODO: inEclipse(sat)
@@ -227,7 +237,7 @@ function connectLasers() {
 						disconnectLaser(i,j);
 					}
 			}
-			lunarSpark.satellites[i].laser_power_draw = laserConnectCount*1/0.2; // TODO: confirm 20% efficiency to produce 1kW
+			lunarSpark.satellites[i].laser_power_draw = laserConnectCount*1/0.2; // TODO: confirm 20% efficiency to produce 1kW (make sure not double applying efficiency in display)
 		}
 	}
 }

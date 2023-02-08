@@ -220,6 +220,8 @@ function printSatellite(index) {
             satellite.className = "satellite inview";
         }
 
+        // TODO: add orbit count, satLat, satLong, and range/az/elev to each customer
+        
         satellite.appendChild(printRow("Satellite["+index+"]:", sat.id, "-", true));
         satellite.appendChild(printRow("Orbit(time/period):", sat.orbit.min.toFixed(0)+"/"+lunarSpark.environment.orbit.period, "min"));
         satellite.appendChild(printRow("Solar Panel Pwr Output:", sat.solar_panel.power_output.toFixed(2), "kW"));
@@ -306,6 +308,8 @@ function printVehicle(index) {
             row.className = "red";
         }
         vehicle.appendChild(row);
+
+        // TODO: add battery bar
         
         vehicle.appendChild(printRow("Laser Panel Pwr Output:", (veh.laser_panel.power_output).toFixed(2), "kW"));
         vehicle.appendChild(printTable("Lsr", "Rng", "Azm", "Elv", "Dia", "Int", "Pwr", true));

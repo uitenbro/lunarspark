@@ -127,6 +127,8 @@ function drawSatellite(anomaly, id, ascendingNode) {
         context.font = "16px Courier";
         context.fillStyle = "white";
 
+        // TODO: Draw satellite shadow on map
+
         // Translate back to the center of satellite on the ellipse and rotate to horizontal
         context.translate(x,y);
         context.rotate(-ascendingNode);
