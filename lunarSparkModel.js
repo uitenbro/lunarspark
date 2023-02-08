@@ -166,12 +166,13 @@ function connectLasers() {
 				if (lunarSpark.vehicles[k].active) {
 					// Determine beam characteristics for this vehicle
 					var {vehIndex, range, azimuth, elevation, diameter, intensity, power} = calculateBeamCharacteristics(i,k);
-					// TODO: perform line sight calculation
+					// If the vehicle is in the line of sight (elevation)
 					if (elevation > 12) { // TODO: consider shadow model (needs azimuth)
-							// Determine if vehicle can recieve another beam 
-							// if (current beam intensity + new beam intesity) < max intensity {
-								potentialVehicles.push({vehIndex, range, azimuth, elevation, diameter, intensity, power});
-							//}
+						// If vehicle is in the lunar night 
+						if (lunarSpark.vehicles[k].location.in_night) {	
+							//if (current beam intensity + new beam intesity) < max intensity {
+							potentialVehicles.push({vehIndex, range, azimuth, elevation, diameter, intensity, power});
+						}
 					}
 				}
 			}
@@ -209,7 +210,12 @@ function connectLasers() {
 				// if there is a chosen vehicle
 				//if (j<chosenVehicles.length>0) {
 					var chosenVeh = chosenVehicles[0];  // set the chosen vehicle to the first entry because % won't work on zero
-					if (chosenVehicles.length > 1) {
+					if (chosenVehicles.length == 1){
+						// connect the laser to the vehicle (allow multiple lasers to single vehicle)
+						connectLaser(i, j, chosenVeh.vehIndex, chosenVeh.range, chosenVeh.azimuth, chosenVeh.elevation, chosenVeh.diameter, chosenVeh.intensity, chosenVeh.power);  
+						laserConnectCount++;
+					}
+					else if (chosenVehicles.length > 1) {
 						chosenVeh = chosenVehicles[j%(chosenVehicles.length-1)]; 
 					
 						// connect the laser to the vehicle (allow multiple lasers to single vehicle)
@@ -299,31 +305,82 @@ function calculateBeamCharacteristics(satIndex, vehIndex) {
 function calculateRangeAzimuthElevation(satIndex, vehIndex) {
 	var sat = lunarSpark.satellites[satIndex];
 	var veh = lunarSpark.vehicles[vehIndex];
-
-	// Calculate satellite coordinates in moon centered inertial frame (x,y,z)
-	var satLong = convert360to90(lunarSpark.environment.orbit.ascending_node)*Math.PI/180; // satellite long is related to the ascending node given its in a 90 deg polar orbit
-	var satLat = convert360to90(sat.orbit.anomaly)*Math.PI/180; // satellite lat is related to the current position in the orbit (anomaly)
-	var satRadius = orbitRadius; // meter
-	var satVector = {"x": Math.cos(satLat)*Math.cos(satLong)*satRadius, "y": Math.cos(satLat)*Math.sin(satLong)*satRadius, "z": Math.sin(satLat)*satRadius}
-
-	// Calculate vehicle coordinates in moon centered inertial frame (x,y,z)
-	var vehLat = veh.location.lat*Math.PI/180;
-	var vehLong = veh.location.long*Math.PI/180;
-	var vehRadius = moonRadius; // meters
-	var vehVector = {"x": Math.cos(vehLat)*Math.cos(vehLong)*vehRadius, "y": Math.cos(vehLat)*Math.sin(vehLong)*vehRadius, "z": Math.sin(vehLat)*vehRadius}
-
-	// Calculate the vehicle to satellite vector in moon centered inertial frame (x,y,z)
-	var rangeVector = {"x": vehVector.x - satVector.x, "y": vehVector.y - satVector.y, "z": vehVector.z - satVector.z,};
-	// Calculate the range from vehicle to satellite
-	var range = Math.sqrt(rangeVector.x**2 + rangeVector.y**2 + rangeVector.z**2); // meters
 	
-	// Calculate azimuth and elevation from vehicle to satellite (unit vector)
-	var azimuth = Math.atan(rangeVector.y/rangeVector.x)*180/Math.PI; // deg
-	var elevation = Math.asin(rangeVector.z/range)*180/Math.PI; // deg
+	// // Calculate satellite coordinates in moon centered inertial frame (x,y,z)
+	// var satLong = convert360to90(lunarSpark.environment.orbit.ascending_node)*Math.PI/180; // satellite long is related to the ascending node given its in a 90 deg polar orbit
+	// var satLat = convert360to90(sat.orbit.anomaly)*Math.PI/180; // satellite lat is related to the current position in the orbit (anomaly)
+	// var satRadius = orbitRadius; // meter
+	// var satVector = {"x": Math.cos(satLat)*Math.cos(satLong)*satRadius, "y": Math.cos(satLat)*Math.sin(satLong)*satRadius, "z": Math.sin(satLat)*satRadius}
+
+	// // Calculate vehicle coordinates in moon centered inertial frame (x,y,z)
+	// var vehLat = veh.location.lat*Math.PI/180;
+	// var vehLong = veh.location.long*Math.PI/180;
+	// var vehRadius = moonRadius; // meters
+	// var vehVector = {"x": Math.cos(vehLat)*Math.cos(vehLong)*vehRadius, "y": Math.cos(vehLat)*Math.sin(vehLong)*vehRadius, "z": Math.sin(vehLat)*vehRadius}
+
+	// // Calculate the vehicle to satellite vector in moon centered inertial frame (x,y,z)
+	// var rangeVector = {"x": vehVector.x - satVector.x, "y": vehVector.y - satVector.y, "z": vehVector.z - satVector.z,};
+	// // Calculate the range from vehicle to satellite
+	// var range = Math.sqrt(rangeVector.x**2 + rangeVector.y**2 + rangeVector.z**2); // meters
+	
+	// // Calculate azimuth and elevation from vehicle to satellite (unit vector)
+	// var azimuth = Math.atan(rangeVector.y/rangeVector.x)*180/Math.PI; // deg
+	// var elevation = Math.asin(rangeVector.z/range)*180/Math.PI; // deg
+
+	// satellite long is related to the ascending node given its in a 90 deg polar orbit
+	var satLong = lunarSpark.environment.orbit.ascending_node*Math.PI/180; // rad
+	// satellite lat is related to the current position in the orbit (anomaly)
+	var satLat = convert360to90(sat.orbit.anomaly)*Math.PI/180; // rad
+	var satRadius = orbitRadius; // meters
+
+	var vehLat = (veh.location.lat)*Math.PI/180;
+	var vehLong = convert180to360(veh.location.long)*Math.PI/180;
+	var vehRadius = moonRadius; // meters
+	
+	// SMAD Section 5.2 Example
+	// satLat = 10*Math.PI/180
+	// satLong = 185*Math.PI/180
+	// vehLat = 22*Math.PI/180
+	// vehLong = 200*Math.PI/180
+	// vehRadius = 6378 // example uses earth radius
+	// satRadius = 7378
+
+	// Calculate lamba angle between sub-satellite lat/long center of moon and veh lat/log (SMAD 5-10)
+	var lamda = Math.acos((Math.sin(satLat)*Math.sin(vehLat) + Math.cos(satLat)*Math.cos(vehLat)*Math.cos(Math.abs(satLong-vehLong)))) //rad
+	// Calculate rho angle between sub-satellite lat/long center of moon and line-of-sight horizong for satellite
+	var rho = Math.asin(vehRadius/satRadius) // rad
+	// Calculate nadir angle from sub-satellite point to satellite to vehicle (SMAD 5-14)
+	var nadirAngle = Math.atan(Math.sin(rho)*Math.sin(lamda)/(1-(Math.sin(rho)*Math.cos(lamda)))) // rad
+	// Calculate range (SMAD 5-15b)
+	var range = lunarSpark.environment.orbit.altitude;  // if nadir is zero return satellite altitude
+	if (nadirAngle != 0) {
+		range = vehRadius * Math.sin(lamda)/Math.sin(nadirAngle) // meters
+	}
+	// Calculate azimuth (SMAD 5-11)
+	var azimuth = 0;
+	// protect for divide by zero when satellite is directly overhead or passing over the poles
+	if (lamda != 0) {
+		if (satLat <= -Math.PI/2) {
+			azimuth = Math.PI; // point to southpole
+		}
+		else if (satLat >= Math.PI/2) {
+			azimuth = 0 // point to northpoles
+		}
+		else {
+			azimuth = Math.acos( (Math.sin(vehLat)-(Math.cos(lamda)*Math.sin(satLat))) / (Math.sin(lamda)*Math.cos(satLat)) )
+		}
+	}
+	azimuth = azimuth*180/Math.PI // deg
+	// Calculate elevation (SMAT 5-15a)
+	var elevation = 90*Math.PI/180 - nadirAngle - lamda // rad
+	elevation = elevation*180/Math.PI // deg
 
 	//console.log("vehIndex:"+vehIndex+" vehLat:"+veh.location.lat+" vehLong:"+veh.location.long+" vehVect x:"+vehVector.x.toFixed(0)+" y:"+vehVector.y.toFixed(0)+" z:"+vehVector.z.toFixed(0));
-	//console.log("satIndex:"+satIndex+" satLat:"+convert360to90(sat.orbit.anomaly)+" satLong:"+convert360to90(lunarSpark.environment.orbit.ascending_node)+" satVect x:"+satVector.x.toFixed(0)+" y:"+satVector.y.toFixed(0)+" z:"+satVector.z.toFixed(0));
-	console.log("vehIndex:"+vehIndex+" az:"+azimuth.toFixed(2)+" el:"+elevation.toFixed(2)+" range:" + range + " x:"+rangeVector.x.toFixed(0)+" y:"+rangeVector.y.toFixed(0)+" z:"+rangeVector.z.toFixed(0))
+	console.log("satIndex:"+satIndex+" satLat:"+convert360to90(sat.orbit.anomaly).toFixed(0)+" satLong:"+lunarSpark.environment.orbit.ascending_node.toFixed(0)) // +" satVect x:"+satVector.x.toFixed(0)+" y:"+satVector.y.toFixed(0)+" z:"+satVector.z.toFixed(0));
+	console.log("vehIndex:"+vehIndex+" vehLat:"+veh.location.lat.toFixed(0)+" vehLong:"+veh.location.long+" az:" +(azimuth).toFixed(2)+" el:"+(elevation).toFixed(2)+" range:" + (range/1000).toFixed(0)) // + " x:"+rangeVector.x.toFixed(0)+" y:"+rangeVector.y.toFixed(0)+" z:"+rangeVector.z.toFixed(0))
+	console.log("lmd(18.73): "+(lamda*180/Math.PI).toFixed(2) + " rho(59.82):"+  (rho*180/Math.PI).toFixed(2) + 
+	 	" nadirAngle(56.85):"+ (nadirAngle*180/Math.PI).toFixed(2) + " az(48.35):"+(azimuth).toFixed(2) +
+	 	" el(14.42):"+(elevation).toFixed(2)+" range(2446):" + (range/1000).toFixed(0))
 	console.log();
 
 	return {range, azimuth, elevation}
@@ -340,7 +397,7 @@ function convert360to90(angle360) {
 }
 function convert180to360(angle180) {
 	var angle360 = 0;
-	if (angle180>=0 && angle180<=180) {
+	if (angle180>=0) { // works if 360 deg system is used as well
 		angle360 = angle180;
 	}
 	else if (angle180>=-180 && angle180<0) {

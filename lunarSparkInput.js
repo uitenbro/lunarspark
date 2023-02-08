@@ -42,11 +42,11 @@ var lunarSparkInput = {
       "beams": []
     },
     {
-      "active": false,
+      "active": true,
       "id": "SMALL1",
       "location": {
         "lat": -80,
-        "long": -120,
+        "long": 90,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -77,7 +77,7 @@ var lunarSparkInput = {
       "id": "VIPER2",
       "location": {
         "lat": -80,
-        "long": -0,
+        "long": -90,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -91,10 +91,10 @@ var lunarSparkInput = {
       "eps_efficiency": 0.5,
       "battery": {
         "capacity": 5.0,
-        "charge": 1,
+        "charge": 5.0,
         "percent": 0
       },
-      "power_draw": 0.230,
+      "power_draw": 0.080,
       "laser_panel": {
         "height": 1,
         "width": 2,        
@@ -104,7 +104,7 @@ var lunarSparkInput = {
       "beams": []
     },
     {
-      "active": true,
+      "active": false,
       "id": "SMALL3",
       "location": {
         "lat": -80,
@@ -139,7 +139,7 @@ var lunarSparkInput = {
       "active": true,
       "id": "SMALL4",
       "location": {
-        "lat": -80,
+        "lat": 0,
         "long": 90,
         "shadow_model": [],
         "in_night": false,
@@ -200,11 +200,11 @@ var lunarSparkInput = {
       ]
     },
     {
-      "active": false,
+      "active": true,
       "id": "SMALL6",
       "location": {
-        "lat": -80,
-        "long": -60,
+        "lat": 0,
+        "long": -90,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false

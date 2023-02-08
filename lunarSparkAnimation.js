@@ -1,7 +1,7 @@
 // Background image and canvas dimensions
-const desiredCanvasWidth = 511; // pixels
-const orbitDistanceOffset = 100; // pixels
-const orbitWidth = 200; // pixels
+const desiredCanvasWidth = 311; // pixels
+const orbitDistanceOffset = 200; // pixels
+const orbitWidth = 50; // pixels
 const orbitVisibilityLowerBound  = 46; // degrees
 const orbitVisibilityUpperBound = 314; // degrees
 const satelliteVisibilityOffset = 2 //degrees

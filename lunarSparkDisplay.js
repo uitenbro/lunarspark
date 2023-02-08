@@ -125,8 +125,8 @@ function printSimControl() {
 function updateDisplay() {
     clearCanvas();
     drawAll(time);
-    // if stepping or every 0.5 second 
-    if (simState != "run" || (frameCount%(500/refreshPeriod))==0) {
+    // if stepping or every 0.20 second 
+    if (simState != "run" || (frameCount%(200/refreshPeriod))==0) {
         printAll(time);
     }
     frameCount = frameCount+1;
