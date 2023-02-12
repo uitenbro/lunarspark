@@ -44,11 +44,14 @@ function updateSatellites () {
 	for (var i=0;i<lunarSpark.satellites.length;i++) {
 		var sat = lunarSpark.satellites[i]
 
-		// Update orbit position
+		// Update orbit position and count
 		sat.orbit.min = (sat.orbit.min+timeStep)%lunarSpark.environment.orbit.period;
 		sat.orbit.anomaly = sat.orbit.min/lunarSpark.environment.orbit.period*360;
 
-		// TODO: add orbit count, satLat, satLong
+		// satellite long is related to the ascending node given its in a 90 deg polar orbit
+    	sat.orbit.long = lunarSpark.environment.orbit.ascending_node //deg
+    	// satellite lat is related to the current position in the orbit (anomaly)
+    	sat.orbit.lat = convert360to90(sat.orbit.anomaly) // deg
 
 		// TODO: add range/az/elev to each vehicle 
 		// TODO: add current batt %, prev batt %, in_night?, in_shadow?, priority, solar charging?, laser charging?, laser assigned
@@ -59,7 +62,7 @@ function updateSatellites () {
 		// }	
 
 		// Update Power Production
-		sat.solar_panel.power_output = sat.solar_panel.area * sat.solar_panel.efficiency * solarFluxInLunarOrbit / 1000; // kW TODO: inEclipse(sat)
+		sat.solar_panel.power_output = sat.solar_panel.area * lunarSpark.system.satellite.solar_panel_eff * solarFluxInLunarOrbit / 1000; // kW TODO: inEclipse(sat)
 
 		// Update Power Storage
 		// if the solar panel is producing power
@@ -67,7 +70,7 @@ function updateSatellites () {
 			// if charge is less than full
 			if (sat.battery.charge < sat.battery.capacity) {
 				// add the power provided for this time step to the battery (include eps efficiency)
-				sat.battery.charge = sat.battery.charge + (sat.solar_panel.power_output * timeStep/60 * sat.eps_efficiency); // kWh
+				sat.battery.charge = sat.battery.charge + (sat.solar_panel.power_output * timeStep/60 * lunarSpark.system.satellite.eps_eff); // kWh
 				// limit charge to maximum capacity
 				if (sat.battery.charge > sat.battery.capacity) {
 					sat.battery.charge = sat.battery.capacity;
@@ -100,7 +103,7 @@ function updateVehicles() {
 			// If the vehicle is not in lunar night
 			if (!veh.location.in_night) {
 				// Update solar panel power production
-				veh.solar_panel.power_output = veh.solar_panel.height*veh.solar_panel.width * veh.solar_panel.efficiency * solarFluxInLunarOrbit / 1000; // kW 
+				veh.solar_panel.power_output = veh.solar_panel.height*veh.solar_panel.width * lunarSpark.system.vehicle.solar_panel_eff * solarFluxInLunarOrbit / 1000; // kW 
 			}
 			else {
 				// In lunar night so no solar panel power output
@@ -115,7 +118,7 @@ function updateVehicles() {
 				// if (typeof(veh.beams[j]) !== "undefined") {
 				// 	if (veh.beams[j].laser != "-") {
 						// Update solar panel power production
-						laserPanelPwr = laserPanelPwr + veh.beams[j].power*veh.laser_panel.efficiency/1000; // kW 
+						laserPanelPwr = laserPanelPwr + veh.beams[j].power*lunarSpark.system.vehicle.laser_panel_eff/1000; // kW 
 				// 	}
 				// }
 			}
@@ -129,7 +132,7 @@ function updateVehicles() {
 				// if charge is less than full
 				if (veh.battery.charge < veh.battery.capacity) {
 					// add the power provided for this time step to the battery (include eps efficiency)
-					veh.battery.charge = veh.battery.charge + (totalPwrGenerated * timeStep/60 * veh.eps_efficiency); // kWh
+					veh.battery.charge = veh.battery.charge + (totalPwrGenerated * timeStep/60 * lunarSpark.system.vehicle.eps_eff); // kWh
 					// limit charge to maximum capacity
 					if (veh.battery.charge > veh.battery.capacity) {
 						veh.battery.charge = veh.battery.capacity;
@@ -237,7 +240,8 @@ function connectLasers() {
 						disconnectLaser(i,j);
 					}
 			}
-			lunarSpark.satellites[i].laser_power_draw = laserConnectCount*1/0.2; // TODO: confirm 20% efficiency to produce 1kW (make sure not double applying efficiency in display)
+			// TODO: confirm 20% efficiency to produce 1kW
+			lunarSpark.satellites[i].laser_power_draw = laserConnectCount*lunarSpark.system.satellite.watt_output_per_laser/lunarSpark.system.satellite.laser_eff; 
 		}
 	}
 }
@@ -337,13 +341,11 @@ function calculateRangeAzimuthElevation(satIndex, vehIndex) {
 	// var azimuth = Math.atan(rangeVector.y/rangeVector.x)*180/Math.PI; // deg
 	// var elevation = Math.asin(rangeVector.z/range)*180/Math.PI; // deg
 
-	// satellite long is related to the ascending node given its in a 90 deg polar orbit
-	var satLong = lunarSpark.environment.orbit.ascending_node*Math.PI/180; // rad
-	// satellite lat is related to the current position in the orbit (anomaly)
-	var satLat = convert360to90(sat.orbit.anomaly)*Math.PI/180; // rad
+	var satLong = convert180to360(sat.orbit.long) * Math.PI/180; // rad
+	var satLat = sat.orbit.lat * Math.PI/180; // rad
 	var satRadius = orbitRadius; // meters
 
-	var vehLat = (veh.location.lat)*Math.PI/180;
+	var vehLat = veh.location.lat*Math.PI/180;
 	var vehLong = convert180to360(veh.location.long)*Math.PI/180;
 	var vehRadius = moonRadius; // meters
 	
@@ -366,14 +368,15 @@ function calculateRangeAzimuthElevation(satIndex, vehIndex) {
 	if (nadirAngle != 0) {
 		range = vehRadius * Math.sin(lamda)/Math.sin(nadirAngle) // meters
 	}
+
 	// Calculate azimuth (SMAD 5-11)
 	var azimuth = 0;
-	// protect for divide by zero when satellite is directly overhead or passing over the poles
+	// protect for divide by zero when satellite is directly overhead (lambda = 0) or passing over the poles (satLat = +/- PI/2)
 	if (lamda != 0) {
-		if (satLat <= -Math.PI/2) {
+		if (satLat == -Math.PI/2) {
 			azimuth = Math.PI; // point to southpole
 		}
-		else if (satLat >= Math.PI/2) {
+		else if (satLat == Math.PI/2) {
 			azimuth = 0 // point to northpoles
 		}
 		else {
@@ -381,12 +384,13 @@ function calculateRangeAzimuthElevation(satIndex, vehIndex) {
 		}
 	}
 	azimuth = azimuth*180/Math.PI // deg
+
 	// Calculate elevation (SMAT 5-15a)
 	var elevation = 90*Math.PI/180 - nadirAngle - lamda // rad
 	elevation = elevation*180/Math.PI // deg
 
 	//console.log("vehIndex:"+vehIndex+" vehLat:"+veh.location.lat+" vehLong:"+veh.location.long+" vehVect x:"+vehVector.x.toFixed(0)+" y:"+vehVector.y.toFixed(0)+" z:"+vehVector.z.toFixed(0));
-	console.log("satIndex:"+satIndex+" satLat:"+convert360to90(sat.orbit.anomaly).toFixed(0)+" satLong:"+lunarSpark.environment.orbit.ascending_node.toFixed(0)) // +" satVect x:"+satVector.x.toFixed(0)+" y:"+satVector.y.toFixed(0)+" z:"+satVector.z.toFixed(0));
+	console.log("satIndex:"+satIndex+" satLat:"+(sat.orbit.lat).toFixed(0)+" satLong:"+sat.orbit.long.toFixed(0)) // +" satVect x:"+satVector.x.toFixed(0)+" y:"+satVector.y.toFixed(0)+" z:"+satVector.z.toFixed(0));
 	console.log("vehIndex:"+vehIndex+" vehLat:"+veh.location.lat.toFixed(0)+" vehLong:"+veh.location.long+" az:" +(azimuth).toFixed(2)+" el:"+(elevation).toFixed(2)+" range:" + (range/1000).toFixed(0)) // + " x:"+rangeVector.x.toFixed(0)+" y:"+rangeVector.y.toFixed(0)+" z:"+rangeVector.z.toFixed(0))
 	console.log("lmd(18.73): "+(lamda*180/Math.PI).toFixed(2) + " rho(59.82):"+  (rho*180/Math.PI).toFixed(2) + 
 	 	" nadirAngle(56.85):"+ (nadirAngle*180/Math.PI).toFixed(2) + " az(48.35):"+(azimuth).toFixed(2) +

@@ -84,12 +84,15 @@ function drawSatellites() {
     // TODO: Draw farthest away satelites first so layering is correct
     for (var i=0;i<lunarSpark.satellites.length;i++) {
         if (lunarSpark.satellites[i].active) {
-            drawSatellite(lunarSpark.satellites[i].orbit.anomaly, i, lunarSpark.environment.orbit.ascending_node);
+            drawSatellite(i);
         }
     }
 }
 
-function drawSatellite(anomaly, id, ascendingNode) {
+function drawSatellite(id) {
+    var anomaly = lunarSpark.satellites[id].orbit.anomaly;
+    var ascendingNode =  lunarSpark.environment.orbit.ascending_node;
+
     // Only draw a satellite if it is visible in this portion of its orbit
     if (anomaly >= orbitVisibilityLowerBound+satelliteVisibilityOffset && anomaly <= orbitVisibilityUpperBound-satelliteVisibilityOffset) {    
         
@@ -103,6 +106,9 @@ function drawSatellite(anomaly, id, ascendingNode) {
         // calculate pixel location from canvas origin
         x = originX+x; // pixels from canvas orgin
         y = originY-y; // pixels from canvas orgin
+
+        // Draw sub-satellite point
+        drawSubSatellitePoint(id)
 
         // Save the context then translate to the center of the satellite on the ellipse
         context.save();
@@ -127,8 +133,6 @@ function drawSatellite(anomaly, id, ascendingNode) {
         context.font = "16px Courier";
         context.fillStyle = "white";
 
-        // TODO: Draw satellite shadow on map
-
         // Translate back to the center of satellite on the ellipse and rotate to horizontal
         context.translate(x,y);
         context.rotate(-ascendingNode);
@@ -139,16 +143,46 @@ function drawSatellite(anomaly, id, ascendingNode) {
         context.restore();
     }
 }
+function drawSubSatellitePoint(id) {
+    var anomaly = lunarSpark.satellites[id].orbit.anomaly;
+    var ascendingNode =  lunarSpark.environment.orbit.ascending_node;
+
+    // Draw satellite shadow on map
+
+    // satellite long is related to the ascending node given its in a 90 deg polar orbit
+    var satLong = lunarSpark.environment.orbit.ascending_node // *Math.PI/180; // rad
+    // satellite lat is related to the current position in the orbit (anomaly)
+    var satLat = convert360to90(anomaly) //*Math.PI/180; // rad
+
+    var hyp = (-90-satLat)/(-90-minLatitude) * (canvas.width-(2*orbitDistanceOffset))/2; // pixel length of hypotenuse
+    var x = hyp*Math.sin(satLong * (Math.PI / 180.0)); // pixels from central origin
+    var y = hyp*Math.cos(satLong * (Math.PI / 180.0)); // pixels from central origin
+    x = originX+x; // pixels from canvas orgin
+    y = originY-y; // pixels from canvas orgin
+
+    // Draw sub-satellite point
+    context.beginPath();
+    context.arc(x, y, vehicleRadius, 0, 2*Math.PI);
+    context.closePath();
+    context.lineWidth = 1;
+    context.fillStyle = "rgba(0,0,0,"+shadowTransparency+")";
+    context.fill();
+    context.strokeStyle = "white";
+    context.stroke();
+}
 
 function drawVehicles() {
     for (var i=0;i<lunarSpark.vehicles.length;i++) {
         if (lunarSpark.vehicles[i].active) {
-            drawVehicle(lunarSpark.vehicles[i].location.lat, lunarSpark.vehicles[i].location.long, i);
+            drawVehicle(i);
         }
     }
 }
 
-function drawVehicle(lat, long, id) {
+function drawVehicle(id) {
+    var lat = lunarSpark.vehicles[id].location.lat;
+    var long = lunarSpark.vehicles[id].location.long;
+
     var hyp = (-90-lat)/(-90-minLatitude) * (canvas.width-(2*orbitDistanceOffset))/2; // pixel length of hypotenuse
     var x = hyp*Math.sin(long * (Math.PI / 180.0)); // pixels from central origin
     var y = hyp*Math.cos(long * (Math.PI / 180.0)); // pixels from central origin

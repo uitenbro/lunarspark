@@ -223,7 +223,8 @@ function printSatellite(index) {
         // TODO: add orbit count, satLat, satLong, and range/az/elev to each customer
         
         satellite.appendChild(printRow("Satellite["+index+"]:", sat.id, "-", true));
-        satellite.appendChild(printRow("Orbit(time/period):", sat.orbit.min.toFixed(0)+"/"+lunarSpark.environment.orbit.period, "min"));
+        satellite.appendChild(printRow("Orbit (time/period):", sat.orbit.min.toFixed(0)+"/"+lunarSpark.environment.orbit.period, "min"));
+        satellite.appendChild(printRow("Sub-Satellite (lat/long):", sat.orbit.lat.toFixed(0)+"/"+sat.orbit.long.toFixed(0), "deg"));
         satellite.appendChild(printRow("Solar Panel Pwr Output:", sat.solar_panel.power_output.toFixed(2), "kW"));
         var row = printRow("Battery Charge:", sat.battery.percent.toFixed(1)+"% "+ sat.battery.charge.toFixed(2)+"/"+sat.battery.capacity.toFixed(2), "kWh");
         if (sat.battery.percent <= battOrangeThreshold) {
@@ -235,10 +236,10 @@ function printSatellite(index) {
         satellite.appendChild(row);    
         //satellite.appendChild(printRow("Battery Charge:", (sat.battery.charge/sat.battery.capacity*100).toFixed(0)+"% "+ sat.battery.charge.toFixed(2)+"/"+sat.battery.capacity.toFixed(2), "kWh"));
         
-        satellite.appendChild(printRow("Satellite Pwr Draw:", sat.veh_power_draw.toFixed(2), "kW"));
+        satellite.appendChild(printRow("Satellite Pwr Draw:", sat.sat_power_draw.toFixed(2), "kW"));
 
         satellite.appendChild(printRow("Laser Pwr Draw:", sat.laser_power_draw.toFixed(2), "kW")); 
-        satellite.appendChild(printRow("Laser Pwr Output:", (sat.laser_power_draw*0.2).toFixed(2),"kW")); // TODO: fix hardcoded eff 20%
+        satellite.appendChild(printRow("Laser Pwr Output:", (sat.laser_power_draw*lunarSpark.system.satellite.laser_eff).toFixed(2),"kW"));
 
         satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "Dia", "Int", "Pwr", true));
         satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
@@ -259,7 +260,7 @@ function printSatellite(index) {
         satellite.appendChild(printRow("Battery Charge:", "---", "-"));
         satellite.appendChild(printRow("Satellite Pwr Draw:", "---", "-"));
         satellite.appendChild(printRow("Laser Pwr Draw:", "---", "-")); 
-        satellite.appendChild(printRow("Laser Pwr Output:", "---", "-")); // TODO: fix hardcoded eff 20%
+        satellite.appendChild(printRow("Laser Pwr Output:", "---", "-")); 
         satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "Dia", "Int", "Pwr", true));
         satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
         for (var i=0;i<maxLasersPerSatellite;i++) {
