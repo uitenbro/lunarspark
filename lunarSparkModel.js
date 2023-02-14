@@ -6,8 +6,9 @@ var lunarSpark =  JSON.parse(localStorage.getItem("lunarSparkInput"));
 
 // Lunar constants
 const minPerDay = 60*24; // minutes per day (earth)
-const daysPerLunarCycle = 29.5; // earth days per lunar cycle with respect to sun
-
+// (TODO: check dayPerLunarCycle agains HSF lecture 04 slide 37 13.5 deg per day - may need 28 days)
+// (TODO: check dayPerLunarCycle agains HSF lecture 27-28 chart 13
+const daysPerLunarCycle = 29.5; // earth days per lunar cycle with respect to sun 
 const minPerLunarCycle = daysPerLunarCycle*minPerDay;
 const sunAngleDegreesPerMinute = 360/minPerLunarCycle; // deg per min
 const ascendingNodeDegreesPerMinute = 360/minPerLunarCycle; // deg per min
