@@ -84,7 +84,7 @@ var lunarSparkInput = {
       "id": "VIPER2",
       "location": {
         "lat": -80,
-        "long": -90,
+        "long": 270,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -200,7 +200,7 @@ var lunarSparkInput = {
       "id": "SMALL6",
       "location": {
         "lat": 0,
-        "long": -90,
+        "long": -270,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -261,6 +261,7 @@ var lunarSparkInput = {
         "lat": 0,
         "long": 0,
         "min": 37,
+        "anomaly": 0
       },
       "solar_panel": {
         "area": 25,
@@ -283,6 +284,7 @@ var lunarSparkInput = {
         "lat": 0,
         "long": 0,
         "min": 74,
+        "anomaly": 0
       },
       "solar_panel": {
         "area": 12.5,
@@ -305,6 +307,7 @@ var lunarSparkInput = {
         "lat": 0,
         "long": 0,
         "min": 111,
+        "anomaly": 0
       },
       "solar_panel": {
         "area": 25,
@@ -327,6 +330,7 @@ var lunarSparkInput = {
         "lat": 0,
         "long": 0,
         "min": 0,
+        "anomaly": 0
       },
       "solar_panel": {
         "area": 12.5,

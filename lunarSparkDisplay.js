@@ -223,8 +223,9 @@ function printSatellite(index) {
         // TODO: add orbit count, satLat, satLong, and range/az/elev to each customer
         
         satellite.appendChild(printRow("Satellite["+index+"]:", sat.id, "-", true));
-        satellite.appendChild(printRow("Orbit (time/period):", sat.orbit.min.toFixed(0)+"/"+lunarSpark.environment.orbit.period, "min"));
-        satellite.appendChild(printRow("Sub-Satellite (lat/long):", sat.orbit.lat.toFixed(0)+"/"+sat.orbit.long.toFixed(0), "deg"));
+        satellite.appendChild(printRow("Orbit(anomaly):", sat.orbit.anomaly.toFixed(1), "deg"));
+        satellite.appendChild(printRow("Orbit(time/period):", sat.orbit.min.toFixed(0)+"/"+lunarSpark.environment.orbit.period, "min"));
+        satellite.appendChild(printRow("Sub-Satellite(lat/long):", sat.orbit.lat.toFixed(1)+"/"+sat.orbit.long.toFixed(1), "deg"));
         satellite.appendChild(printRow("Solar Panel Pwr Output:", sat.solar_panel.power_output.toFixed(2), "kW"));
         var row = printRow("Battery Charge:", sat.battery.percent.toFixed(1)+"% "+ sat.battery.charge.toFixed(2)+"/"+sat.battery.capacity.toFixed(2), "kWh");
         if (sat.battery.percent <= battOrangeThreshold) {
@@ -255,7 +256,9 @@ function printSatellite(index) {
     else {
         satellite.className = "satellite inactive";
         satellite.appendChild(printRow("Satellite["+index+"]:", "---", "-", true));
-        satellite.appendChild(printRow("Orbit(time/period):", "---", "-"));
+        satellite.appendChild(printRow("Orbit(anomaly):", "---", "-"));
+        satellite.appendChild(printRow("Orbit(time/period):", "---/---", "-"));
+        satellite.appendChild(printRow("Sub-Satellite(lat/long):", "---/---", "-"));
         satellite.appendChild(printRow("Solar Panel Pwr Output:", "---", "-"));
         satellite.appendChild(printRow("Battery Charge:", "---", "-"));
         satellite.appendChild(printRow("Satellite Pwr Draw:", "---", "-"));
@@ -365,7 +368,8 @@ function printSimStatus() {
     div.appendChild(printRow("Hrs:", Math.floor(time/60)%24, "hrs"));
     div.appendChild(printRow("Min:", (time%60).toFixed(0), "min"));
     div.appendChild(printRow("Orbit Count:", (lunarSpark.environment.orbit.count), "-"));
-    div.appendChild(printRow("Sun Angle:", (lunarSpark.environment.sun_angle).toFixed(2), "deg"));
+    div.appendChild(printRow("Ascending Node:", (lunarSpark.environment.orbit.ascending_node).toFixed(1), "deg"));
+    div.appendChild(printRow("Sun Angle:", (lunarSpark.environment.sun_angle).toFixed(1), "deg"));
 
     simRight = document.getElementById('simStatus2');
     simRight.replaceWith(div);

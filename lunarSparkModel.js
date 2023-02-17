@@ -26,7 +26,7 @@ const laserBeamDivergence = 0.0005/1000 // milli-radians/2/1000 = radians
 const laserBeamDivergenceHalfAngle = laserBeamDivergence/2 // radians
 const laserBeamInitialDiameter = .50 // meters
 
-function stepModel() {
+function stepModel() {  //TODO: add zero time step to initialize all model data not in the input file
 	updateSunAngle();
 	updateAscendingNode();
 	updateVehicles();
@@ -35,10 +35,10 @@ function stepModel() {
 }
 
 function updateSunAngle () {
-	lunarSpark.environment.sun_angle = lunarSpark.environment.sun_angle+(timeStep*sunAngleDegreesPerMinute);
+	lunarSpark.environment.sun_angle = (lunarSpark.environment.sun_angle+(timeStep*sunAngleDegreesPerMinute))%360;
 }
 function updateAscendingNode () {
-	lunarSpark.environment.orbit.ascending_node = lunarSpark.environment.orbit.ascending_node+(timeStep*ascendingNodeDegreesPerMinute);
+	lunarSpark.environment.orbit.ascending_node = (lunarSpark.environment.orbit.ascending_node+(timeStep*ascendingNodeDegreesPerMinute))%360;
 	lunarSpark.environment.orbit.count = Math.floor(time/lunarSpark.environment.orbit.period);
 }
 function updateSatellites () {
@@ -48,9 +48,18 @@ function updateSatellites () {
 		// Update orbit position and count
 		sat.orbit.min = (sat.orbit.min+timeStep)%lunarSpark.environment.orbit.period;
 		sat.orbit.anomaly = sat.orbit.min/lunarSpark.environment.orbit.period*360;
+		if (sat.orbit.anomaly >= 360) {alert(sat.orbit.anomaly + " uh oh")}
+		
+ 		// if anomaly is greater than 180 then flip to the other side of the longitude
+ 		if (sat.orbit.anomaly >= 0 && sat.orbit.anomaly < 180) { // TODO: fix 360 should be 0 issue
+ 			// satellite long is directly related to the ascending node given its in a 90 deg polar orbit
+ 		   	sat.orbit.long = lunarSpark.environment.orbit.ascending_node //deg 0 - 180
+ 		}
+ 		else {
+ 			// satellite is on the other side of orbit so flip the longitude
+			sat.orbit.long = (lunarSpark.environment.orbit.ascending_node + 180)%360; // deg 180 - 360
+ 		}
 
-		// satellite long is related to the ascending node given its in a 90 deg polar orbit
-    	sat.orbit.long = lunarSpark.environment.orbit.ascending_node //deg
     	// satellite lat is related to the current position in the orbit (anomaly)
     	sat.orbit.lat = convert360to90(sat.orbit.anomaly) // deg
 
@@ -81,7 +90,7 @@ function updateSatellites () {
 
 		// Update Satellite/Laser Power Draw
 		// draw the power for this time step from the battery (eps efficiency taken on the way into the battery)
-		sat.battery.charge = sat.battery.charge - (sat.veh_power_draw*timeStep/60) - (sat.laser_power_draw*timeStep/60); // kWh		
+		sat.battery.charge = sat.battery.charge - (sat.sat_power_draw*timeStep/60) - (sat.laser_power_draw*timeStep/60); // kWh		
 		// if battery charge is negative set to zero
 		if (sat.battery.charge < 0) {
 			sat.battery.charge = 0;
