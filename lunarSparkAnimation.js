@@ -144,19 +144,14 @@ function drawSatellite(id) {
     }
 }
 function drawSubSatellitePoint(id) {
-    var anomaly = lunarSpark.satellites[id].orbit.anomaly;
-    var ascendingNode =  lunarSpark.environment.orbit.ascending_node;
 
-    // Draw satellite shadow on map
-
-    // satellite long is related to the ascending node given its in a 90 deg polar orbit
-    var satLong = lunarSpark.environment.orbit.ascending_node // *Math.PI/180; // rad
-    // satellite lat is related to the current position in the orbit (anomaly)
-    var satLat = convert360to90(anomaly) //*Math.PI/180; // rad
+    // Draw satellite shadow on map at the sub-satellite point
+    var satLong = lunarSpark.satellites[id].orbit.long; // rad
+    var satLat = lunarSpark.satellites[id].orbit.lat;  // rad
 
     var hyp = (-90-satLat)/(-90-minLatitude) * (canvas.width-(2*orbitDistanceOffset))/2; // pixel length of hypotenuse
-    var x = hyp*Math.sin(satLong * (Math.PI / 180.0)); // pixels from central origin
-    var y = hyp*Math.cos(satLong * (Math.PI / 180.0)); // pixels from central origin
+    var x = hyp*Math.sin(satLong * (Math.PI/180)); // pixels from central origin
+    var y = hyp*Math.cos(satLong * (Math.PI/180)); // pixels from central origin
     x = originX+x; // pixels from canvas orgin
     y = originY-y; // pixels from canvas orgin
 
@@ -180,12 +175,12 @@ function drawVehicles() {
 }
 
 function drawVehicle(id) {
-    var lat = lunarSpark.vehicles[id].location.lat;
-    var long = lunarSpark.vehicles[id].location.long;
+    var vehLat = lunarSpark.vehicles[id].location.lat;
+    var vehLong = lunarSpark.vehicles[id].location.long;
 
-    var hyp = (-90-lat)/(-90-minLatitude) * (canvas.width-(2*orbitDistanceOffset))/2; // pixel length of hypotenuse
-    var x = hyp*Math.sin(long * (Math.PI / 180.0)); // pixels from central origin
-    var y = hyp*Math.cos(long * (Math.PI / 180.0)); // pixels from central origin
+    var hyp = (-90-vehLat)/(-90-minLatitude) * (canvas.width-(2*orbitDistanceOffset))/2; // pixel length of hypotenuse
+    var x = hyp*Math.sin(vehLong * (Math.PI / 180.0)); // pixels from central origin
+    var y = hyp*Math.cos(vehLong * (Math.PI / 180.0)); // pixels from central origin
     x = originX+x; // pixels from canvas orgin
     y = originY-y; // pixels from canvas orgin
 

@@ -351,12 +351,12 @@ function calculateRangeAzimuthElevation(satIndex, vehIndex) {
 	// var azimuth = Math.atan(rangeVector.y/rangeVector.x)*180/Math.PI; // deg
 	// var elevation = Math.asin(rangeVector.z/range)*180/Math.PI; // deg
 
-	var satLong = convert180to360(sat.orbit.long) * Math.PI/180; // rad
 	var satLat = sat.orbit.lat * Math.PI/180; // rad
+	var satLong = sat.orbit.long * Math.PI/180; // rad
 	var satRadius = orbitRadius; // meters
 
 	var vehLat = veh.location.lat*Math.PI/180;
-	var vehLong = convert180to360(veh.location.long)*Math.PI/180;
+	var vehLong = veh.location.long*Math.PI/180;
 	var vehRadius = moonRadius; // meters
 	
 	// SMAD Section 5.2 Example
