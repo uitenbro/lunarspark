@@ -2,6 +2,7 @@
 var time = 0 // minuites
 var refreshPeriod = 10 // 10msec (100Hz)
 var timeStep = 1; // min/refresh
+var savedTimeStep = timeStep;
 var simState = "pause";
 var previousStartTime = 0;
 var elapsedTime = 0; // msec
@@ -38,7 +39,6 @@ function initSim() {
     avgElapsedTime = 10; // msec
     execRate = 100; // Hz
     frameCount = 0;
-    disconnectAllLasers();
 
     canvas = document.querySelector('#simCanvas'); // canvas is intentionally global
     context = canvas.getContext('2d'); // context is intentionally global
@@ -47,23 +47,38 @@ function initSim() {
     originX = canvas.width/2; // intentionall global
     originY = canvas.height/2; // intentionally global
 
+
+    // step sim with zero time to initialize all dervived parameters
+    stepSim(0);
+    disconnectAllLasers();
+
+    // Draw initial screen
     printSimControl();
     drawMoon();
     drawAll();
     printAll();  
 }
 
-function stepSim() {
+function stepSim(step) {
+    // if a custom time step is commanded use it for this frame (use zero for initialization)
+    if (step != undefined) {
+        savedTimeStep = timeStep;
+    }
     time = time+timeStep;
+
+    // restore previous time step
+    timeStep = savedTimeStep;
+
     stepModel();
     updateDisplay();
+
 }
 
 function runSim() {
     document.getElementById('runButton').className = "buttonDisabled"
     var startTime =  Date.now();
     if (previousStartTime == 0) {
-        elapsedTime = 10; // set initial elapsed time 
+        elapsedTime = refreshPeriod; // set initial elapsed time to the refresh period
     }
     else {
         elapsedTime = startTime - previousStartTime; // msec
@@ -90,10 +105,12 @@ function pauseSim() {
 
 function faster() {
     timeStep = timeStep*2;
+    savedTimeStep = timeStep;
     printSimData();
 }
 function slower() {
     timeStep = timeStep/2;
+    savedTimeStep = timeStep;
     printSimData();
 }
 
@@ -244,14 +261,23 @@ function printSatellite(index) {
 
         satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "Dia", "Int", "Pwr", true));
         satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
-        for (var i=0;i<maxLasersPerSatellite;i++) {
-            if (i<sat.lasers.length) {
-                satellite.appendChild(printTable(sat.lasers[i].vehicle, (sat.lasers[i].range/1000).toFixed(0), sat.lasers[i].azimuth.toFixed(0), sat.lasers[i].elevation.toFixed(0), (sat.lasers[i].diameter*100).toFixed(0), sat.lasers[i].intensity.toFixed(0), sat.lasers[i].power.toFixed(0)));
+        for (var i=0;i<sat.vehicles.length;i++) {
+            if (i<sat.vehicles.length && lunarSpark.vehicles[i].active == true) {
+                satellite.appendChild(printTable(sat.vehicles[i].id, (sat.vehicles[i].range/1000).toFixed(0), sat.vehicles[i].azimuth.toFixed(0), sat.vehicles[i].elevation.toFixed(0), (sat.vehicles[i].diameter*100).toFixed(0), sat.vehicles[i].intensity.toFixed(0), sat.vehicles[i].power.toFixed(0)));
             }
-              else {
+            else {
                 satellite.appendChild(printTable("---", "---", "---", "---", "---", "---", "---")); 
             }
         }
+        // satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
+        // for (var i=0;i<maxLasersPerSatellite;i++) {
+        //     if (i<sat.lasers.length) {
+        //         satellite.appendChild(printTable(sat.lasers[i].vehicle, (sat.lasers[i].range/1000).toFixed(0), sat.lasers[i].azimuth.toFixed(0), sat.lasers[i].elevation.toFixed(0), (sat.lasers[i].diameter*100).toFixed(0), sat.lasers[i].intensity.toFixed(0), sat.lasers[i].power.toFixed(0)));
+        //     }
+        //       else {
+        //         satellite.appendChild(printTable("---", "---", "---", "---", "---", "---", "---")); 
+        //     }
+        // }
     }
     else {
         satellite.className = "satellite inactive";
@@ -266,7 +292,7 @@ function printSatellite(index) {
         satellite.appendChild(printRow("Laser Pwr Output:", "---", "-")); 
         satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "Dia", "Int", "Pwr", true));
         satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
-        for (var i=0;i<maxLasersPerSatellite;i++) {
+        for (var i=0;i<sat.vehicles.length;i++) {
             satellite.appendChild(printTable("---", "---", "---", "---", "---", "---", "---")); 
         }
 

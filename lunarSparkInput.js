@@ -24,11 +24,11 @@ var lunarSparkInput = {
   },
   "vehicles": [
     {
-      "active": false,
+      "active": true,
       "id": "VIPER0",
       "location": {
         "lat": -80,
-        "long": 30,
+        "long": 0,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -84,7 +84,7 @@ var lunarSparkInput = {
       "id": "VIPER2",
       "location": {
         "lat": -80,
-        "long": 270,
+        "long": 180,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -109,11 +109,11 @@ var lunarSparkInput = {
       "beams": []
     },
     {
-      "active": false,
+      "active": true,
       "id": "SMALL3",
       "location": {
         "lat": -80,
-        "long": 180,
+        "long": 270,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -141,8 +141,8 @@ var lunarSparkInput = {
       "active": true,
       "id": "SMALL4",
       "location": {
-        "lat": 0,
-        "long": 90,
+        "lat": -85,
+        "long": 0,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -163,15 +163,14 @@ var lunarSparkInput = {
         "width": 0.5,
         "power_output": 0
       },
-      "beams": [
-      ]
+      "beams": []
     },
     {
       "active": true,
       "id": "SMALL5",
       "location": {
-        "lat": -90,
-        "long": 0,
+        "lat": -85,
+        "long": 90,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -192,15 +191,14 @@ var lunarSparkInput = {
         "width": 0.5,
         "power_output": 0
       },
-      "beams": [
-      ]
+      "beams": []
     },
     {
       "active": true,
       "id": "SMALL6",
       "location": {
-        "lat": 0,
-        "long": -270,
+        "lat": -85,
+        "long": 180,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -221,15 +219,14 @@ var lunarSparkInput = {
         "width": 0.5,
         "power_output": 0
       },
-      "beams": [
-      ]
+      "beams": []
     },
     {
-      "active": false,
+      "active": true,
       "id": "SMALL7",
       "location": {
-        "lat": -80,
-        "long": 120,
+        "lat": -85,
+        "long": 270,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -275,6 +272,7 @@ var lunarSparkInput = {
       "sat_power_draw": 1.8,
       "laser_count": 4,
       "laser_power_draw": 0,
+      "vehicles": [],
       "lasers": []
     },
     {
@@ -298,6 +296,7 @@ var lunarSparkInput = {
       "sat_power_draw": 1.8,
       "laser_count": 4,
       "laser_power_draw": 0,
+      "vehicles": [],
       "lasers": []
     },
     {
@@ -321,6 +320,7 @@ var lunarSparkInput = {
       "sat_power_draw": 1.8,
       "laser_count": 4,
       "laser_power_draw": 0,
+      "vehicles": [],
       "lasers": []
     },
     {
@@ -344,6 +344,7 @@ var lunarSparkInput = {
       "sat_power_draw": 1.8,
       "laser_count": 4,
       "laser_power_draw": 0,
+      "vehicles": [],
       "lasers": []
     }
   ]

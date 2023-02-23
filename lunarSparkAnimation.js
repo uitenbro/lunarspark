@@ -32,6 +32,7 @@ const laser3yOffset = 0;
 
 // Vehicle drawing constants
 const vehicleRadius = 10; // pixels
+const azimuthLength = 50; // pixels (at the longest)
 
 function clearCanvas() {
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -178,12 +179,44 @@ function drawVehicle(id) {
     var vehLat = lunarSpark.vehicles[id].location.lat;
     var vehLong = lunarSpark.vehicles[id].location.long;
 
+
+    var azimuth = lunarSpark.satellites[0].vehicles[id].azimuth;
+    var elevation = lunarSpark.satellites[0].vehicles[id].elevation;
+    var lineLength = azimuthLength*Math.cos(elevation*Math.PI/180);
+
+
+
+
+
     var hyp = (-90-vehLat)/(-90-minLatitude) * (canvas.width-(2*orbitDistanceOffset))/2; // pixel length of hypotenuse
     var x = hyp*Math.sin(vehLong * (Math.PI / 180.0)); // pixels from central origin
     var y = hyp*Math.cos(vehLong * (Math.PI / 180.0)); // pixels from central origin
     x = originX+x; // pixels from canvas orgin
     y = originY-y; // pixels from canvas orgin
 
+
+    // Draw the azimuth
+    context.save();
+    context.translate(x, y);
+    // rotate to localc north (vehLong) and then to the azimuth
+    context.rotate((vehLong+azimuth)*Math.PI/180);
+    context.strokeStyle = "black";
+    context.lineWidth = 5.0;
+    context.beginPath();
+    context.moveTo(0,-vehicleRadius)
+    context.lineTo(0, -lineLength-1);
+    context.stroke();
+    context.strokeStyle = "yellow";
+    context.lineWidth = 3.0;
+    context.beginPath();
+    context.moveTo(0,-vehicleRadius)
+    context.lineTo(0, -lineLength);
+    context.stroke();
+    context.restore();
+
+
+
+    // Draw Vehicle circle
     context.beginPath();
     context.arc(x, y, vehicleRadius, 0, 2*Math.PI);
     context.closePath();
@@ -196,6 +229,7 @@ function drawVehicle(id) {
     context.fillStyle = "black";
     context.fillText(id, x-5, y+5);
 }
+
 function drawLasers() {
     for (var i=0;i<lunarSpark.satellites.length;i++) {
         if (lunarSpark.satellites[i].active) {

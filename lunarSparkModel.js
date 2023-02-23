@@ -63,13 +63,17 @@ function updateSatellites () {
     	// satellite lat is related to the current position in the orbit (anomaly)
     	sat.orbit.lat = convert360to90(sat.orbit.anomaly) // deg
 
-		// TODO: add range/az/elev to each vehicle 
+		// Update range/az/elev to each vehicle 
+		for (var k=0;k<lunarSpark.vehicles.length;k++) {
+			if (lunarSpark.vehicles[k].active) {
+				var {vehIndex, range, azimuth, elevation, diameter, intensity, power} = calculateBeamCharacteristics(i,k);
+				sat.vehicles[k] = {"id": vehIndex, "range": range, "azimuth": azimuth, "elevation": elevation, "diameter": diameter, "intensity": intensity, "power": power};
+			}
+			else {
+				sat.vehicles[k] = {"id": "---", "range": 0, "azimuth": 0, "elevation": 0, "diameter": 0, "intensity": 0, "power": 0};
+			}
+		}	
 		// TODO: add current batt %, prev batt %, in_night?, in_shadow?, priority, solar charging?, laser charging?, laser assigned
-		// for (var k=0;k<lunarSpark.vehicles.length;k++) {
-		// 	if (lunarSpark.vehicles[k].active) {
-		// 		var {vehIndex, range, azimuth, elevation, diameter, intensity, power} = calculateBeamCharacteristics(i,k);
-		// 	}
-		// }	
 
 		// Update Power Production
 		sat.solar_panel.power_output = sat.solar_panel.area * lunarSpark.system.satellite.solar_panel_eff * solarFluxInLunarOrbit / 1000; // kW TODO: inEclipse(sat)
@@ -320,7 +324,7 @@ function calculateBeamCharacteristics(satIndex, vehIndex) {
 	var {range, azimuth, elevation} = calculateRangeAzimuthElevation(satIndex, vehIndex); // meters deg deg
 	var diameter = 2*range * Math.tan(laserBeamDivergenceHalfAngle) + laserBeamInitialDiameter; // meters
 	var areaBeam = Math.PI*((diameter/2)**2); 
-	var intensity = laserBeamOutputPower/(areaBeam); // TODO: 1kW laser constant
+	var intensity = laserBeamOutputPower/(areaBeam); // W/m2 (laser output constant no space loss from output to panel)
 	var power = areaBeam*intensity; // TODO: handle case where beam diameter exceed laser panel dimensions
 
 	return {vehIndex, azimuth, elevation, range, diameter, intensity, power} 
@@ -364,12 +368,12 @@ function calculateRangeAzimuthElevation(satIndex, vehIndex) {
 	// satLong = 185*Math.PI/180
 	// vehLat = 22*Math.PI/180
 	// vehLong = 200*Math.PI/180
-	// vehRadius = 6378 // example uses earth radius
-	// satRadius = 7378
+	// vehRadius = 6378000 // example uses earth radius
+	// satRadius = 7378000
 
 	// Calculate lamba angle between sub-satellite lat/long center of moon and veh lat/log (SMAD 5-10)
 	var lamda = Math.acos((Math.sin(satLat)*Math.sin(vehLat) + Math.cos(satLat)*Math.cos(vehLat)*Math.cos(Math.abs(satLong-vehLong)))) //rad
-	// Calculate rho angle between sub-satellite lat/long center of moon and line-of-sight horizong for satellite
+	// Calculate rho angle between sub-satellite lat/long center of moon and line-of-sight horizong for satellite (SMAD5-13)
 	var rho = Math.asin(vehRadius/satRadius) // rad
 	// Calculate nadir angle from sub-satellite point to satellite to vehicle (SMAD 5-14)
 	var nadirAngle = Math.atan(Math.sin(rho)*Math.sin(lamda)/(1-(Math.sin(rho)*Math.cos(lamda)))) // rad
@@ -379,21 +383,61 @@ function calculateRangeAzimuthElevation(satIndex, vehIndex) {
 		range = vehRadius * Math.sin(lamda)/Math.sin(nadirAngle) // meters
 	}
 
-	// Calculate azimuth (SMAD 5-11)
-	var azimuth = 0;
-	// protect for divide by zero when satellite is directly overhead (lambda = 0) or passing over the poles (satLat = +/- PI/2)
-	if (lamda != 0) {
-		if (satLat == -Math.PI/2) {
-			azimuth = Math.PI; // point to southpole
-		}
-		else if (satLat == Math.PI/2) {
-			azimuth = 0 // point to northpoles
-		}
-		else {
-			azimuth = Math.acos( (Math.sin(vehLat)-(Math.cos(lamda)*Math.sin(satLat))) / (Math.sin(lamda)*Math.cos(satLat)) )
-		}
-	}
-	azimuth = azimuth*180/Math.PI // deg
+// 'use strict';
+
+// function toDegrees(radians) {
+//   return radians * 180 / Math.PI;
+// }
+
+// omni.define('azimuth', function(lat1, lat2, lon1, lon2) {
+//   lat1 = lat1.toNumber();
+//   lat2 = lat2.toNumber();
+//   lon1 = lon1.toNumber();
+//   lon2 = lon2.toNumber();
+
+//   var R = 6371e3;
+//   var phi = (lat2-lat1);
+//   var lambda = (lon2-lon1);
+
+//   var a = (Math.sin(phi /2) * Math.sin(phi /2)) + (Math.cos(lat1) * Math.cos(lat2) * Math.sin(lambda/2) * Math.sin(lambda/2));
+//   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+//   var d = R*c;
+//   return d;
+// });
+
+// omni.define('bearing', function(lat1, lat2, lon1, lon2) {
+//   lat1 = lat1.toNumber();
+//   lat2 = lat2.toNumber();
+//   lon1 = lon1.toNumber();
+//   lon2 = lon2.toNumber();
+//   var y = Math.sin(lon2-lon1) * Math.cos(lat2);
+//   var x = Math.cos(lat1)*Math.sin(lat2) - Math.sin(lat1)*Math.cos(lat2)*Math.cos(lon2-lon1);
+//   var brng = toDegrees(Math.atan2(y, x));
+//   brng =  ( (brng+360) % 360);
+//   return brng;
+// });
+// //# sourceURL=https://www.omnicalculator.com/customjs/azimuth.js
+
+	var y = Math.sin(satLong-vehLong) * Math.cos(satLat);
+	var x = Math.cos(vehLat)*Math.sin(satLat) - Math.sin(vehLat)*Math.cos(satLat)*Math.cos(satLong-vehLong);
+	var brng = (Math.atan2(y, x));
+	brng = brng*180/Math.PI;
+	brng =  ( (brng+360) % 360);
+	var azimuth = brng;
+
+	// // Calculate azimuth (SMAD 5-11) TODO: https://www.omnicalculator.com/other/azimuth
+	// var azimuth = 0;
+	// // protect for divide by zero when satellite is directly overhead (lambda = 0) or passing over the poles (satLat = +/- PI/2)
+	// if (lamda !=0 && Math.sin(lamda) != 0 && Math.cos(satLat) != 0) {
+	// 	var operation = (Math.sin(vehLat)-(Math.cos(lamda)*Math.sin(satLat))) / (Math.sin(lamda)*Math.cos(satLat))
+	// 	azimuth = Math.acos( operation.toFixed(3) )
+	// }
+	// else {
+	// 	azimuth = 0;		
+	// }
+	// azimuth = azimuth*180/Math.PI // deg
+	// // switch to vehicle perspective
+	// //azimuth = (azimuth+180)%360
 
 	// Calculate elevation (SMAT 5-15a)
 	var elevation = 90*Math.PI/180 - nadirAngle - lamda // rad
