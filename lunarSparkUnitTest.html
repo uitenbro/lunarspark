@@ -1,0 +1,34 @@
+<html>
+<head>
+<title>Lunar Spark - Operational Simulation</title>
+<link rel="stylesheet" href="lunarSpark.css" />
+
+<script language="javascript" type="text/javascript" src="lunarSparkInput.js"></script>
+<script language="javascript" type="text/javascript" src="lunarSparkAnimation.js"></script>
+<script language="javascript" type="text/javascript" src="lunarSparkDisplay.js"></script>
+<script language="javascript" type="text/javascript" src="lunarSparkModel.js"></script>
+<script language="javascript" type="text/javascript" src="lunarSparkUnitTest.js"></script>
+
+<body onLoad="initUnitTest(); ">
+<div id="all">
+	<div id="top">
+	</div>
+
+	<div id="middle">
+		<div id="simLeft">
+			<div id="simControl"></div>
+			<div id="simStatus1"></div>
+			<div id="vehLeft"></div>
+		</div>	 
+		<canvas id="simCanvas"></canvas>
+		<div id="simRight">
+			<div id="simStatus2"></div>
+			<div id="vehRight"></div>
+		</div>
+	</div>
+
+	<div id="bottom">	
+	</div>
+
+</div>
+</body>
