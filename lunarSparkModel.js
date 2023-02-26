@@ -26,7 +26,7 @@ const laserBeamDivergence = 0.0005/1000 // milli-radians/2/1000 = radians
 const laserBeamDivergenceHalfAngle = laserBeamDivergence/2 // radians
 const laserBeamInitialDiameter = .50 // meters
 
-function stepModel() {  //TODO: add zero time step to initialize all model data not in the input file
+function stepModel() { 
 	updateSunAngle();
 	updateAscendingNode();
 	updateVehicles();
@@ -48,7 +48,6 @@ function updateSatellites () {
 		// Update orbit position and count
 		sat.orbit.min = (sat.orbit.min+timeStep)%lunarSpark.environment.orbit.period;
 		sat.orbit.anomaly = sat.orbit.min/lunarSpark.environment.orbit.period*360;
-		if (sat.orbit.anomaly >= 360) {alert(sat.orbit.anomaly + " uh oh")}
 		
  		// if anomaly is greater than 180 then flip to the other side of the longitude
  		if (sat.orbit.anomaly >= 0 && sat.orbit.anomaly < 180) { // TODO: fix 360 should be 0 issue

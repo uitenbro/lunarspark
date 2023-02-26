@@ -32,6 +32,7 @@ function initSim() {
     time = 0 // minuites
     refreshPeriod = 10 // 10msec (100Hz)
     timeStep = 1; // min/refresh
+    savedTimeStep = timeStep;
     simState = "pause";
     previousStartTime = 0;
     elapsedTime = 0; // msec
@@ -60,16 +61,20 @@ function initSim() {
 }
 
 function stepSim(step) {
+
     // if a custom time step is commanded use it for this frame (use zero for initialization)
     if (step != undefined) {
         savedTimeStep = timeStep;
+        timeStep = step;
     }
+   
     time = time+timeStep;
-
+    
+    stepModel();
+    
     // restore previous time step
     timeStep = savedTimeStep;
 
-    stepModel();
     updateDisplay();
 
 }

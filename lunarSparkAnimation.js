@@ -180,40 +180,42 @@ function drawVehicle(id) {
     var vehLong = lunarSpark.vehicles[id].location.long;
 
 
-    var azimuth = lunarSpark.satellites[0].vehicles[id].azimuth;
-    var elevation = lunarSpark.satellites[0].vehicles[id].elevation;
-    var lineLength = azimuthLength*Math.cos(elevation*Math.PI/180);
+    for (var l=0;l<lunarSpark.satellites.length;l++) {
 
+        if (lunarSpark.satellites[l].active) {
+            var azimuth = lunarSpark.satellites[l].vehicles[id].azimuth;
+            var elevation = lunarSpark.satellites[l].vehicles[id].elevation;
+            var lineLength = azimuthLength*Math.cos(elevation*Math.PI/180);
 
+            var hyp = (-90-vehLat)/(-90-minLatitude) * (canvas.width-(2*orbitDistanceOffset))/2; // pixel length of hypotenuse
+            var x = hyp*Math.sin(vehLong * (Math.PI / 180.0)); // pixels from central origin
+            var y = hyp*Math.cos(vehLong * (Math.PI / 180.0)); // pixels from central origin
+            x = originX+x; // pixels from canvas orgin
+            y = originY-y; // pixels from canvas orgin
 
-
-
-    var hyp = (-90-vehLat)/(-90-minLatitude) * (canvas.width-(2*orbitDistanceOffset))/2; // pixel length of hypotenuse
-    var x = hyp*Math.sin(vehLong * (Math.PI / 180.0)); // pixels from central origin
-    var y = hyp*Math.cos(vehLong * (Math.PI / 180.0)); // pixels from central origin
-    x = originX+x; // pixels from canvas orgin
-    y = originY-y; // pixels from canvas orgin
-
-
-    // Draw the azimuth
-    context.save();
-    context.translate(x, y);
-    // rotate to localc north (vehLong) and then to the azimuth
-    context.rotate((vehLong+azimuth)*Math.PI/180);
-    context.strokeStyle = "black";
-    context.lineWidth = 5.0;
-    context.beginPath();
-    context.moveTo(0,-vehicleRadius)
-    context.lineTo(0, -lineLength-1);
-    context.stroke();
-    context.strokeStyle = "yellow";
-    context.lineWidth = 3.0;
-    context.beginPath();
-    context.moveTo(0,-vehicleRadius)
-    context.lineTo(0, -lineLength);
-    context.stroke();
-    context.restore();
-
+            // If the elevation of the satellite is above zero
+            if (elevation >= 0) {
+                // Draw the azimuth
+                context.save();
+                context.translate(x, y);
+                // rotate to localc north (vehLong) and then to the azimuth
+                context.rotate((vehLong+azimuth)*Math.PI/180);
+                context.strokeStyle = "black";
+                context.lineWidth = 5.0;
+                context.beginPath();
+                context.moveTo(0,-vehicleRadius)
+                context.lineTo(0, -lineLength-1);
+                context.stroke();
+                context.strokeStyle = "yellow";
+                context.lineWidth = 3.0;
+                context.beginPath();
+                context.moveTo(0,-vehicleRadius)
+                context.lineTo(0, -lineLength);
+                context.stroke();
+                context.restore();
+            }
+       }
+    }
 
 
     // Draw Vehicle circle
