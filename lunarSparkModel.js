@@ -72,10 +72,10 @@ function updateSatellites () {
 				sat.vehicles[k] = {"id": "---", "range": 0, "azimuth": 0, "elevation": 0, "diameter": 0, "intensity": 0, "power": 0};
 			}
 		}	
-		// TODO: add current batt %, prev batt %, in_night?, in_shadow?, priority, solar charging?, laser charging?, laser assigned
+		// TODO: inEclipse(sat)
 
 		// Update Power Production
-		sat.solar_panel.power_output = sat.solar_panel.area * lunarSpark.system.satellite.solar_panel_eff * solarFluxInLunarOrbit / 1000; // kW TODO: inEclipse(sat)
+		sat.solar_panel.power_output = sat.solar_panel.area * lunarSpark.system.satellite.solar_panel_eff * solarFluxInLunarOrbit ; // Watts 
 
 		// Update Power Storage
 		// if the solar panel is producing power
@@ -83,7 +83,7 @@ function updateSatellites () {
 			// if charge is less than full
 			if (sat.battery.charge < sat.battery.capacity) {
 				// add the power provided for this time step to the battery (include eps efficiency)
-				sat.battery.charge = sat.battery.charge + (sat.solar_panel.power_output * timeStep/60 * lunarSpark.system.satellite.eps_eff); // kWh
+				sat.battery.charge = sat.battery.charge + (sat.solar_panel.power_output * timeStep/60 * lunarSpark.system.satellite.eps_eff); // Watt*h
 				// limit charge to maximum capacity
 				if (sat.battery.charge > sat.battery.capacity) {
 					sat.battery.charge = sat.battery.capacity;
@@ -93,7 +93,7 @@ function updateSatellites () {
 
 		// Update Satellite/Laser Power Draw
 		// draw the power for this time step from the battery (eps efficiency taken on the way into the battery)
-		sat.battery.charge = sat.battery.charge - (sat.sat_power_draw*timeStep/60) - (sat.laser_power_draw*timeStep/60); // kWh		
+		sat.battery.charge = sat.battery.charge - (sat.sat_power_draw*timeStep/60) - (sat.laser_power_draw*timeStep/60); // Watt*h		
 		// if battery charge is negative set to zero
 		if (sat.battery.charge < 0) {
 			sat.battery.charge = 0;
@@ -116,7 +116,7 @@ function updateVehicles() {
 			// If the vehicle is not in lunar night
 			if (!veh.location.in_night) {
 				// Update solar panel power production
-				veh.solar_panel.power_output = veh.solar_panel.height*veh.solar_panel.width * lunarSpark.system.vehicle.solar_panel_eff * solarFluxInLunarOrbit / 1000; // kW 
+				veh.solar_panel.power_output = veh.solar_panel.height*veh.solar_panel.width * lunarSpark.system.vehicle.solar_panel_eff * solarFluxInLunarOrbit ; // Watts 
 			}
 			else {
 				// In lunar night so no solar panel power output
@@ -131,7 +131,7 @@ function updateVehicles() {
 				// if (typeof(veh.beams[j]) !== "undefined") {
 				// 	if (veh.beams[j].laser != "-") {
 						// Update solar panel power production
-						laserPanelPwr = laserPanelPwr + veh.beams[j].power*lunarSpark.system.vehicle.laser_panel_eff/1000; // kW 
+						laserPanelPwr = laserPanelPwr + veh.beams[j].power*lunarSpark.system.vehicle.laser_panel_eff; // Watts 
 				// 	}
 				// }
 			}
@@ -145,7 +145,7 @@ function updateVehicles() {
 				// if charge is less than full
 				if (veh.battery.charge < veh.battery.capacity) {
 					// add the power provided for this time step to the battery (include eps efficiency)
-					veh.battery.charge = veh.battery.charge + (totalPwrGenerated * timeStep/60 * lunarSpark.system.vehicle.eps_eff); // kWh
+					veh.battery.charge = veh.battery.charge + (totalPwrGenerated * timeStep/60 * lunarSpark.system.vehicle.eps_eff); // Watt*h
 					// limit charge to maximum capacity
 					if (veh.battery.charge > veh.battery.capacity) {
 						veh.battery.charge = veh.battery.capacity;
@@ -155,7 +155,7 @@ function updateVehicles() {
 
 			// Update Vehicle Power Draw 
 			// draw the power for this time step from the battery (eps efficiency taken on the way into the battery)
-			veh.battery.charge = veh.battery.charge - (veh.power_draw*timeStep/60.0); // kWh		
+			veh.battery.charge = veh.battery.charge - (veh.power_draw*timeStep/60.0); // Watt*h		
 			// if battery charge is negative set to zero
 			if (veh.battery.charge < 0) {
 				veh.battery.charge = 0;
@@ -321,9 +321,10 @@ function calculateBeamCharacteristics(satIndex, vehIndex) {
 
 	// Calculate beam characteristics
 	var {range, azimuth, elevation} = calculateRangeAzimuthElevation(satIndex, vehIndex); // meters deg deg
+	// TODO: This is a potential beam (it may not be achieveable due to line of site)
 	var diameter = 2*range * Math.tan(laserBeamDivergenceHalfAngle) + laserBeamInitialDiameter; // meters
 	var areaBeam = Math.PI*((diameter/2)**2); 
-	var intensity = laserBeamOutputPower/(areaBeam); // W/m2 (laser output constant no space loss from output to panel)
+	var intensity = laserBeamOutputPower/(areaBeam); // W/m2 (laser output constant no space loss from output to panel) // TODO: check use of env.sat constant
 	var power = areaBeam*intensity; // TODO: handle case where beam diameter exceed laser panel dimensions
 
 	return {vehIndex, azimuth, elevation, range, diameter, intensity, power} 

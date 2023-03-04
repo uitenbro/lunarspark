@@ -9,6 +9,7 @@ var elapsedTime = 0; // msec
 var prevAvgElapsedTime = 10; // msec
 var avgElapsedTime = 10; // msec
 var execRate = 100; // Hz
+var realTime = execRate * timeStep*60// step/sec * min/step
 var frameCount = 0;
 
 // Display thresholds
@@ -39,6 +40,7 @@ function initSim() {
     prevAvgElapsedTime = 10; // msec
     avgElapsedTime = 10; // msec
     execRate = 100; // Hz
+    realTime = execRate * timeStep*60
     frameCount = 0;
 
     canvas = document.querySelector('#simCanvas'); // canvas is intentionally global
@@ -90,6 +92,7 @@ function runSim() {
     }
     avgElapsedTime = (prevAvgElapsedTime*99 + elapsedTime)/100; // moving average over 100 samples - 1 sec
     execRate = (1000/(avgElapsedTime)); // Hz
+    realTime = execRate * timeStep*60
     previousStartTime = startTime;
     prevAvgElapsedTime = avgElapsedTime;
     stepSim();
@@ -111,11 +114,13 @@ function pauseSim() {
 function faster() {
     timeStep = timeStep*2;
     savedTimeStep = timeStep;
+    realTime = execRate * timeStep*60
     printSimData();
 }
 function slower() {
     timeStep = timeStep/2;
     savedTimeStep = timeStep;
+    realTime = execRate * timeStep*60
     printSimData();
 }
 
@@ -256,7 +261,7 @@ function printSatellite(index) {
         // TODO: add orbit count, satLat, satLong, and range/az/elev to each customer
         
         satellite.appendChild(printRow("Satellite["+index+"]:", sat.id, "-", true));
-        var row = printRow("Battery Charge:", sat.battery.percent.toFixed(1)+"% "+ sat.battery.charge.toFixed(2)+"/"+sat.battery.capacity.toFixed(2), "kWh");
+        var row = printRow("Battery Charge:", sat.battery.percent.toFixed(1)+"% "+ sat.battery.charge.toFixed(0)+"/"+sat.battery.capacity.toFixed(0), "Wh");
         if (sat.battery.percent <= battOrangeThreshold) {
             row.className = "orange";
         }
@@ -265,13 +270,13 @@ function printSatellite(index) {
         }
         satellite.appendChild(row); 
         satellite.appendChild(printBatteryGuage(sat.battery.percent)); 
-        satellite.appendChild(printRow("Satellite Pwr Draw:", sat.sat_power_draw.toFixed(1), "kW"));
+        satellite.appendChild(printRow("Satellite Pwr Draw:", sat.sat_power_draw.toFixed(0), "W"));
         satellite.appendChild(printRow("Orbit(anomaly):", sat.orbit.anomaly.toFixed(1), "deg"));
         satellite.appendChild(printRow("Orbit(time/period):", sat.orbit.min.toFixed(0)+"/"+lunarSpark.environment.orbit.period, "min"));
         satellite.appendChild(printRow("Sub-Satellite(lat/long):", sat.orbit.lat.toFixed(1)+"/"+sat.orbit.long.toFixed(1), "deg"));
-        satellite.appendChild(printRow("Solar Panel Pwr Output:", sat.solar_panel.power_output.toFixed(2), "kW"));        
-        satellite.appendChild(printRow("Laser Pwr Draw:", sat.laser_power_draw.toFixed(2), "kW")); 
-        satellite.appendChild(printRow("Laser Pwr Output:", (sat.laser_power_draw*lunarSpark.system.satellite.laser_eff).toFixed(2),"kW"));
+        satellite.appendChild(printRow("Solar Panel Pwr Output:", sat.solar_panel.power_output.toFixed(0), "W"));        
+        satellite.appendChild(printRow("Laser Pwr Draw:", sat.laser_power_draw.toFixed(0), "W")); 
+        satellite.appendChild(printRow("Laser Pwr Output:", (sat.laser_power_draw*lunarSpark.system.satellite.laser_eff).toFixed(2),"W"));
         satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "Dia", "Int", "Pwr", true));
         satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
         for (var i=0;i<sat.vehicles.length;i++) {
@@ -341,8 +346,8 @@ function printVehicle(index) {
             vehicle.className = "vehicle notinshadow";
         }
 
-        vehicle.appendChild(printRow("Vehicle["+index+"]:", veh.id, "-", true));
-        var row = printRow("Battery Charge:", veh.battery.percent.toFixed(1)+"% "+ veh.battery.charge.toFixed(2)+"/"+veh.battery.capacity.toFixed(2), "kWh");
+        vehicle.appendChild(printRow("Vehicle["+index+"]: "+veh.id, "("+veh.location.lat+"/"+veh.location.long+")", "deg", true));
+        var row = printRow("Battery Charge:", veh.battery.percent.toFixed(1)+"% "+ veh.battery.charge.toFixed(0)+"/"+veh.battery.capacity.toFixed(0), "Wh");
         if (veh.battery.percent <= battOrangeThreshold) {
             row.className = "orange";
         }
@@ -352,10 +357,9 @@ function printVehicle(index) {
         vehicle.appendChild(row);
 
         vehicle.appendChild(printBatteryGuage(veh.battery.percent));
-        vehicle.appendChild(printRow("Location (lat/long):", veh.location.lat+"/"+veh.location.long, "deg"));
-        vehicle.appendChild(printRow("Vehicle Pwr Draw:",  (veh.power_draw).toFixed(2), "kW"));
-        vehicle.appendChild(printRow("Solar Panel Pwr Output:", veh.solar_panel.power_output.toFixed(2), "kW"));
-        vehicle.appendChild(printRow("Laser Panel Pwr Output:", (veh.laser_panel.power_output).toFixed(2), "kW"));
+        vehicle.appendChild(printRow("Vehicle Pwr Draw:",  (veh.power_draw).toFixed(0), "W"));
+        vehicle.appendChild(printRow("Solar Panel Pwr Output:", veh.solar_panel.power_output.toFixed(0), "W"));
+        vehicle.appendChild(printRow("Laser Panel Pwr Output:", (veh.laser_panel.power_output).toFixed(0), "W"));
         vehicle.appendChild(printTable("Lsr", "Rng", "Azm", "Elv", "Dia", "Int", "Pwr", true));
         vehicle.appendChild(printTable("#.#", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
         for (var i=0;i<maxBeamsPerVehicle;i++) {
@@ -372,7 +376,6 @@ function printVehicle(index) {
         vehicle.appendChild(printRow("Vehicle["+index+"]:", "---", "-", true));
         vehicle.appendChild(printRow("Battery Charge:", "---", "-"));
         vehicle.appendChild(printBatteryGuage(0));
-        vehicle.appendChild(printRow("Location (lat/long):", "---", "-"));
         vehicle.appendChild(printRow("Vehicle Pwr Draw:",  "---", "-"))
         vehicle.appendChild(printRow("Solar Panel Pwr Output:", "---", "-"));
         vehicle.appendChild(printRow("Laser Panel Pwr Output:", "---", "-"));
@@ -396,7 +399,8 @@ function printSimStatus() {
     div.id = "simStatus1";
 
     div.appendChild(printRow("Step Duration:", timeStep.toFixed(3), "min"));
-    div.appendChild(printRow("Exec Rate:", execRate.toFixed(1), "Hz"));
+    div.appendChild(printRow("Execution Rate:", execRate.toFixed(1), "Hz"));
+    div.appendChild(printRow("Realtime Rate:", realTime.toFixed(1), "X"));
     
     simStatus = document.getElementById('simStatus1');
     simStatus.replaceWith(div);
