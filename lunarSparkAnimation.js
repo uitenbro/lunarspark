@@ -1,9 +1,9 @@
 // Background image and canvas dimensions
-const desiredCanvasWidth = 311; // pixels
-const orbitDistanceOffset = 200; // pixels
+const desiredCanvasWidth = 511; // pixels
+const orbitDistanceOffset = 100; // pixels
 const orbitWidth = 50; // pixels
-const orbitVisibilityLowerBound  = 46; // degrees
-const orbitVisibilityUpperBound = 314; // degrees
+const orbitVisibilityLowerBound  = 85; // degrees
+const orbitVisibilityUpperBound = 275; // degrees
 const satelliteVisibilityOffset = 2 //degrees
 const img = new Image(); // Create new img element
 //const imageFile = "labeled_lunar_south_pole.jpg"; // 80-90 degree south pole image with sites labeled
@@ -48,8 +48,8 @@ function drawMoon() {
 
 function drawAll(time) {
     drawSunIllumination(); 
-    drawLasers();
     drawVehicles();
+    drawLasers();
     drawOrbit();
     drawSatellites();
 }
