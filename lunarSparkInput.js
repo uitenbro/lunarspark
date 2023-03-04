@@ -278,17 +278,17 @@ var lunarSparkInput = {
   ],
   "satellites": [
     {
-      "active": false,
+      "active": true,
       "id": "Spark1",
       "orbit": {
         "min": 37,
       },
       "solar_panel": {
-        "area": 25,
+        "area": 35,
       },
       "battery": {
-        "capacity": 5000,
-        "charge": 5000,
+        "capacity": 8000,
+        "charge": 8000,
       },
       "sat_power_draw": 1800,
       "laser_count": 4,
@@ -297,7 +297,7 @@ var lunarSparkInput = {
       "lasers": []
     },
     {
-      "active": true,
+      "active": false,
       "id": "Spark2",
       "orbit": {
         "min": 74,
@@ -325,12 +325,12 @@ var lunarSparkInput = {
         "anomaly": 180
       },
       "solar_panel": {
-        "area": 25,
+        "area": 30,
         "power_output": 0
       },
       "battery": {
         "capacity": 10000,
-        "charge": 7500,
+        "charge": 10000,
         "percent": 0
       },
       "sat_power_draw": 2000,
@@ -340,7 +340,7 @@ var lunarSparkInput = {
       "lasers": []
     },
     {
-      "active": true,
+      "active": false,
       "id": "Spark4",
       "orbit": {
         "lat": 0,
