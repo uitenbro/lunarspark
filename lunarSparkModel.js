@@ -242,7 +242,7 @@ function connectLasers() {
 						laserConnectCount++;
 					}
 					else if (chosenVehicles.length > 1) {
-						chosenVeh = chosenVehicles[j%(chosenVehicles.length-1)]; 
+						chosenVeh = chosenVehicles[j%(chosenVehicles.length)]; 
 					
 						// connect the laser to the vehicle (allow multiple lasers to single vehicle)
 						connectLaser(i, j, chosenVeh.vehIndex, chosenVeh.range, chosenVeh.azimuth, chosenVeh.elevation, chosenVeh.diameter, chosenVeh.intensity, chosenVeh.power);  

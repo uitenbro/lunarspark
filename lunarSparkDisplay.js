@@ -400,7 +400,7 @@ function printSimStatus() {
 
     div.appendChild(printRow("Step Duration:", timeStep.toFixed(3), "min"));
     div.appendChild(printRow("Execution Rate:", execRate.toFixed(1), "Hz"));
-    div.appendChild(printRow("Realtime Rate:", realTime.toFixed(1), "X"));
+    div.appendChild(printRow("Realtime Rate:", realTime.toFixed(1), "x"));
     
     simStatus = document.getElementById('simStatus1');
     simStatus.replaceWith(div);
