@@ -251,7 +251,7 @@ var lunarSparkInput = {
       "beams": []
     },
     {
-      "active": true,
+      "active": false,
       "id": "SMALL9",
       "location": {
         "lat": -85,
@@ -278,7 +278,7 @@ var lunarSparkInput = {
   ],
   "satellites": [
     {
-      "active": true,
+      "active": false,
       "id": "Spark1",
       "orbit": {
         "min": 37,

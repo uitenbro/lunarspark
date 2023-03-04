@@ -99,6 +99,10 @@ div#simStatus2  {
 	padding: 2px;
 }
 
+meter {
+	width: 100%;
+/*	height: 5px;*/
+}
 /* table alignment */
 .left {
 	display: block;
@@ -123,6 +127,7 @@ div#simStatus2  {
 }
 .underline {
 	text-decoration: underline;
+	font-weight: bold;
 }
 /* satellite */
 .satellite {
@@ -143,7 +148,7 @@ div#simStatus2  {
 
 /* vehicle */
 .vehicle {
-	border: 1px solid black;
+	border: 1px solid white;
 	margin: 0px;	
 	padding: 2px;
 	min-width: 350px;
