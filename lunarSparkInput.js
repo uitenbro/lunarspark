@@ -14,7 +14,9 @@ var lunarSparkInput = {
       "solar_panel_eff": 0.3,
       "eps_eff": 0.5,
       "laser_eff": 0.2,
-      "watt_output_per_laser": 1000,
+      "laser_output_power": 1000,
+      "laser_output_diameter": .50, 
+      "laser_divergence_half_angle" : 0.0005/1000/2,
     },
     "vehicle": {
       "solar_panel_eff": 0.3,

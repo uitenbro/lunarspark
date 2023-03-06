@@ -251,7 +251,7 @@ function printSatellite(index) {
     var satellite = document.createElement('div');
 
     if (sat.active) {
-        if (index % 2) {
+        if (sat.orbit.anomaly >= orbitVisibilityLowerBound+satelliteVisibilityOffset && sat.orbit.anomaly <= orbitVisibilityUpperBound-satelliteVisibilityOffset) {
             satellite.className = "satellite notinview";
         }
         else {
@@ -262,12 +262,12 @@ function printSatellite(index) {
         
         satellite.appendChild(printRow("Satellite["+index+"]:", sat.id, "-", true));
         var row = printRow("Battery Charge:", sat.battery.percent.toFixed(1)+"% "+ sat.battery.charge.toFixed(0)+"/"+sat.battery.capacity.toFixed(0), "Wh");
-        if (sat.battery.percent <= battOrangeThreshold) {
-            row.className = "orange";
-        }
-        if (sat.battery.percent <= battRedThreshold) {
-            row.className = "red";
-        }
+        // if (sat.battery.percent <= battOrangeThreshold) {
+        //     row.className = "orange";
+        // }
+        // if (sat.battery.percent <= battRedThreshold) {
+        //     row.className = "red";
+        // }
         satellite.appendChild(row); 
         satellite.appendChild(printBatteryGuage(sat.battery.percent)); 
         satellite.appendChild(printRow("Satellite Pwr Draw:", sat.sat_power_draw.toFixed(0), "W"));
@@ -348,12 +348,12 @@ function printVehicle(index) {
 
         vehicle.appendChild(printRow("Vehicle["+index+"]: "+veh.id, "("+veh.location.lat+"/"+veh.location.long+")", "deg", true));
         var row = printRow("Battery Charge:", veh.battery.percent.toFixed(1)+"% "+ veh.battery.charge.toFixed(0)+"/"+veh.battery.capacity.toFixed(0), "Wh");
-        if (veh.battery.percent <= battOrangeThreshold) {
-            row.className = "orange";
-        }
-        if (veh.battery.percent <= battRedThreshold) {
-            row.className = "red";
-        }
+        // if (veh.battery.percent <= battOrangeThreshold) {
+        //     row.className = "orange";
+        // }
+        // if (veh.battery.percent <= battRedThreshold) {
+        //     row.className = "red";
+        // }
         vehicle.appendChild(row);
 
         vehicle.appendChild(printBatteryGuage(veh.battery.percent));

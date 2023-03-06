@@ -12,19 +12,11 @@ const daysPerLunarCycle = 29.5; // earth days per lunar cycle with respect to su
 const minPerLunarCycle = daysPerLunarCycle*minPerDay;
 const sunAngleDegreesPerMinute = 360/minPerLunarCycle; // deg per min
 const ascendingNodeDegreesPerMinute = 360/minPerLunarCycle; // deg per min
-
 const solarFluxInLunarOrbit = 1373; // W/m2
 const moonRadius = 1740000; // meters
 
-// Orbit inputs
+// Orbit constants
 const orbitRadius = moonRadius + lunarSpark.environment.orbit.altitude; // meters
-
-// Laser Constants
-const laserBeamWavelength = 1070; // nanometers (not used)
-const laserBeamOutputPower = 1000; // Watts
-const laserBeamDivergence = 0.0005/1000 // milli-radians/2/1000 = radians
-const laserBeamDivergenceHalfAngle = laserBeamDivergence/2 // radians
-const laserBeamInitialDiameter = .50 // meters
 
 function stepModel() { 
 	updateSunAngle();
@@ -254,7 +246,7 @@ function connectLasers() {
 					}
 			}
 			// TODO: confirm 20% efficiency to produce 1kW
-			lunarSpark.satellites[i].laser_power_draw = laserConnectCount*lunarSpark.system.satellite.watt_output_per_laser/lunarSpark.system.satellite.laser_eff; 
+			lunarSpark.satellites[i].laser_power_draw = laserConnectCount*lunarSpark.system.satellite.laser_output_power/lunarSpark.system.satellite.laser_eff; 
 		}
 	}
 }
@@ -322,9 +314,9 @@ function calculateBeamCharacteristics(satIndex, vehIndex) {
 	// Calculate beam characteristics
 	var {range, azimuth, elevation} = calculateRangeAzimuthElevation(satIndex, vehIndex); // meters deg deg
 	// TODO: This is a potential beam (it may not be achieveable due to line of site)
-	var diameter = 2*range * Math.tan(laserBeamDivergenceHalfAngle) + laserBeamInitialDiameter; // meters
+	var diameter = 2*range * Math.tan(lunarSpark.system.satellite.laser_divergence_half_angle) + lunarSpark.system.satellite.laser_output_diameter; // meters
 	var areaBeam = Math.PI*((diameter/2)**2); 
-	var intensity = laserBeamOutputPower/(areaBeam); // W/m2 (laser output constant no space loss from output to panel) // TODO: check use of env.sat constant
+	var intensity = lunarSpark.system.satellite.laser_output_power/(areaBeam); // W/m2 (laser output constant no space loss from output to panel)
 	var power = areaBeam*intensity; // TODO: handle case where beam diameter exceed laser panel dimensions
 
 	return {vehIndex, azimuth, elevation, range, diameter, intensity, power} 
@@ -444,12 +436,12 @@ function calculateRangeAzimuthElevation(satIndex, vehIndex) {
 	elevation = elevation*180/Math.PI // deg
 
 	//console.log("vehIndex:"+vehIndex+" vehLat:"+veh.location.lat+" vehLong:"+veh.location.long+" vehVect x:"+vehVector.x.toFixed(0)+" y:"+vehVector.y.toFixed(0)+" z:"+vehVector.z.toFixed(0));
-	console.log("satIndex:"+satIndex+" satLat:"+(sat.orbit.lat).toFixed(0)+" satLong:"+sat.orbit.long.toFixed(0)) // +" satVect x:"+satVector.x.toFixed(0)+" y:"+satVector.y.toFixed(0)+" z:"+satVector.z.toFixed(0));
-	console.log("vehIndex:"+vehIndex+" vehLat:"+veh.location.lat.toFixed(0)+" vehLong:"+veh.location.long+" az:" +(azimuth).toFixed(2)+" el:"+(elevation).toFixed(2)+" range:" + (range/1000).toFixed(0)) // + " x:"+rangeVector.x.toFixed(0)+" y:"+rangeVector.y.toFixed(0)+" z:"+rangeVector.z.toFixed(0))
-	console.log("lmd(18.73): "+(lamda*180/Math.PI).toFixed(2) + " rho(59.82):"+  (rho*180/Math.PI).toFixed(2) + 
-	 	" nadirAngle(56.85):"+ (nadirAngle*180/Math.PI).toFixed(2) + " az(48.35):"+(azimuth).toFixed(2) +
-	 	" el(14.42):"+(elevation).toFixed(2)+" range(2446):" + (range/1000).toFixed(0))
-	console.log();
+	// console.log("satIndex:"+satIndex+" satLat:"+(sat.orbit.lat).toFixed(0)+" satLong:"+sat.orbit.long.toFixed(0)) // +" satVect x:"+satVector.x.toFixed(0)+" y:"+satVector.y.toFixed(0)+" z:"+satVector.z.toFixed(0));
+	// console.log("vehIndex:"+vehIndex+" vehLat:"+veh.location.lat.toFixed(0)+" vehLong:"+veh.location.long+" az:" +(azimuth).toFixed(2)+" el:"+(elevation).toFixed(2)+" range:" + (range/1000).toFixed(0)) // + " x:"+rangeVector.x.toFixed(0)+" y:"+rangeVector.y.toFixed(0)+" z:"+rangeVector.z.toFixed(0))
+	// console.log("lmd(18.73): "+(lamda*180/Math.PI).toFixed(2) + " rho(59.82):"+  (rho*180/Math.PI).toFixed(2) + 
+	//  	" nadirAngle(56.85):"+ (nadirAngle*180/Math.PI).toFixed(2) + " az(48.35):"+(azimuth).toFixed(2) +
+	//  	" el(14.42):"+(elevation).toFixed(2)+" range(2446):" + (range/1000).toFixed(0))
+	// console.log();
 
 	return {range, azimuth, elevation}
 }
