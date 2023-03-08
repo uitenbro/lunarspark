@@ -138,12 +138,12 @@ meter {
 	min-width: 350px;
 }
 .notinview {
-	background-color: cornflowerblue;
-	color: white;
-}
-.inview {
 	background-color: palegoldenrod;
 	color: black;
+}
+.inview {
+	background-color: cornflowerblue;
+	color: white;
 }
 
 /* vehicle */
@@ -167,6 +167,9 @@ meter {
 }
 .red {
 	background-color: red;
+}
+.green {
+	background-color: green;
 }
 .inactive {
 	color: #e3e3e3;

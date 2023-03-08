@@ -236,6 +236,16 @@ function printBatteryGuage(batteryPecent) {
     batteryGauge.low = battRedThreshold;
     batteryGauge.optimum = 75;
     batteryGauge.value = batteryPecent;
+    if (batteryPecent <= battRedThreshold) {
+        batteryGauge.className = "red";
+    }
+    else if (batteryPecent <= battOrangeThreshold) {
+        batteryGauge.className = "orange";
+    }
+    else {
+        batteryGauge.className = "green";
+    }
+
 
     return batteryGauge;
 }
@@ -251,23 +261,17 @@ function printSatellite(index) {
     var satellite = document.createElement('div');
 
     if (sat.active) {
-        if (sat.orbit.anomaly >= orbitVisibilityLowerBound+satelliteVisibilityOffset && sat.orbit.anomaly <= orbitVisibilityUpperBound-satelliteVisibilityOffset) {
-            satellite.className = "satellite notinview";
-        }
-        else {
+        // if (sat.orbit.anomaly >= orbitVisibilityLowerBound+satelliteVisibilityOffset && sat.orbit.anomaly <= orbitVisibilityUpperBound-satelliteVisibilityOffset) {
+        //     satellite.className = "satellite notinview";
+        // }
+        // else {
             satellite.className = "satellite inview";
-        }
+        // }
 
         // TODO: add orbit count, satLat, satLong, and range/az/elev to each customer
         
         satellite.appendChild(printRow("Satellite["+index+"]:", sat.id, "-", true));
         var row = printRow("Battery Charge:", sat.battery.percent.toFixed(1)+"% "+ sat.battery.charge.toFixed(0)+"/"+sat.battery.capacity.toFixed(0), "Wh");
-        // if (sat.battery.percent <= battOrangeThreshold) {
-        //     row.className = "orange";
-        // }
-        // if (sat.battery.percent <= battRedThreshold) {
-        //     row.className = "red";
-        // }
         satellite.appendChild(row); 
         satellite.appendChild(printBatteryGuage(sat.battery.percent)); 
         satellite.appendChild(printRow("Satellite Pwr Draw:", sat.sat_power_draw.toFixed(0), "W"));
@@ -276,7 +280,7 @@ function printSatellite(index) {
         satellite.appendChild(printRow("Sub-Satellite(lat/long):", sat.orbit.lat.toFixed(1)+"/"+sat.orbit.long.toFixed(1), "deg"));
         satellite.appendChild(printRow("Solar Panel Pwr Output:", sat.solar_panel.power_output.toFixed(0), "W"));        
         satellite.appendChild(printRow("Laser Pwr Draw:", sat.laser_power_draw.toFixed(0), "W")); 
-        satellite.appendChild(printRow("Laser Pwr Output:", (sat.laser_power_draw*lunarSpark.system.satellite.laser_eff).toFixed(2),"W"));
+        satellite.appendChild(printRow("Laser Pwr Output:", (sat.laser_power_draw*lunarSpark.system.satellite.laser_eff).toFixed(0),"W"));
         satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "Dia", "Int", "Pwr", true));
         satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
         for (var i=0;i<sat.vehicles.length;i++) {
@@ -301,7 +305,7 @@ function printSatellite(index) {
         satellite.className = "satellite inactive";
         satellite.appendChild(printRow("Satellite["+index+"]:", "---", "-", true));
         satellite.appendChild(printRow("Battery Charge:", "---", "-"));
-        satellite.appendChild(printBatteryGuage(0));
+        satellite.appendChild(document.createElement('meter'));
         satellite.appendChild(printRow("Satellite Pwr Draw:", "---", "-"));
         satellite.appendChild(printRow("Orbit(anomaly):", "---", "-"));
         satellite.appendChild(printRow("Orbit(time/period):", "---/---", "-"));
@@ -348,14 +352,7 @@ function printVehicle(index) {
 
         vehicle.appendChild(printRow("Vehicle["+index+"]: "+veh.id, "("+veh.location.lat+"/"+veh.location.long+")", "deg", true));
         var row = printRow("Battery Charge:", veh.battery.percent.toFixed(1)+"% "+ veh.battery.charge.toFixed(0)+"/"+veh.battery.capacity.toFixed(0), "Wh");
-        // if (veh.battery.percent <= battOrangeThreshold) {
-        //     row.className = "orange";
-        // }
-        // if (veh.battery.percent <= battRedThreshold) {
-        //     row.className = "red";
-        // }
         vehicle.appendChild(row);
-
         vehicle.appendChild(printBatteryGuage(veh.battery.percent));
         vehicle.appendChild(printRow("Vehicle Pwr Draw:",  (veh.power_draw).toFixed(0), "W"));
         vehicle.appendChild(printRow("Solar Panel Pwr Output:", veh.solar_panel.power_output.toFixed(0), "W"));
@@ -375,7 +372,7 @@ function printVehicle(index) {
         vehicle.className = "vehicle inactive";
         vehicle.appendChild(printRow("Vehicle["+index+"]:", "---", "-", true));
         vehicle.appendChild(printRow("Battery Charge:", "---", "-"));
-        vehicle.appendChild(printBatteryGuage(0));
+        vehicle.appendChild(document.createElement('meter'));
         vehicle.appendChild(printRow("Vehicle Pwr Draw:",  "---", "-"))
         vehicle.appendChild(printRow("Solar Panel Pwr Output:", "---", "-"));
         vehicle.appendChild(printRow("Laser Panel Pwr Output:", "---", "-"));
