@@ -281,11 +281,11 @@ function printSatellite(index) {
         satellite.appendChild(printRow("Solar Panel Pwr Output:", sat.solar_panel.power_output.toFixed(0), "W"));        
         satellite.appendChild(printRow("Laser Pwr Draw:", sat.laser_power_draw.toFixed(0), "W")); 
         satellite.appendChild(printRow("Laser Pwr Output:", (sat.laser_power_draw*lunarSpark.system.satellite.laser_eff).toFixed(0),"W"));
-        satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "Dia", "Int", "Pwr", true));
-        satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
+        satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "RxArea", "Int", "Pwr", true));
+        satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(m2)", "(W/m2)", "(W)", true));
         for (var i=0;i<sat.vehicles.length;i++) {
             if (i<sat.vehicles.length && lunarSpark.vehicles[i].active == true) {
-                satellite.appendChild(printTable(sat.vehicles[i].id, (sat.vehicles[i].range/1000).toFixed(0), sat.vehicles[i].azimuth.toFixed(0), sat.vehicles[i].elevation.toFixed(0), (sat.vehicles[i].diameter*100).toFixed(0), sat.vehicles[i].intensity.toFixed(0), sat.vehicles[i].power.toFixed(0)));
+                satellite.appendChild(printTable(sat.vehicles[i].id, (sat.vehicles[i].range/1000).toFixed(0), sat.vehicles[i].azimuth.toFixed(0), sat.vehicles[i].elevation.toFixed(0), (sat.vehicles[i].rxArea).toFixed(2), sat.vehicles[i].intensity.toFixed(0), sat.vehicles[i].power.toFixed(0)));
             }
             else {
                 satellite.appendChild(printTable("---", "---", "---", "---", "---", "---", "---")); 
@@ -294,7 +294,7 @@ function printSatellite(index) {
         // satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
         // for (var i=0;i<maxLasersPerSatellite;i++) {
         //     if (i<sat.lasers.length) {
-        //         satellite.appendChild(printTable(sat.lasers[i].vehicle, (sat.lasers[i].range/1000).toFixed(0), sat.lasers[i].azimuth.toFixed(0), sat.lasers[i].elevation.toFixed(0), (sat.lasers[i].diameter*100).toFixed(0), sat.lasers[i].intensity.toFixed(0), sat.lasers[i].power.toFixed(0)));
+        //         satellite.appendChild(printTable(sat.lasers[i].vehicle, (sat.lasers[i].range/1000).toFixed(0), sat.lasers[i].azimuth.toFixed(0), sat.lasers[i].elevation.toFixed(0), (sat.lasers[i].rxArea*100).toFixed(0), sat.lasers[i].intensity.toFixed(0), sat.lasers[i].power.toFixed(0)));
         //     }
         //       else {
         //         satellite.appendChild(printTable("---", "---", "---", "---", "---", "---", "---")); 
@@ -313,8 +313,8 @@ function printSatellite(index) {
         satellite.appendChild(printRow("Solar Panel Pwr Output:", "---", "-"));
         satellite.appendChild(printRow("Laser Pwr Draw:", "---", "-")); 
         satellite.appendChild(printRow("Laser Pwr Output:", "---", "-")); 
-        satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "Dia", "Int", "Pwr", true));
-        satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
+        satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "RxArea", "Int", "Pwr", true));
+        satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(m2)", "(W/m2)", "(W)", true));
         for (var i=0;i<sat.vehicles.length;i++) {
             satellite.appendChild(printTable("---", "---", "---", "---", "---", "---", "---")); 
         }
@@ -357,11 +357,11 @@ function printVehicle(index) {
         vehicle.appendChild(printRow("Vehicle Pwr Draw:",  (veh.power_draw).toFixed(0), "W"));
         vehicle.appendChild(printRow("Solar Panel Pwr Output:", veh.solar_panel.power_output.toFixed(0), "W"));
         vehicle.appendChild(printRow("Laser Panel Pwr Output:", (veh.laser_panel.power_output).toFixed(0), "W"));
-        vehicle.appendChild(printTable("Lsr", "Rng", "Azm", "Elv", "Dia", "Int", "Pwr", true));
-        vehicle.appendChild(printTable("#.#", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
+        vehicle.appendChild(printTable("Lsr", "Rng", "Azm", "Elv", "RxArea", "Int", "Pwr", true));
+        vehicle.appendChild(printTable("#.#", "(km)", "(deg)", "(deg)", "(m2)", "(W/m2)", "(W)", true));
         for (var i=0;i<maxBeamsPerVehicle;i++) {
             if (i<veh.beams.length) {
-                vehicle.appendChild(printTable(veh.beams[i].satellite+"."+veh.beams[i].laser, (veh.beams[i].range/1000).toFixed(0), veh.beams[i].azimuth.toFixed(0), veh.beams[i].elevation.toFixed(0), (veh.beams[i].diameter*100).toFixed(0), veh.beams[i].intensity.toFixed(0), veh.beams[i].power.toFixed(0))); 
+                vehicle.appendChild(printTable(veh.beams[i].satellite+"."+veh.beams[i].laser, (veh.beams[i].range/1000).toFixed(0), veh.beams[i].azimuth.toFixed(0), veh.beams[i].elevation.toFixed(0), (veh.beams[i].rxArea).toFixed(2), veh.beams[i].intensity.toFixed(0), veh.beams[i].power.toFixed(0))); 
             }
             else {
                 vehicle.appendChild(printTable("-.-", "---", "---", "---", "---", "---", "---")); 
@@ -376,8 +376,8 @@ function printVehicle(index) {
         vehicle.appendChild(printRow("Vehicle Pwr Draw:",  "---", "-"))
         vehicle.appendChild(printRow("Solar Panel Pwr Output:", "---", "-"));
         vehicle.appendChild(printRow("Laser Panel Pwr Output:", "---", "-"));
-        vehicle.appendChild(printTable("Lsr", "Rng", "Azm", "Elv", "Dia", "Int", "Pwr", true));
-        vehicle.appendChild(printTable("#.#", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
+        vehicle.appendChild(printTable("Lsr", "Rng", "Azm", "Elv", "RxArea", "Int", "Pwr", true));
+        vehicle.appendChild(printTable("#.#", "(km)", "(deg)", "(deg)", "(m2)", "(W/m2)", "(W)", true));
         for (var i=0;i<maxBeamsPerVehicle;i++) {
             vehicle.appendChild(printTable("-.-", "---", "---", "---", "---", "---", "---")); 
         }

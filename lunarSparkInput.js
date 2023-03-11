@@ -2,8 +2,8 @@ var lunarSparkInput = {
   "environment": {
     "time": 0,
     "orbit": {
-      "period": 148,
-      "altitude": 402000,
+      "period": 250,
+      "altitude": 1300000,
       "ascending_node": 90,
       "count":0
     },
@@ -15,13 +15,13 @@ var lunarSparkInput = {
       "eps_eff": 0.5,
       "laser_eff": 0.2,
       "laser_output_power": 1000,
-      "laser_output_diameter": .50, 
+      "laser_output_diameter": 1, 
       "laser_divergence_half_angle" : 0.0005/1000/2,
     },
     "vehicle": {
       "solar_panel_eff": 0.3,
+      "laser_panel_eff": 0.4,
       "eps_eff": 0.5,
-      "laser_panel_eff": 0.4
     }
   },
   "vehicles": [
@@ -45,8 +45,7 @@ var lunarSparkInput = {
       },
       "power_draw": 80,
       "laser_panel": {
-        "height": 1,
-        "width": 1,
+        "diameter": 1,
       },
       "beams": []
     },
@@ -70,8 +69,7 @@ var lunarSparkInput = {
       },
       "power_draw": 10,
       "laser_panel": {
-        "height": 0.5,
-        "width": 0.5,
+        "diameter": 0.5,
       },
       "beams": []
     },
@@ -96,8 +94,7 @@ var lunarSparkInput = {
       },
       "power_draw": 300,
       "laser_panel": {
-        "height": 0.5,
-        "width": 0.5,        
+        "diameter": 0.5,
       },
       "beams": []
     },
@@ -121,8 +118,7 @@ var lunarSparkInput = {
       },
       "power_draw": 80,
       "laser_panel": {
-        "height": 0.5,
-        "width": 0.5,
+        "diameter": 0.5,
       },
       "beams": [
       ]
@@ -147,8 +143,7 @@ var lunarSparkInput = {
       },
       "power_draw": 10,
       "laser_panel": {
-        "height": 0.5,
-        "width": 0.5,
+        "diameter": 0.5,
       },
       "beams": []
     },
@@ -172,8 +167,7 @@ var lunarSparkInput = {
       },
       "power_draw": 10,
       "laser_panel": {
-        "height": 0.5,
-        "width": 0.5,
+        "diameter": 0.5,
       },
       "beams": []
     },
@@ -197,8 +191,7 @@ var lunarSparkInput = {
       },
       "power_draw": 10,
       "laser_panel": {
-        "height": 0.5,
-        "width": 0.5,
+        "diameter": 0.5,
       },
       "beams": []
     },
@@ -222,8 +215,7 @@ var lunarSparkInput = {
       },
       "power_draw": 10,
       "laser_panel": {
-        "height": 0.5,
-        "width": 0.5,
+        "diameter": 0.5,
       },
       "beams": []
     },
@@ -247,8 +239,7 @@ var lunarSparkInput = {
       },
       "power_draw": 10,
       "laser_panel": {
-        "height": 0.5,
-        "width": 0.5,
+        "diameter": 0.5,
       },
       "beams": []
     },
@@ -272,8 +263,7 @@ var lunarSparkInput = {
       },
       "power_draw": 20,
       "laser_panel": {
-        "height": 0.5,
-        "width": 0.5,
+        "diameter": 0.5,
       },
       "beams": []
     }

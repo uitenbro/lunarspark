@@ -57,11 +57,11 @@ function updateSatellites () {
 		// Update range/az/elev to each vehicle 
 		for (var k=0;k<lunarSpark.vehicles.length;k++) {
 			if (lunarSpark.vehicles[k].active) {
-				var {vehIndex, range, azimuth, elevation, diameter, intensity, power} = calculateBeamCharacteristics(i,k);
-				sat.vehicles[k] = {"id": vehIndex, "range": range, "azimuth": azimuth, "elevation": elevation, "diameter": diameter, "intensity": intensity, "power": power};
+				var {vehIndex, range, azimuth, elevation, rxArea, intensity, power} = calculateBeamCharacteristics(i,k);
+				sat.vehicles[k] = {"id": vehIndex, "range": range, "azimuth": azimuth, "elevation": elevation, "rxArea": rxArea, "intensity": intensity, "power": power};
 			}
 			else {
-				sat.vehicles[k] = {"id": "---", "range": 0, "azimuth": 0, "elevation": 0, "diameter": 0, "intensity": 0, "power": 0};
+				sat.vehicles[k] = {"id": "---", "range": 0, "azimuth": 0, "elevation": 0, "rxArea": 0, "intensity": 0, "power": 0};
 			}
 		}	
 		// TODO: inEclipse(sat)
@@ -183,13 +183,13 @@ function connectLasers() {
 			for (var k=0;k<lunarSpark.vehicles.length;k++) {
 				if (lunarSpark.vehicles[k].active) {
 					// Determine beam characteristics for this vehicle
-					var {vehIndex, range, azimuth, elevation, diameter, intensity, power} = calculateBeamCharacteristics(i,k);
+					var {vehIndex, range, azimuth, elevation, rxArea, intensity, power} = calculateBeamCharacteristics(i,k);
 					// If the vehicle is in the line of sight (elevation)
 					if (elevation > 12) { // TODO: consider shadow model (needs azimuth)
 						// If vehicle is in the lunar night 
 						if (lunarSpark.vehicles[k].location.in_night) {	
 							//if (current beam intensity + new beam intesity) < max intensity {
-							potentialVehicles.push({vehIndex, range, azimuth, elevation, diameter, intensity, power});
+							potentialVehicles.push({vehIndex, range, azimuth, elevation, rxArea, intensity, power});
 						}
 					}
 				}
@@ -230,14 +230,14 @@ function connectLasers() {
 					var chosenVeh = chosenVehicles[0];  // set the chosen vehicle to the first entry because % won't work on zero
 					if (chosenVehicles.length == 1){
 						// connect the laser to the vehicle (allow multiple lasers to single vehicle)
-						connectLaser(i, j, chosenVeh.vehIndex, chosenVeh.range, chosenVeh.azimuth, chosenVeh.elevation, chosenVeh.diameter, chosenVeh.intensity, chosenVeh.power);  
+						connectLaser(i, j, chosenVeh.vehIndex, chosenVeh.range, chosenVeh.azimuth, chosenVeh.elevation, chosenVeh.rxArea, chosenVeh.intensity, chosenVeh.power);  
 						laserConnectCount++;
 					}
 					else if (chosenVehicles.length > 1) {
 						chosenVeh = chosenVehicles[j%(chosenVehicles.length)]; 
 					
 						// connect the laser to the vehicle (allow multiple lasers to single vehicle)
-						connectLaser(i, j, chosenVeh.vehIndex, chosenVeh.range, chosenVeh.azimuth, chosenVeh.elevation, chosenVeh.diameter, chosenVeh.intensity, chosenVeh.power);  
+						connectLaser(i, j, chosenVeh.vehIndex, chosenVeh.range, chosenVeh.azimuth, chosenVeh.elevation, chosenVeh.rxArea, chosenVeh.intensity, chosenVeh.power);  
 						laserConnectCount++;
 					}
 					else {
@@ -250,7 +250,7 @@ function connectLasers() {
 		}
 	}
 }
-function connectLaser(satellite, laser, vehicle, range, azimuth, elevation, diameter, intensity, power) {
+function connectLaser(satellite, laser, vehicle, range, azimuth, elevation, rxArea, intensity, power) {
 	//TODO: how many beams allowed per vehicles should be a function of intensity not arbitary max number
 	// TODO: error connecting if satellite is too low on power
 
@@ -258,9 +258,9 @@ function connectLaser(satellite, laser, vehicle, range, azimuth, elevation, diam
 	disconnectLaser(satellite, laser);
 
 	// Update satellite data store
-	lunarSpark.satellites[satellite].lasers.push({"laser": laser, "vehicle": vehicle, "range": range, "azimuth":azimuth , "elevation": elevation, "diameter": diameter, "intensity": intensity, "power": power });
+	lunarSpark.satellites[satellite].lasers.push({"laser": laser, "vehicle": vehicle, "range": range, "azimuth":azimuth , "elevation": elevation, "rxArea": rxArea, "intensity": intensity, "power": power });
 	// Update vehicle data store
-	lunarSpark.vehicles[vehicle].beams.push({"satellite": satellite, "laser": laser, "range": range, "diameter": diameter, "azimuth":azimuth , "elevation": elevation, "intensity": intensity, "power": power});
+	lunarSpark.vehicles[vehicle].beams.push({"satellite": satellite, "laser": laser, "range": range, "rxArea": rxArea, "azimuth":azimuth , "elevation": elevation, "intensity": intensity, "power": power});
 
 	// if more than maxBeamsPerVehicle report a message TODO: reword error message
 	if (lunarSpark.vehicles[vehicle].beams.length > maxBeamsPerVehicle) {
@@ -314,12 +314,16 @@ function calculateBeamCharacteristics(satIndex, vehIndex) {
 	// Calculate beam characteristics
 	var {range, azimuth, elevation} = calculateRangeAzimuthElevation(satIndex, vehIndex); // meters deg deg
 	// TODO: This is a potential beam (it may not be achieveable due to line of site)
-	var diameter = 2*range * Math.tan(lunarSpark.system.satellite.laser_divergence_half_angle) + lunarSpark.system.satellite.laser_output_diameter; // meters
-	var areaBeam = Math.PI*((diameter/2)**2); 
+	// TODO: if beam is not columnated then need divergence half angle
+	//var diameter = 2*range * Math.tan(lunarSpark.system.satellite.laser_divergence_half_angle) + lunarSpark.system.satellite.laser_output_diameter; // meters
+	var beamDiameter = lunarSpark.system.satellite.laser_output_diameter // meters
+	var areaBeam = Math.PI*((beamDiameter/2)**2); 
+	var receiverDiameter = lunarSpark.vehicles[vehIndex].laser_panel.diameter;
+	var rxArea = Math.PI*((receiverDiameter/2)**2)*Math.cos((90-elevation)*Math.PI/180); // area of the ellipse created due to elevation TODO:  Not correct
 	var intensity = lunarSpark.system.satellite.laser_output_power/(areaBeam); // W/m2 (laser output constant no space loss from output to panel)
-	var power = areaBeam*intensity; // TODO: handle case where beam diameter exceed laser panel dimensions
+	var power = rxArea*intensity; // Assume beam always covers the whole panel (pointing error accomodated by beam width)
 
-	return {vehIndex, azimuth, elevation, range, diameter, intensity, power} 
+	return {vehIndex, azimuth, elevation, range, rxArea, intensity, power} 
 }
 
 function calculateRangeAzimuthElevation(satIndex, vehIndex) {
