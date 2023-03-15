@@ -19,7 +19,7 @@ var context
 // Satellite drawing constants
 const satelliteCrossWidth = 20; // pixels
 const satelliteCrossHeight = 40; // pixels
-const satelliteLaserOffset = 9; //pixels
+const satelliteLaserOffset = 0; //pixels
 const laser0xOffset = 2*satelliteLaserOffset;
 const laser1xOffset = satelliteLaserOffset; 
 const laser2xOffset = -satelliteLaserOffset;

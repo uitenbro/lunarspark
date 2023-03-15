@@ -236,10 +236,10 @@ function printBatteryGuage(batteryPecent) {
     batteryGauge.low = battRedThreshold;
     batteryGauge.optimum = 75;
     batteryGauge.value = batteryPecent;
-    if (batteryPecent <= battRedThreshold) {
+    if (batteryPecent < battRedThreshold) {
         batteryGauge.className = "red";
     }
-    else if (batteryPecent <= battOrangeThreshold) {
+    else if (batteryPecent < battOrangeThreshold) {
         batteryGauge.className = "orange";
     }
     else {

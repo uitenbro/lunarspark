@@ -85,7 +85,10 @@ function updateSatellites () {
 
 		// Update Satellite/Laser Power Draw
 		// draw the power for this time step from the battery (eps efficiency taken on the way into the battery)
-		sat.battery.charge = sat.battery.charge - (sat.sat_power_draw*timeStep/60) - (sat.laser_power_draw*timeStep/60); // Watt*h		
+		// satellite power draw
+		sat.battery.charge = sat.battery.charge - (sat.sat_power_draw*timeStep/60) // Watt*h
+		// laser power draw x the duty cycle
+		sat.battery.charge = sat.battery.charge - (sat.laser_power_draw*lunarSpark.system.satellite.laser_duty_cycle*timeStep/60); // Watt*h		
 		// if battery charge is negative set to zero
 		if (sat.battery.charge < 0) {
 			sat.battery.charge = 0;
@@ -185,7 +188,7 @@ function connectLasers() {
 					// Determine beam characteristics for this vehicle
 					var {vehIndex, range, azimuth, elevation, rxArea, intensity, power} = calculateBeamCharacteristics(i,k);
 					// If the vehicle is in the line of sight (elevation)
-					if (elevation > 12) { // TODO: consider shadow model (needs azimuth)
+					if (elevation >= lunarSpark.system.vehicle.laser_panel_min_elevation) { // TODO: consider shadow model (needs azimuth)
 						// If vehicle is in the lunar night 
 						if (lunarSpark.vehicles[k].location.in_night) {	
 							//if (current beam intensity + new beam intesity) < max intensity {
@@ -198,22 +201,23 @@ function connectLasers() {
 			// If potential vehicles exceeds number of lasers
 			if (potentialVehicles.length > lunarSpark.satellites[i].laser_count) {
 				//TODO: add algorithm or sort to prioritize low power vehicles
-				//TODO: consider existing beam intensity to spread power more
-				
-				for (l=0;l<potentialVehicles.length;l++) {
-					var potVeh = potentialVehicles[l]
-					// Prefer vehicles who are already charging but not yet 100%
-					// if (lunarSpark.vehicles[potVeh.vehIndex].beams.length && lunarSpark.vehicles[potVeh.vehIndex].battery.percent < 99) {
-						chosenVehicles.push(potVeh)
-					// }
-					// else {
-					// 	// Determine if a vehicle is low on power
-					// 	if (lunarSpark.vehicles[potVeh.vehIndex].battery.percent<50) {  //TODO: use global threshold
-					// 		// This will out prioritize already charging vehicles // TODO: prioritize low charges
-					// 		chosenVehicles.push(potVeh)
-					// 	}
-					// }
-				}
+				chosenVehicles = potentialVehicles.sort(function(a,b){return lunarSpark.vehicles[a.vehIndex].battery.percent - lunarSpark.vehicles[b.vehIndex].battery.percent })
+
+
+				// for (l=0;l<potentialVehicles.length;l++) {
+				// 	var potVeh = potentialVehicles[l]
+				// 	// Prefer vehicles who are already charging but not yet 100%
+				// 	// if (lunarSpark.vehicles[potVeh.vehIndex].beams.length && lunarSpark.vehicles[potVeh.vehIndex].battery.percent < 99) {
+				// 		chosenVehicles.push(potVeh)
+				// 	// }
+				// 	// else {
+				// 	// 	// Determine if a vehicle is low on power
+				// 	// 	if (lunarSpark.vehicles[potVeh.vehIndex].battery.percent<50) {  //TODO: use global threshold
+				// 	// 		// This will out prioritize already charging vehicles // TODO: prioritize low charges
+				// 	// 		chosenVehicles.push(potVeh)
+				// 	// 	}
+				// 	// }
+				// }
 				// Down select to number of available lasers
 				chosenVehicles = chosenVehicles.slice(0,lunarSpark.satellites[i].laser_count); 
 			}
@@ -245,7 +249,7 @@ function connectLasers() {
 						disconnectLaser(i,j);
 					}
 			}
-			// TODO: confirm 20% efficiency to produce 1kW
+			// laser power draw includes efficiency (duty cycle included on the battery draw calculation)
 			lunarSpark.satellites[i].laser_power_draw = laserConnectCount*lunarSpark.system.satellite.laser_output_power/lunarSpark.system.satellite.laser_eff; 
 		}
 	}
@@ -319,8 +323,10 @@ function calculateBeamCharacteristics(satIndex, vehIndex) {
 	var beamDiameter = lunarSpark.system.satellite.laser_output_diameter // meters
 	var areaBeam = Math.PI*((beamDiameter/2)**2); 
 	var receiverDiameter = lunarSpark.vehicles[vehIndex].laser_panel.diameter;
-	var rxArea = Math.PI*((receiverDiameter/2)**2)*Math.cos((90-elevation)*Math.PI/180); // area of the ellipse created due to elevation TODO:  Not correct
-	var intensity = lunarSpark.system.satellite.laser_output_power/(areaBeam); // W/m2 (laser output constant no space loss from output to panel)
+	// Area of the ellipse created due to elevation
+	var rxArea = Math.PI*((receiverDiameter/2)**2)*Math.cos((90-elevation)*Math.PI/180); 
+	// Laser output constant x duty cycle with no space loss from output to panel
+	var intensity = lunarSpark.system.satellite.laser_output_power*lunarSpark.system.satellite.laser_duty_cycle/(areaBeam); // W/m2 
 	var power = rxArea*intensity; // Assume beam always covers the whole panel (pointing error accomodated by beam width)
 
 	return {vehIndex, azimuth, elevation, range, rxArea, intensity, power} 
