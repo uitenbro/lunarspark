@@ -227,9 +227,10 @@ function drawVehicle(id) {
     context.fill();
     context.strokeStyle = "black";
     context.stroke();
-    context.font = "16px Courier";
+    context.font = "14px Courier";
     context.fillStyle = "black";
-    context.fillText(id, x-5, y+5);
+    var strOffset = id.toString().length*4.5
+    context.fillText(id, x-strOffset, y+5);
 }
 
 function drawLasers() {
