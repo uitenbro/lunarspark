@@ -5,7 +5,7 @@ body {
 }
 
 div#all {
-	width: 1438px;
+	width: 1440px;
 /*	border: 1px solid white;*/
 
 }
@@ -14,7 +14,7 @@ div#top {
 /*	width: 20%;*/
 	display: flow-root;
 /*	min-width: 350px;*/
-	border: 1px solid white;
+/*	border: 1px solid white;*/
 	padding: 2px;
 }
 
@@ -23,7 +23,7 @@ div#bottom {
 /*	min-width: 550px;*/
 	display: flow-root;
 	text-align:center;
-/*	border: 1px solid white;*/
+	border: 1px solid white;
 	padding: 2px;
 }
 
@@ -37,6 +37,7 @@ div#middle {
 }
 canvas {
 /*	border: 1px solid gray; */
+	margin: 0px 0px 0px 7px;
 	background-repeat: no-repeat;
 	display: none;
 }
@@ -52,7 +53,7 @@ div#simLeft {
 }
 div#simRight {
 /*	border: 1px solid white;*/
-	margin: 0px 5px 0px 0px;
+	margin: 0px 7px 0px 0px;
 /*	padding: 2px 2px 2px 2px;*/
 	float:right;
 	color:white;
@@ -131,8 +132,8 @@ meter {
 }
 /* satellite */
 .satellite {
-	border: 1px solid black;
-	margin: 1px;
+	border: 1px solid white;
+	margin: 1px 1px 1px 1px;
 	padding: 2px;
 	float: left;
 	min-width: 350px;
@@ -149,7 +150,7 @@ meter {
 /* vehicle */
 .vehicle {
 	border: 1px solid white;
-	margin: 0px;	
+	margin: 1px 1px 1px 1px;	
 	padding: 2px;
 	min-width: 350px;
 	float: left;

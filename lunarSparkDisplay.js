@@ -11,6 +11,7 @@ var avgElapsedTime = 10; // msec
 var execRate = 100; // Hz
 var realTime = execRate * timeStep*60// step/sec * min/step
 var frameCount = 0;
+var spinLock = true;
 
 // Display thresholds
 const battRedThreshold = 25 // %
@@ -160,9 +161,9 @@ function updateDisplay() {
 }
 
 function printAll() {
+    printSimData();   
     printSatellites();
     printVehicles();
-    printSimData();
 }
 
 
@@ -250,15 +251,32 @@ function printBatteryGuage(batteryPecent) {
     return batteryGauge;
 }
 function printSatellites() {
-    var top = document.getElementById('top');
-    top.replaceChildren()
-    for (i=0;i<maxLasersPerSatellite;i++) {
-        top.appendChild(printSatellite(i));
+    var sat = document.getElementById('simLeft');
+    if (spinLock) {
+        // setup initial layout
+        for (var i=0;i<lunarSpark.satellites.length;i++) {
+            if (i%2 == 0) {
+                sat = document.getElementById('simLeft');
+            }
+            else {
+                sat = document.getElementById('simRight');
+            }
+            sat.appendChild(printSatellite(i));
+        }
+        spinLock = false;
+    }
+    // update satellite in place
+    else {
+        for (var i=0;i<lunarSpark.satellites.length;i++) {
+            sat = document.getElementById("sat-"+i)
+            sat.replaceWith(printSatellite(i))
+        }
     }
 }
 function printSatellite(index) {
     var sat = lunarSpark.satellites[index]
     var satellite = document.createElement('div');
+    satellite.id = "sat-"+index
 
     if (sat.active) {
         // if (sat.orbit.anomaly >= orbitVisibilityLowerBound+satelliteVisibilityOffset && sat.orbit.anomaly <= orbitVisibilityUpperBound-satelliteVisibilityOffset) {
@@ -324,19 +342,19 @@ function printSatellite(index) {
 }
 
 function printVehicles() {
-    var left = document.createElement('div');
-    left.id = "vehLeft";
-    for (i=0;i<lunarSpark.vehicles.length/2;i++) {
-        left.appendChild(printVehicle(i));
+    var bottom = document.createElement('div');
+    bottom.id = "bottom";
+    for (i=0;i<lunarSpark.vehicles.length;i++) {
+        bottom.appendChild(printVehicle(i));
     }
-    document.getElementById("vehLeft").replaceWith(left);
+    document.getElementById("bottom").replaceWith(bottom);
 
-    var right = document.createElement('div');
-    right.id = "vehRight";
-    for (i=lunarSpark.vehicles.length/2;i<lunarSpark.vehicles.length;i++) {
-        right.appendChild(printVehicle(i));
-    }
-    document.getElementById("vehRight").replaceWith(right);
+    // var right = document.createElement('div');
+    // right.id = "vehRight";
+    // for (i=lunarSpark.vehicles.length/2;i<lunarSpark.vehicles.length;i++) {
+    //     right.appendChild(printVehicle(i));
+    // }
+    // document.getElementById("vehRight").replaceWith(right);
 }
 
 function printVehicle(index) {

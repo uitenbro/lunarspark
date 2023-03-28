@@ -531,7 +531,7 @@ var lunarSparkInput = {
       "lasers": []
     },
     {
-      "active": false,
+      "active": true,
       "id": "Spark2",
       "orbit": {
         "min": 74,
@@ -549,53 +549,5 @@ var lunarSparkInput = {
       "vehicles": [],
       "lasers": []
     },
-    {
-      "active": false,
-      "id": "Spark3",
-      "orbit": {
-        "lat": 0,
-        "long": 0,
-        "min": 111,
-        "anomaly": 180
-      },
-      "solar_panel": {
-        "area": 30,
-        "power_output": 0
-      },
-      "battery": {
-        "capacity": 10000,
-        "charge": 10000,
-        "percent": 0
-      },
-      "sat_power_draw": 2000,
-      "laser_count": 1,
-      "laser_power_draw": 0,
-      "vehicles": [],
-      "lasers": []
-    },
-    {
-      "active": false,
-      "id": "Spark4",
-      "orbit": {
-        "lat": 0,
-        "long": 0,
-        "min": 0,
-        "anomaly": 180
-      },
-      "solar_panel": {
-        "area": 12.5,
-        "power_output": 0
-      },      
-      "battery": {
-        "capacity": 5000,
-        "charge": 5000,
-        "percent": 0
-      },
-      "sat_power_draw": 2000,
-      "laser_count": 1,
-      "laser_power_draw": 0,
-      "vehicles": [],
-      "lasers": []
-    }
   ]
 }
