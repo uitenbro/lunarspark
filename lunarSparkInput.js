@@ -1,13 +1,13 @@
 var lunarSparkInput = {
   "environment": {
     "time": 0,
-    "orbit": {
+    "orbit": { // TODO: move this to satellite
       "period": 250,
       "altitude": 1300000,
       "ascending_node": 90,
       "count":0
     },
-    "sun_angle": 0
+    "sun_angle": 0 // TODO: add solar flux and sun angle period to inputs
   },
   "system": {
     "satellite": {
