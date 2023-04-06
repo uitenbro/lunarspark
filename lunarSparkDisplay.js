@@ -97,7 +97,7 @@ function runSim() {
     previousStartTime = startTime;
     prevAvgElapsedTime = avgElapsedTime;
     stepSim();
-    if ((time >= minPerLunarCycle) || (simState != "run")) {
+    if ((time >= minPerSinodicLunarCycle) || (simState != "run")) {
         clearInterval(simRun);
         document.getElementById('runButton').className = "button";
         previousStartTime = 0; // reset start time for exec rate
@@ -295,7 +295,7 @@ function printSatellite(index) {
         satellite.appendChild(printRow("Satellite Pwr Draw:", sat.sat_power_draw.toFixed(0), "W"));
         satellite.appendChild(printRow("Orbit(anomaly):", sat.orbit.anomaly.toFixed(1), "deg"));
         satellite.appendChild(printRow("Orbit(time/period):", sat.orbit.min.toFixed(0)+"/"+lunarSpark.environment.orbit.period, "min"));
-        satellite.appendChild(printRow("Sub-Satellite(lat/long):", sat.orbit.lat.toFixed(1)+"/"+sat.orbit.long.toFixed(1), "deg"));
+        satellite.appendChild(printRow("Sub-Satellite(lat/lng):", sat.orbit.lat.toFixed(1)+"/"+sat.orbit.long.toFixed(1), "deg"));
         satellite.appendChild(printRow("Solar Panel Pwr Output:", sat.solar_panel.power_output.toFixed(0), "W"));        
         satellite.appendChild(printRow("Laser Pwr Draw:", sat.laser_power_draw.toFixed(0), "W")); 
         satellite.appendChild(printRow("Laser Pwr Output:", (sat.laser_power_draw*lunarSpark.system.satellite.laser_eff).toFixed(0),"W"));
@@ -327,7 +327,7 @@ function printSatellite(index) {
         satellite.appendChild(printRow("Satellite Pwr Draw:", "---", "-"));
         satellite.appendChild(printRow("Orbit(anomaly):", "---", "-"));
         satellite.appendChild(printRow("Orbit(time/period):", "---/---", "-"));
-        satellite.appendChild(printRow("Sub-Satellite(lat/long):", "---/---", "-"));
+        satellite.appendChild(printRow("Sub-Satellite(lat/lng):", "---/---", "-"));
         satellite.appendChild(printRow("Solar Panel Pwr Output:", "---", "-"));
         satellite.appendChild(printRow("Laser Pwr Draw:", "---", "-")); 
         satellite.appendChild(printRow("Laser Pwr Output:", "---", "-")); 

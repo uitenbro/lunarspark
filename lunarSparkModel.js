@@ -4,16 +4,22 @@ localStorage.setItem("lunarSparkInput", JSON.stringify(lunarSparkInput));
 // Set initial values from input configuration file (global)
 var lunarSpark =  JSON.parse(localStorage.getItem("lunarSparkInput"));
 
-// Lunar constants
-const minPerDay = 60*24; // minutes per day (earth)
+// Lunar constants 
+// https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
+// http://astro.dur.ac.uk/~ams/users/lunar_sid_syn.html
 // (TODO: check dayPerLunarCycle agains HSF lecture 04 slide 37 13.5 deg per day - may need 28 days)
 // (TODO: check dayPerLunarCycle agains HSF lecture 27-28 chart 13
-const daysPerLunarCycle = 29.5; // earth days per lunar cycle with respect to sun 
-const minPerLunarCycle = daysPerLunarCycle*minPerDay;
-const sunAngleDegreesPerMinute = 360/minPerLunarCycle; // deg per min
-const ascendingNodeDegreesPerMinute = 360/minPerLunarCycle; // deg per min
-const solarFluxInLunarOrbit = 1373; // W/m2
-const moonRadius = 1740000; // meters
+
+const minPerDay = 60*24; // minutes per day (earth)
+const daysPerSinodicLunarCycle = 29.53; // earth days per lunar cycle with respect to sun - https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
+const daysPerSidrealLunarCycle = 27.32; // earth days per lunar cycle with respect to orbit - https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
+const minPerSinodicLunarCycle = daysPerSinodicLunarCycle*minPerDay;
+const minPerSidrealLunarCycle = daysPerSidrealLunarCycle*minPerDay;
+
+const sunAngleDegreesPerMinute = 360/minPerSinodicLunarCycle; // deg per min respect to sun
+const ascendingNodeDegreesPerMinute = 360/minPerSidrealLunarCycle; // deg per min respect to orit
+const solarFluxInLunarOrbit = 1361; // W/m2 - https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
+const moonRadius = 1736000; // meters - https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
 
 // Orbit constants
 const orbitRadius = moonRadius + lunarSpark.environment.orbit.altitude; // meters
@@ -27,10 +33,10 @@ function stepModel() {
 }
 
 function updateSunAngle () {
-	lunarSpark.environment.sun_angle = (lunarSpark.environment.sun_angle+(timeStep*sunAngleDegreesPerMinute))%360;
+	lunarSpark.environment.sun_angle = (360+lunarSpark.environment.sun_angle-(timeStep*sunAngleDegreesPerMinute))%360;
 }
 function updateAscendingNode () {
-	lunarSpark.environment.orbit.ascending_node = (lunarSpark.environment.orbit.ascending_node+(timeStep*ascendingNodeDegreesPerMinute))%360;
+	lunarSpark.environment.orbit.ascending_node = (360+lunarSpark.environment.orbit.ascending_node-(timeStep*ascendingNodeDegreesPerMinute))%360;
 	lunarSpark.environment.orbit.count = Math.floor(time/lunarSpark.environment.orbit.period);
 }
 function updateSatellites () {
