@@ -80,8 +80,8 @@ function updateSatellites () {
 		if (sat.solar_panel.power_output>0) {
 			// if charge is less than full
 			if (sat.battery.charge < sat.battery.capacity) {
-				// add the power provided for this time step to the battery (include eps efficiency)
-				sat.battery.charge = sat.battery.charge + (sat.solar_panel.power_output * timeStep/60 * lunarSpark.system.satellite.eps_eff); // Watt*h
+				// add the power provided for this time step to the battery (dont include eps efficiency, take on the way out of batt)
+				sat.battery.charge = sat.battery.charge + (sat.solar_panel.power_output * timeStep/60 ); // Watt*h
 				// limit charge to maximum capacity
 				if (sat.battery.charge > sat.battery.capacity) {
 					sat.battery.charge = sat.battery.capacity;
@@ -90,11 +90,11 @@ function updateSatellites () {
 		}
 
 		// Update Satellite/Laser Power Draw
-		// draw the power for this time step from the battery (eps efficiency taken on the way into the battery)
+		// draw the power for this time step from the battery (eps efficiency taken on the way out of the battery) 
 		// satellite power draw
-		sat.battery.charge = sat.battery.charge - (sat.sat_power_draw*timeStep/60) // Watt*h
+		sat.battery.charge = sat.battery.charge - ((sat.sat_power_draw/lunarSpark.system.satellite.eps_eff)*timeStep/60) // Watt*h
 		// laser power draw x the duty cycle
-		sat.battery.charge = sat.battery.charge - (sat.laser_power_draw*lunarSpark.system.satellite.laser_duty_cycle*timeStep/60); // Watt*h		
+		sat.battery.charge = sat.battery.charge - ((sat.laser_power_draw/lunarSpark.system.satellite.eps_eff)*lunarSpark.system.satellite.laser_duty_cycle*timeStep/60); // Watt*h		
 		// if battery charge is negative set to zero
 		if (sat.battery.charge < 0) {
 			sat.battery.charge = 0;
@@ -145,8 +145,8 @@ function updateVehicles() {
 			if (totalPwrGenerated > 0) {
 				// if charge is less than full
 				if (veh.battery.charge < veh.battery.capacity) {
-					// add the power provided for this time step to the battery (include eps efficiency)
-					veh.battery.charge = veh.battery.charge + (totalPwrGenerated * timeStep/60 * lunarSpark.system.vehicle.eps_eff); // Watt*h
+					// add the power provided for this time step to the battery (dont include eps efficiency, this is taken on the way out)
+					veh.battery.charge = veh.battery.charge + (totalPwrGenerated * timeStep/60); // Watt*h
 					// limit charge to maximum capacity
 					if (veh.battery.charge > veh.battery.capacity) {
 						veh.battery.charge = veh.battery.capacity;
@@ -155,8 +155,8 @@ function updateVehicles() {
 			}
 
 			// Update Vehicle Power Draw 
-			// draw the power for this time step from the battery (eps efficiency taken on the way into the battery)
-			veh.battery.charge = veh.battery.charge - (veh.power_draw*timeStep/60.0); // Watt*h		
+			// draw the power for this time step from the battery (eps efficiency taken on the way out of the battery)
+			veh.battery.charge = veh.battery.charge - ((veh.power_draw/lunarSpark.system.vehicle.eps_eff)*timeStep/60.0); // Watt*h		
 			// if battery charge is negative set to zero
 			if (veh.battery.charge < 0) {
 				veh.battery.charge = 0;

@@ -515,7 +515,7 @@ var lunarSparkInput = {
       "active": true,
       "id": "Spark1",
       "orbit": {
-        "min": 37,
+        "min": 62.5,
       },
       "solar_panel": {
         "area": 28,
@@ -534,7 +534,7 @@ var lunarSparkInput = {
       "active": true,
       "id": "Spark2",
       "orbit": {
-        "min": 74,
+        "min": 187.5,
       },
       "solar_panel": {
         "area": 12.5,

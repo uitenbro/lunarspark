@@ -289,15 +289,15 @@ function printSatellite(index) {
         // TODO: add orbit count, satLat, satLong, and range/az/elev to each customer
         
         satellite.appendChild(printRow("Satellite["+index+"]:", sat.id, "-", true));
+        satellite.appendChild(printRow("Orbit(anomaly):", sat.orbit.anomaly.toFixed(1), "deg"));
+        satellite.appendChild(printRow("Sub-Satellite(lat/lng):", sat.orbit.lat.toFixed(1)+"/"+sat.orbit.long.toFixed(1), "deg"));
+        satellite.appendChild(printRow("Orbit(time/period):", sat.orbit.min.toFixed(0)+"/"+lunarSpark.environment.orbit.period, "min"));
         var row = printRow("Battery Charge:", sat.battery.percent.toFixed(1)+"% "+ sat.battery.charge.toFixed(0)+"/"+sat.battery.capacity.toFixed(0), "Wh");
         satellite.appendChild(row); 
         satellite.appendChild(printBatteryGuage(sat.battery.percent)); 
-        satellite.appendChild(printRow("Satellite Pwr Draw:", sat.sat_power_draw.toFixed(0), "W"));
-        satellite.appendChild(printRow("Orbit(anomaly):", sat.orbit.anomaly.toFixed(1), "deg"));
-        satellite.appendChild(printRow("Orbit(time/period):", sat.orbit.min.toFixed(0)+"/"+lunarSpark.environment.orbit.period, "min"));
-        satellite.appendChild(printRow("Sub-Satellite(lat/lng):", sat.orbit.lat.toFixed(1)+"/"+sat.orbit.long.toFixed(1), "deg"));
         satellite.appendChild(printRow("Solar Panel Pwr Output:", sat.solar_panel.power_output.toFixed(0), "W"));        
-        satellite.appendChild(printRow("Laser Pwr Draw:", sat.laser_power_draw.toFixed(0), "W")); 
+        satellite.appendChild(printRow("Satellite Pwr Draw:", sat.sat_power_draw.toFixed(0), "W"));
+        satellite.appendChild(printRow("Laser Pwr Draw (duty cycle):", (sat.laser_power_draw * lunarSpark.system.satellite.laser_duty_cycle).toFixed(0), "W")); 
         satellite.appendChild(printRow("Laser Pwr Output:", (sat.laser_power_draw*lunarSpark.system.satellite.laser_eff).toFixed(0),"W"));
         satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "RxArea", "Int", "Pwr", true));
         satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(m2)", "(W/m2)", "(W)", true));
@@ -322,14 +322,14 @@ function printSatellite(index) {
     else {
         satellite.className = "satellite inactive";
         satellite.appendChild(printRow("Satellite["+index+"]:", "---", "-", true));
-        satellite.appendChild(printRow("Battery Charge:", "---", "-"));
-        satellite.appendChild(document.createElement('meter'));
-        satellite.appendChild(printRow("Satellite Pwr Draw:", "---", "-"));
         satellite.appendChild(printRow("Orbit(anomaly):", "---", "-"));
         satellite.appendChild(printRow("Orbit(time/period):", "---/---", "-"));
         satellite.appendChild(printRow("Sub-Satellite(lat/lng):", "---/---", "-"));
+        satellite.appendChild(printRow("Battery Charge:", "---", "-"));
+        satellite.appendChild(document.createElement('meter'));
         satellite.appendChild(printRow("Solar Panel Pwr Output:", "---", "-"));
-        satellite.appendChild(printRow("Laser Pwr Draw:", "---", "-")); 
+        satellite.appendChild(printRow("Satellite Pwr Draw:", "---", "-"));
+        satellite.appendChild(printRow("Laser Pwr Draw (duty cycle):", "---", "-")); 
         satellite.appendChild(printRow("Laser Pwr Output:", "---", "-")); 
         satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "RxArea", "Int", "Pwr", true));
         satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(m2)", "(W/m2)", "(W)", true));
