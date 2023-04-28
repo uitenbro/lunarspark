@@ -11,6 +11,7 @@ var lunarSpark =  JSON.parse(localStorage.getItem("lunarSparkInput"));
 // (TODO: check dayPerLunarCycle agains HSF lecture 27-28 chart 13
 
 const minPerDay = 60*24; // minutes per day (earth)
+// SpaceTech2022-ST-22-23-Serie-Introduction-to-Lunar-Transfer-Problem.pdf slide 31
 const daysPerSinodicLunarCycle = 29.53; // earth days per lunar cycle with respect to sun - https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
 const daysPerSidrealLunarCycle = 27.32; // earth days per lunar cycle with respect to orbit - https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
 const minPerSinodicLunarCycle = daysPerSinodicLunarCycle*minPerDay;
@@ -207,8 +208,13 @@ function connectLasers() {
 			// If potential vehicles exceeds number of lasers
 			if (potentialVehicles.length > lunarSpark.satellites[i].laser_count) {
 				//TODO: add algorithm or sort to prioritize low power vehicles
-				chosenVehicles = potentialVehicles.sort(function(a,b){return lunarSpark.vehicles[a.vehIndex].battery.percent - lunarSpark.vehicles[b.vehIndex].battery.percent })
-
+				//chosenVehicles = potentialVehicles.sort(function(a,b){return lunarSpark.vehicles[a.vehIndex].battery.percent - lunarSpark.vehicles[b.vehIndex].battery.percent })
+				if (i==0) {
+					chosenVehicles.push(potentialVehicles[0])
+				}
+				else {
+					chosenVehicles.push(potentialVehicles[1])
+				}
 
 				// for (l=0;l<potentialVehicles.length;l++) {
 				// 	var potVeh = potentialVehicles[l]
@@ -325,8 +331,9 @@ function calculateBeamCharacteristics(satIndex, vehIndex) {
 	var {range, azimuth, elevation} = calculateRangeAzimuthElevation(satIndex, vehIndex); // meters deg deg
 	// TODO: This is a potential beam (it may not be achieveable due to line of site)
 	// TODO: if beam is not columnated then need divergence half angle
-	//var diameter = 2*range * Math.tan(lunarSpark.system.satellite.laser_divergence_half_angle) + lunarSpark.system.satellite.laser_output_diameter; // meters
-	var beamDiameter = lunarSpark.system.satellite.laser_output_diameter // meters
+	var divergenceHalfAngle = lunarSpark.system.satellite.laser_wavelength/(Math.PI*lunarSpark.system.satellite.laser_output_diameter)
+	var beamDiameter = 2*range * Math.tan(divergenceHalfAngle) + lunarSpark.system.satellite.laser_output_diameter; // meters
+	//var beamDiameter = lunarSpark.system.satellite.laser_output_diameter // meters
 	var areaBeam = Math.PI*((beamDiameter/2)**2); 
 	var receiverDiameter = lunarSpark.vehicles[vehIndex].laser_panel.diameter;
 	// Area of the ellipse created due to elevation

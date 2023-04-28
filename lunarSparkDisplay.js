@@ -46,8 +46,8 @@ function initSim() {
 
     canvas = document.querySelector('#simCanvas'); // canvas is intentionally global
     context = canvas.getContext('2d'); // context is intentionally global
-    canvas.width = desiredCanvasWidth + 2*orbitDistanceOffset
-    canvas.height = desiredCanvasWidth + 2*orbitDistanceOffset;     
+    canvas.width = moonImgWidth + 2*orbitDistanceOffset
+    canvas.height = moonImgWidth + 2*orbitDistanceOffset;     
     originX = canvas.width/2; // intentionall global
     originY = canvas.height/2; // intentionally global
 
@@ -83,7 +83,7 @@ function stepSim(step) {
 }
 
 function runSim() {
-    document.getElementById('runButton').className = "buttonDisabled"
+
     var startTime =  Date.now();
     if (previousStartTime == 0) {
         elapsedTime = refreshPeriod; // set initial elapsed time to the refresh period
@@ -107,9 +107,13 @@ function runSim() {
 function startSim() {
     simState = "run"
     simRun = setInterval(runSim, refreshPeriod);
+    document.getElementById('runButton').className = "buttonDisabled"
+    document.getElementById('pauseButton').className = "button"
 }
 function pauseSim() {
     simState = "pause"
+    document.getElementById('runButton').className = "button"
+    document.getElementById('pauseButton').className = "buttonDisabled"
 }
 
 function faster() {
@@ -128,7 +132,12 @@ function slower() {
 function printButton(label, action, id) {
     var a = document.createElement('a')
     a.href = action; 
-    a.className = "button";
+    if (id == "pauseButton") {
+        a.className = "buttonDisabled";
+    }
+    else {
+        a.className = "button"
+    }
     a.id = id;
     a.appendChild(document.createTextNode(label));
     return a    

@@ -1,12 +1,13 @@
 // Background image and canvas dimensions
-const desiredCanvasWidth = 511; // pixels
+const moonImgWidth = 511; // pixels
 const orbitDistanceOffset = 100; // pixels
 const orbitWidth = 50; // pixels
 const orbitVisibilityLowerBound  = 85; // degrees
 const orbitVisibilityUpperBound = 275; // degrees
-const satelliteVisibilityOffset = 2 //degrees
-const img = new Image(); // Create new img element
-//const imageFile = "labeled_lunar_south_pole.jpg"; // 80-90 degree south pole image with sites labeled
+const satelliteVisibilityOffset = 2; //degrees
+const satImg1 = new Image()
+const satImgSize = 150;
+
 const imageFile = "elphic_south_lunar_pole_ice.png"; // 80-90 degree south pole image with ice sites colored
 var initComplete = false;
 const minLatitude = -80; // minimum degrees of latitude in image
@@ -41,7 +42,7 @@ function clearCanvas() {
 function drawMoon() {
     var moon = document.getElementById('simCanvas');
     moon.style.backgroundImage = 'url('+imageFile+')';
-    moon.style.backgroundSize = desiredCanvasWidth+"px";
+    moon.style.backgroundSize = moonImgWidth+"px";
     moon.style.backgroundPosition = orbitDistanceOffset+"px "+orbitDistanceOffset+"px";
     moon.style.display = "inline";
 }
@@ -50,7 +51,7 @@ function drawAll(time) {
     drawSunIllumination(); 
     drawVehicles();
     drawLasers();
-    drawOrbit();
+    // drawOrbit(); // TODO: Add orbit back in?
     drawSatellites();
 }
 
@@ -108,21 +109,86 @@ function drawSatellite(id) {
         x = originX+x; // pixels from canvas orgin
         y = originY-y; // pixels from canvas orgin
 
-        // Draw sub-satellite point
-        drawSubSatellitePoint(id)
+        // Draw sub-satellite point TODO: Add back sub satellite back in?
+        //drawSubSatellitePoint(id)
 
-        // Save the context then translate to the center of the satellite on the ellipse
+
+        // // Draw Satellite Image
+        // if (id==0) {
+            // satImg1.src = "satellite-icon.png"; // satellite image
+
+            // satImg1.onload = function() {
+                
+            //     // draw image...
+            //     context.save();
+            //     context.translate(originX, originY);
+            //     context.rotate(ascendingNode*(Math.PI/180));
+            //     context.translate(-originX, -originY);
+            //     //context.drawImage(satImg1, -75, 355.5-75, 150, 150)//satelliteCrossWidth, satelliteCrossWidth/2)
+            //     //context.drawImage(satImg1, 711-75, 355.5-75, 150, 150)//satelliteCrossWidth, satelliteCrossWidth/2)
+            //     context.translate(x, y);
+            //     //context.drawImage(satImg1, (x-satImgSize/2), (y-satImgSize/2), satImgSize, satImgSize)//satelliteCrossWidth, satelliteCrossWidth/2)
+            //     context.drawImage(satImg1, (-satImgSize/2), (-satImgSize/2), satImgSize, satImgSize)//satelliteCrossWidth, satelliteCrossWidth/2)
+            //     // context.drawImage(satImg1, 100, 400, 150, 150)//satelliteCrossWidth, satelliteCrossWidth/2)
+            //     // context.drawImage(satImg1, 200, 300, 150, 150)//satelliteCrossWidth, satelliteCrossWidth/2)
+            //     // context.drawImage(satImg1, 300, 200, 150, 150)//satelliteCrossWidth, satelliteCrossWidth/2)
+            //     // context.drawImage(satImg1, 400, 100, 150, 150)//satelliteCrossWidth, satelliteCrossWidth/2)
+            //     // context.drawImage(satImg1, 500, 0, 150, 150)//satelliteCrossWidth, satelliteCrossWidth/2)
+            //     console.log(id, ascendingNode*(180/Math.PI), x, x-satImgSize/2, y, y-satImgSize/2)
+
+
+            //     context.beginPath();
+            //     context.arc(x, y, vehicleRadius, 0, 2*Math.PI);
+            //     context.closePath();
+            //     context.lineWidth = 1;
+            //     context.fillStyle = "rgba(FF,FF,FF,1)";
+            //     context.fill();
+            //     context.strokeStyle = "white";
+            //     context.stroke();
+
+            //     context.font = "16px Courier";
+            //     context.fillStyle = "white";
+            //     // Translate back to the center of satellite on the ellipse and rotate to horizontal
+            //     context.translate(x,y);
+            //     //context.rotate(-ascendingNode);
+
+            //     // Draw id text with offset to align in the center of cross
+            //     context.fillText(id, -5, 5)
+
+            //     context.restore()
+
+            // }
+        // }
+        // else {
+
+        //     const satImg2 = new Image()
+        //     satImg2.onload = function()
+        //     {
+        //     // draw image...
+        //         context.save();
+        //         //context.translate(satImg2.width/2, satImg2.height/2,);
+        //         //context.rotate(ascendingNode*Math.PI/180)
+        //         context.drawImage(satImg2, 200, 200, 200, 200)//satelliteCrossWidth, satelliteCrossWidth/2)
+        //         console.log(id, x, y)
+        //         context.restore()
+
+        //     }
+        //     satImg2.src = "satellite-icon.png"; // satellite image
+        // }
+
+        // Save the context then translate to the center of the ellipse
         context.save();
         context.translate(originX,originY);
 
-        // Rotate ascending node to aligh 0 with north pole (hidden back side of the display)
-        ascendingNode = (ascendingNode)
+        // // Rotate ascending node to aligh 0 with north pole (hidden back side of the display)
+        // ascendingNode = (ascendingNode)
         // Convert ascending node to radians 
         ascendingNode = ascendingNode * (Math.PI/180)
         // Rotate the canvas to align with the orbit ellipse
         context.rotate(ascendingNode);
         // Translate back to the original canvas origin (still rotated)
         context.translate(-originX,-originY);
+
 
         // Draw satellite background and foregroud crosses (still rotated)
         context.fillStyle = "white";

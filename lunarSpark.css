@@ -68,6 +68,7 @@ div#simControl {
 	padding: 10px 5px 10px 5px;;
 }
 div#simControl .button {
+	width: 30px;
 	font-size: 20px;
 	text-align: center;
 	color: white;
@@ -79,13 +80,14 @@ div#simControl .button {
 div#simControl .buttonDisabled {
 	font-size: 20px;
 	text-align: center;
-	color: gray;
+	/*color: gray;
 	border: 1px solid darkgray;
 	margin: 5px 5px 5px 5px;
 	padding: 5px 10px 5px 10px;
-	text-decoration: none;
+	text-decoration: none;*/
 	pointer-events: none;
   	cursor: default;
+  	display:none;
 }
 div#simStatus1  {
 	width: 350px;
