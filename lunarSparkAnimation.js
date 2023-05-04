@@ -1,7 +1,7 @@
 // Background image and canvas dimensions
 const moonImgWidth = 511; // pixels
 const orbitDistanceOffset = 100; // pixels
-const orbitWidth = 50; // pixels
+const orbitWidth = 100; // pixels
 const orbitVisibilityLowerBound  = 85; // degrees
 const orbitVisibilityUpperBound = 275; // degrees
 const satelliteVisibilityOffset = 2; //degrees
@@ -51,7 +51,7 @@ function drawAll(time) {
     drawSunIllumination(); 
     drawVehicles();
     drawLasers();
-    // drawOrbit(); // TODO: Add orbit back in?
+    drawOrbit(); // TODO: Add orbit back in?
     drawSatellites();
 }
 

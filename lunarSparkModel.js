@@ -27,7 +27,7 @@ const orbitRadius = moonRadius + lunarSpark.environment.orbit.altitude; // meter
 
 function stepModel() { 
 	updateSunAngle();
-	updateAscendingNode();
+	//updateAscendingNode();
 	updateVehicles();
 	updateSatellites();
 	connectLasers();

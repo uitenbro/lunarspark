@@ -100,6 +100,7 @@ function runSim() {
     if ((time >= minPerSinodicLunarCycle) || (simState != "run")) {
         clearInterval(simRun);
         document.getElementById('runButton').className = "button";
+        document.getElementById('pauseButton').className = "buttonDisabled";
         previousStartTime = 0; // reset start time for exec rate
         printAll(); // ensure final step data has been printed to display
     }

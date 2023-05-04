@@ -11,7 +11,7 @@ var lunarSparkInput = {
   },
   "system": {
     "satellite": {
-      "solar_panel_eff": 0.25, // 35% ideal x 77% inherant x 93% degradation-8 years
+      "solar_panel_eff": 0.28, // 39% ideal x 77% inherant x 93% degradation-8 years
       "eps_eff": 0.90,
       "laser_eff": 0.30,
       "laser_output_power": 12850,
@@ -34,32 +34,32 @@ var lunarSparkInput = {
         "min": 0,
       },
       "solar_panel": {
-        "area": 85,
+        "area": 42.56,
       },
       "battery": {
-        "capacity": 32500,
-        "charge": 32500,
+        "capacity": 22934,
+        "charge": 22934,
       },
-      "sat_power_draw": 10700,  // SMAD Prelimnary Sizing S/C
+      "sat_power_draw": 8845,  // SMAD S/C Pre Sizing S/C Avg Pwr
       "laser_count": 1,
       "laser_power_draw": 0,
       "vehicles": [],
       "lasers": []
     },  
     {
-      "active": true,
+      "active": false,
       "id": "Spark2",
       "orbit": {
         "min": 90,
       },
       "solar_panel": {
-        "area": 85,
+        "area": 42.56,
       },
       "battery": {
-        "capacity": 32500,
-        "charge": 32500,
+        "capacity": 22934, // SMAD Secondary Battery Sizing
+        "charge": 22934,
       },
-      "sat_power_draw": 10700, // SMAD Prelimnary Sizing S/C
+      "sat_power_draw": 8845, // SMAD S/C Pre Sizing S/C Avg Pwr
       "laser_count": 1,
       "laser_power_draw": 0,
       "vehicles": [],
@@ -71,8 +71,8 @@ var lunarSparkInput = {
       "active": true,
       "id": "VIPER0",
       "location": {
-        "lat": -80,
-        "long": 180,
+        "lat": -90,
+        "long": 0,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -95,8 +95,8 @@ var lunarSparkInput = {
       "active": true,
       "id": "VIPER0",
       "location": {
-        "lat": -90,
-        "long": 180,
+        "lat": -80,
+        "long": 90,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -116,11 +116,11 @@ var lunarSparkInput = {
       "beams": []
     },
     {
-      "active": false,
+      "active": true,
       "id": "LARGE",
       "location": {
-        "lat": -90,
-        "long": 180,
+        "lat": -80,
+        "long": 270 ,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -139,30 +139,30 @@ var lunarSparkInput = {
       },
       "beams": []
     },  
-  //   {
-  //     "active": true,
-  //     "id": "SMALL2",
-  //     "location": {
-  //       "lat": -85,
-  //       "long": 330,
-  //       "shadow_model": [],
-  //       "in_night": false,
-  //       "in_shadow": false
-  //     },
-  //     "solar_panel": {
-  //       "height": 1,
-  //       "width": 1,
-  //     },
-  //     "battery": {
-  //       "capacity": 5000,
-  //       "charge": 2500,
-  //     },
-  //     "power_draw": 10,
-  //     "laser_panel": {
-  //       "diameter": 0.6,
-  //     },
-  //     "beams": []
-  //   },     
+    {
+      "active": true,
+      "id": "SMALL2",
+      "location": {
+        "lat": -80,
+        "long": 180,
+        "shadow_model": [],
+        "in_night": false,
+        "in_shadow": false
+      },
+      "solar_panel": {
+        "height": 1,
+        "width": 1,
+      },
+      "battery": {
+        "capacity": 5000,
+        "charge": 2500,
+      },
+      "power_draw": 10,
+      "laser_panel": {
+        "diameter": 0.6,
+      },
+      "beams": []
+    },     
   //   {
   //     "active": true,
   //     "id": "SMALL3",
