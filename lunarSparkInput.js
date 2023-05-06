@@ -1,8 +1,8 @@
 var lunarSparkInput = {
   "environment": {
     "time": 0,
-    "orbit": { // TODO: move this to satellite and create perpendicular orbit
-      "period": 180.02,
+    "orbit": { // TODO: move this to satellite and calculate based on altitude
+      "period": 179.86,
       "altitude": 700000,
       "ascending_node": 90,
       "count":0
@@ -11,16 +11,16 @@ var lunarSparkInput = {
   },
   "system": {
     "satellite": {
-      "solar_panel_eff": 0.28, // 39% ideal x 77% inherant x 93% degradation-8 years
+      "solar_panel_eff": 0.28, // cos(10deg off pointing) x 39% ideal x 77% inherant x 93% degradation-8 years
       "eps_eff": 0.90,
       "laser_eff": 0.30,
-      "laser_output_power": 12850,
+      "laser_output_power": 12800,
       "laser_duty_cycle": 1.00,
       "laser_output_diameter": 0.30, 
       "laser_wavelength" : 445/1000000000,
     },
     "vehicle": {
-      "solar_panel_eff": 0.25,
+      "solar_panel_eff": 0.28,  // same as satellite
       "laser_panel_eff": 0.60,
       "laser_panel_min_elevation" : 45,
       "eps_eff": 0.90,
@@ -34,32 +34,34 @@ var lunarSparkInput = {
         "min": 0,
       },
       "solar_panel": {
-        "area": 42.56,
+        "area": 37.58,
       },
       "battery": {
-        "capacity": 22934,
-        "charge": 22934,
+        "capacity": 16150,
+        "charge": 16150,
+        "dod": 0.60 // TODO: Set yellow color bar based on dod
       },
-      "sat_power_draw": 8845,  // SMAD S/C Pre Sizing S/C Avg Pwr
+      "sat_power_draw": 2814,  // SMAD S/C Pre Sizing S/C Avg Pwr
       "laser_count": 1,
       "laser_power_draw": 0,
       "vehicles": [],
       "lasers": []
     },  
     {
-      "active": false,
+      "active": true,
       "id": "Spark2",
       "orbit": {
         "min": 90,
       },
       "solar_panel": {
-        "area": 42.56,
+        "area": 37.58,
       },
       "battery": {
-        "capacity": 22934, // SMAD Secondary Battery Sizing
-        "charge": 22934,
+        "capacity": 16150, // SMAD Secondary Battery Sizing
+        "charge": 16150,
+        "dod": 0.60
       },
-      "sat_power_draw": 8845, // SMAD S/C Pre Sizing S/C Avg Pwr
+      "sat_power_draw": 2814, // SMAD S/C Pre Sizing S/C Avg Pwr
       "laser_count": 1,
       "laser_power_draw": 0,
       "vehicles": [],

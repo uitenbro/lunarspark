@@ -27,7 +27,7 @@ const orbitRadius = moonRadius + lunarSpark.environment.orbit.altitude; // meter
 
 function stepModel() { 
 	updateSunAngle();
-	//updateAscendingNode();
+	updateAscendingNode();
 	updateVehicles();
 	updateSatellites();
 	connectLasers();
@@ -461,8 +461,8 @@ function calculateRangeAzimuthElevation(satIndex, vehIndex) {
 	//console.log("vehIndex:"+vehIndex+" vehLat:"+veh.location.lat+" vehLong:"+veh.location.long+" vehVect x:"+vehVector.x.toFixed(0)+" y:"+vehVector.y.toFixed(0)+" z:"+vehVector.z.toFixed(0));
 	// console.log("satIndex:"+satIndex+" satLat:"+(sat.orbit.lat).toFixed(0)+" satLong:"+sat.orbit.long.toFixed(0)) // +" satVect x:"+satVector.x.toFixed(0)+" y:"+satVector.y.toFixed(0)+" z:"+satVector.z.toFixed(0));
 	// console.log("vehIndex:"+vehIndex+" vehLat:"+veh.location.lat.toFixed(0)+" vehLong:"+veh.location.long+" az:" +(azimuth).toFixed(2)+" el:"+(elevation).toFixed(2)+" range:" + (range/1000).toFixed(0)) // + " x:"+rangeVector.x.toFixed(0)+" y:"+rangeVector.y.toFixed(0)+" z:"+rangeVector.z.toFixed(0))
-	// console.log("lmd(18.73): "+(lamda*180/Math.PI).toFixed(2) + " rho(59.82):"+  (rho*180/Math.PI).toFixed(2) + 
-	//  	" nadirAngle(56.85):"+ (nadirAngle*180/Math.PI).toFixed(2) + " az(48.35):"+(azimuth).toFixed(2) +
+	// console.log("lmd(18.73): "+(lamda).toFixed(2) + " rho(59.82):"+  (rho).toFixed(2) + 
+	//  	" nadirAngle(56.85):"+ (nadirAngle).toFixed(2) + " az(48.35):"+(azimuth).toFixed(2) +
 	//  	" el(14.42):"+(elevation).toFixed(2)+" range(2446):" + (range/1000).toFixed(0))
 	// console.log();
 
