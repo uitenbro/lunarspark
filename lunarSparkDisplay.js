@@ -348,7 +348,23 @@ function printSatellite(index) {
         }
 
     }
+    // if (document.getElementById("sat_" + index + "_stripchart") == null) {
+        var canvas = document.createElement('canvas');
+        canvas.id = "sat_" + index + "_stripchart";
+        canvas.className = "satellite_stripchart";
+        chart = createStripChart(canvas);
+        satellite.appendChild(canvas);
+    // }
+    updateStripChart(chart)
+
     return satellite;
+}
+
+function printSatelliteStripChart(id) {
+
+    updateStripChart(id)
+
+    return 
 }
 
 function printVehicles() {
