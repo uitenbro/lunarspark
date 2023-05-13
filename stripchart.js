@@ -3,10 +3,14 @@ var data = [];
 var data1 = [];
 var labels = [];
 var count = 0;
-var chart;
+//var chart;
 
-function createStripChart(canvas) {
+function updateStripChart(index) {
     //var ctx = document.getElementById(canvasName).getContext("2d");
+
+    var canvas = document.createElement('canvas');
+    canvas.id = "sat_" + index + "_stripchart";
+    canvas.className = "satellite_stripchart";
 
     // create initial empty dataset with label
     var dataset = {
@@ -74,10 +78,7 @@ function createStripChart(canvas) {
           }
         }
       })
-    return chart
-}
 
-function updateStripChart(chart) {
       // calculate value based on current time
       var time = Date.now() 
       var value = Math.sin(count/10);
@@ -90,17 +91,26 @@ function updateStripChart(chart) {
       // add current time to labels array
       labels.push(count);
 
-      // remove oldest data point if over 200 points
-      // if (data.length > 100) {
-      //   data.shift();
-      //   labels.shift();
-      // }
+      // remove oldest data point if over 250 points
+      if (data.length >= 100) {
+        data.shift();      
+        data1.shift();
+        labels.shift();
+        chart.options.scales.x.min = labels[0]
+        chart.options.scales.x.max = labels[0]+100
+      }
+      else {
+        chart.options.scales.x.min = 0
+        chart.options.scales.x.max = 100
+      }
 
       // update chart with new data and x-axis labels
-      //  chart.update();
+      chart.update();
 
       // increment counter
       count++;
+
+      return canvas
 
 }
 
