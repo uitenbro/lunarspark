@@ -264,6 +264,7 @@ function printSatellites() {
     var sat = document.getElementById('simLeft');
     if (spinLock) {
         // setup initial layout
+        chart = new Chart(document.createElement('canvas'));
         for (var i=0;i<lunarSpark.satellites.length;i++) {
             if (i%2 == 0) {
                 sat = document.getElementById('simLeft');
@@ -271,7 +272,7 @@ function printSatellites() {
             else {
                 sat = document.getElementById('simRight');
             }
-            sat.appendChild(printSatellite(i));
+            sat.appendChild(printSatellite(chart, i));
         }
         spinLock = false;
     }
@@ -279,11 +280,11 @@ function printSatellites() {
     else {
         for (var i=0;i<lunarSpark.satellites.length;i++) {
             sat = document.getElementById("sat-"+i)
-            sat.replaceWith(printSatellite(i))
+            sat.replaceWith(printSatellite(chart, i))
         }
     }
 }
-function printSatellite(index) {
+function printSatellite(chart, index) {
     var sat = lunarSpark.satellites[index]
     var satellite = document.createElement('div');
     satellite.id = "sat-"+index
@@ -355,7 +356,7 @@ function printSatellite(index) {
         // chart = createStripChart(canvas);
         // satellite.appendChild(canvas);
     // }
-    satellite.appendChild(updateStripChart(i))
+    satellite.appendChild(updateStripChart(chart, i))
 
     return satellite;
 }

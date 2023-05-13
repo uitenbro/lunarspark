@@ -3,9 +3,9 @@ var data = [];
 var data1 = [];
 var labels = [];
 var count = 0;
-//var chart;
+var chart 
 
-function updateStripChart(index) {
+function updateStripChart(chart, index) {
     //var ctx = document.getElementById(canvasName).getContext("2d");
 
     var canvas = document.createElement('canvas');
@@ -28,6 +28,7 @@ function updateStripChart(index) {
       fill: false,
     };
 
+    chart.destroy()
     // create initial chart with empty dataset and x-axis labels
     var chart = new Chart(canvas, {
         type: "line",
