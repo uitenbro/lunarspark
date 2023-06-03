@@ -31,6 +31,7 @@ function stepModel() {
 	updateVehicles();
 	updateSatellites();
 	connectLasers();
+	logData();
 }
 
 function updateSunAngle () {

@@ -94,30 +94,46 @@ function updateStripChart(type, index) {
 
       // cyclic update funcionality
       var chart = Chart.getChart(canvas)
-
+        
+      if (lunarSpark.environment.time_history.length < 1000) {
+        slice = 0
+      }
+      else {
+        slice = lunarSpark.environment.time_history.length - 1000
+      }
+      
       // add value to data array
       if (type == "sat") {
-        chart.data.datasets[0].data.push(lunarSpark.satellites[index].solar_panel.power_output/1000);
-        chart.data.datasets[1].data.push(lunarSpark.satellites[index].battery.percent);
-        chart.data.datasets[2].data.push(lunarSpark.satellites[index].laser_power_draw*lunarSpark.system.satellite.laser_eff/1000);
+              
+
+        // var chartData = lunarSpark.satellites[index].battery.percent_history.slice(slice).map(function(item) {
+        //   return item /10*10; // Multiply each item by 2
+        // });
+
+        chart.data.datasets[0].data = lunarSpark.satellites[index].solar_panel.power_output_history.slice(slice).map(function(item) {return item/1000});
+        chart.data.datasets[1].data = lunarSpark.satellites[index].battery.percent_history.slice(slice).map(function(item) {return item});
+        chart.data.datasets[2].data = lunarSpark.satellites[index].laser_power_draw_duty_cycle_history.slice(slice).map(function(item) {return item/1000});
       }
       else if (type == "veh") {
-        chart.data.datasets[0].data.push(lunarSpark.vehicles[index].solar_panel.power_output/100);
-        chart.data.datasets[1].data.push(lunarSpark.vehicles[index].battery.percent/10);
-        chart.data.datasets[2].data.push(lunarSpark.vehicles[index].laser_panel.power_output/1000);        
+        chart.data.datasets[0].data = lunarSpark.vehicles[index].solar_panel.power_output_history.slice(slice).map(function(item) {return item/100});
+        chart.data.datasets[1].data = lunarSpark.vehicles[index].battery.percent_history.slice(slice).map(function(item) {return item/10});
+        chart.data.datasets[2].data = lunarSpark.vehicles[index].laser_panel.power_output_history.slice(slice).map(function(item) {return item/1000});        
       }
 
       
       // add current time to labels array
-      chart.data.labels.push(lunarSpark.environment.time);
+      //chart.data.labels.push(lunarSpark.environment.time);
+
+      chart.data.labels = lunarSpark.environment.time_history.slice(slice).map(function(item) {return Math.floor(item)});        
+      
 
       // remove oldest data point if over 100 points
-      if (chart.data.datasets[0].data.length >= 100) {
-        for (var i=0;i<chart.data.datasets.length;i++) {      
-          chart.data.datasets[i].data.shift();
-        }
-        chart.data.labels.shift();
-      }
+      // if (chart.data.datasets[0].data.length >= 100) {
+      //   for (var i=0;i<chart.data.datasets.length;i++) {      
+      //     chart.data.datasets[i].data.shift();
+      //   }
+      //   chart.data.labels.shift();
+      // }
 
       // limit x-axis to the dataset boundaries
       chart.options.scales.x.min = chart.data.labels[0]

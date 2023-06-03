@@ -53,6 +53,7 @@ function initSim() {
 
 
     // step sim with zero time to initialize all dervived parameters
+    initializeDataLog();
     stepSim(0);
     disconnectAllLasers();
 
@@ -352,13 +353,6 @@ function printSatellite(chart, index) {
 
     return satellite;
 }
-
-// function printSatelliteStripChart(id) {
-
-//     updateStripChart(id)
-
-//     return 
-// }
 
 function printVehicles() {
     var bottom = document.createElement('div');
