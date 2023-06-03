@@ -161,7 +161,7 @@ meter {
 	color: white;
 }
 .notinshadow {
-	background-color: lightgray;
+	background-color: #DDA300;
 	color: black;
 }
 .orange {
@@ -177,6 +177,6 @@ meter {
 	color: #e3e3e3;
 	background-color: lightgray;
 }
-.satellite_stripchart {
+.sat_stripchart {
 
 }

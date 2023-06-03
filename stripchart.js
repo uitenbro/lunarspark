@@ -1,23 +1,27 @@
-// initialize empty arrays for data and x-axis labels
-// var data = [];
-// var data1 = [];
-// var labels = [];
-var count = 0;
-// var chart 
+//var count = 0;
 
-function updateStripChart(chart, index) {
 
-    var canvas = document.getElementById("sat_"+index+"_stripchart");
-
+function updateStripChart(type, index) {
+    var canvas = document.getElementById(type+"_"+index+"_stripchart");
+    
+    // initial setup funcionality
     if (canvas == null) {
       canvas = document.createElement('canvas');
-      canvas.id = "sat_" + index + "_stripchart";
-      canvas.className = "satellite_stripchart";
+      canvas.id = type + "_" + index + "_stripchart";
+      canvas.className = type + "_stripchart";
       ctx = canvas.getContext("2d")
     
-    
       // create initial empty dataset with label
-      var dataset = {
+      var dataset0 = {
+        label: "Solar",
+        data: [],
+        borderColor: "rgb(80, 80, 80",
+        borderWidth: 1,
+        fill: false,
+        pointRadius: 0, // Remove decorations on data points
+        pointHoverRadius: 0
+      };      
+      var dataset1 = {
         label: "Battery",
         data: [],
         borderColor: "rgb(255, 255, 255",
@@ -26,8 +30,8 @@ function updateStripChart(chart, index) {
         pointRadius: 0, // Remove decorations on data points
         pointHoverRadius: 0
       };
-      var dataset1 = {
-        label: "Anomaly",
+      var dataset2 = {
+        label: "Laser",
         data: [],
         borderColor: "rgb(0, 0, 0",
         borderWidth: 1,
@@ -36,12 +40,11 @@ function updateStripChart(chart, index) {
         pointHoverRadius: 0
       };
 
-      //chart.destroy()
       // create initial chart with empty dataset and x-axis labels
       var chart = new Chart(ctx, {
           type: "line",
           data: {
-            datasets: [dataset, dataset1],
+            datasets: [dataset0, dataset1, dataset2],
             labels: [],
           },
           options: {  
@@ -49,7 +52,7 @@ function updateStripChart(chart, index) {
             plugins: {
               legend: {
                 labels: {
-                  color: "black"
+                  color: "white"
                 }
               }
             },
@@ -89,42 +92,43 @@ function updateStripChart(chart, index) {
         })
       }
 
+      // cyclic update funcionality
       var chart = Chart.getChart(canvas)
 
-      // calculate value based on current time
-      // var time = Date.now() 
-      // var value = Math.sin(count/10);
+      // add value to data array
+      if (type == "sat") {
+        chart.data.datasets[0].data.push(lunarSpark.satellites[index].solar_panel.power_output/1000);
+        chart.data.datasets[1].data.push(lunarSpark.satellites[index].battery.percent);
+        chart.data.datasets[2].data.push(lunarSpark.satellites[index].laser_power_draw*lunarSpark.system.satellite.laser_eff/1000);
+      }
+      else if (type == "veh") {
+        chart.data.datasets[0].data.push(lunarSpark.vehicles[index].solar_panel.power_output/100);
+        chart.data.datasets[1].data.push(lunarSpark.vehicles[index].battery.percent/10);
+        chart.data.datasets[2].data.push(lunarSpark.vehicles[index].laser_panel.power_output/1000);        
+      }
 
-      // add value to data array
-      chart.data.datasets[0].data.push(lunarSpark.satellites[index].battery.percent);
-      // add value to data array
-      chart.data.datasets[1].data.push(lunarSpark.satellites[index].orbit.anomaly.toFixed(1));
-      // console.log("sat_"+index+"_stripchart "+lunarSpark.environment.time+" - orbit["+index+"] "+lunarSpark.satellites[index].orbit.anomaly.toFixed(1)+" dataset[1] "+chart.data.datasets[1].data)
       
       // add current time to labels array
       chart.data.labels.push(lunarSpark.environment.time);
 
       // remove oldest data point if over 100 points
       if (chart.data.datasets[0].data.length >= 100) {
-        chart.data.datasets[0].data.shift();      
-        chart.data.datasets[1].data.shift();
+        for (var i=0;i<chart.data.datasets.length;i++) {      
+          chart.data.datasets[i].data.shift();
+        }
         chart.data.labels.shift();
       }
-        chart.options.scales.x.min = chart.data.labels[0]
-        chart.options.scales.x.max = chart.data.labels[chart.data.labels.length-1]
-      // }
-      // else {
-      //   chart.options.scales.x.min = 0
-      //   chart.options.scales.x.max = 200
-      // }
+
+      // limit x-axis to the dataset boundaries
+      chart.options.scales.x.min = chart.data.labels[0]
+      chart.options.scales.x.max = chart.data.labels[chart.data.labels.length-1]
 
       // update chart with new data and x-axis labels
       chart.update();
 
       // increment counter
-      count++;
+      //count++;
 
       return canvas
-
 }
 

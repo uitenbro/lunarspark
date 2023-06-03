@@ -321,7 +321,7 @@ function printSatellite(chart, index) {
                 satellite.appendChild(printTable("---", "---", "---", "---", "---", "---", "---")); 
             }
         }
-        satellite.appendChild(updateStripChart(chart, index))
+        satellite.appendChild(updateStripChart("sat", index))
     }
     else {
         satellite.className = "satellite inactive";
@@ -404,6 +404,7 @@ function printVehicle(index) {
                 vehicle.appendChild(printTable("-.-", "---", "---", "---", "---", "---", "---")); 
             }
         }
+        vehicle.appendChild(updateStripChart("veh", index))
     }
     else {
         vehicle.className = "vehicle inactive";
