@@ -72,6 +72,7 @@ function stepSim(step) {
     }
    
     time = time+timeStep;
+    lunarSpark.environment.time = time
     
     stepModel();
     
@@ -297,11 +298,11 @@ function printSatellite(chart, index) {
             satellite.className = "satellite inview";
         // }
 
-        // TODO: add orbit count, satLat, satLong, and range/az/elev to each customer
+        // TODO: add orbit count
         
         satellite.appendChild(printRow("Satellite["+index+"]:", sat.id, "-", true));
         satellite.appendChild(printRow("Orbit(anomaly):", sat.orbit.anomaly.toFixed(1), "deg"));
-        satellite.appendChild(printRow("Sub-Satellite(lat/lng):", sat.orbit.lat.toFixed(1)+"/"+sat.orbit.long.toFixed(1), "deg"));
+        satellite.appendChild(printRow("Sub-Satellite(lat/long):", sat.orbit.lat.toFixed(1)+"/"+sat.orbit.long.toFixed(1), "deg"));
         satellite.appendChild(printRow("Orbit(time/period):", sat.orbit.min.toFixed(0)+"/"+lunarSpark.environment.orbit.period, "min"));
         var row = printRow("Battery Charge:", sat.battery.percent.toFixed(1)+"% "+ sat.battery.charge.toFixed(0)+"/"+sat.battery.capacity.toFixed(0), "Wh");
         satellite.appendChild(row); 
@@ -320,22 +321,14 @@ function printSatellite(chart, index) {
                 satellite.appendChild(printTable("---", "---", "---", "---", "---", "---", "---")); 
             }
         }
-        // satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(cm)", "(W/m2)", "(W)", true));
-        // for (var i=0;i<maxLasersPerSatellite;i++) {
-        //     if (i<sat.lasers.length) {
-        //         satellite.appendChild(printTable(sat.lasers[i].vehicle, (sat.lasers[i].range/1000).toFixed(0), sat.lasers[i].azimuth.toFixed(0), sat.lasers[i].elevation.toFixed(0), (sat.lasers[i].rxArea*100).toFixed(0), sat.lasers[i].intensity.toFixed(0), sat.lasers[i].power.toFixed(0)));
-        //     }
-        //       else {
-        //         satellite.appendChild(printTable("---", "---", "---", "---", "---", "---", "---")); 
-        //     }
-        // }
+        satellite.appendChild(updateStripChart(chart, index))
     }
     else {
         satellite.className = "satellite inactive";
         satellite.appendChild(printRow("Satellite["+index+"]:", "---", "-", true));
         satellite.appendChild(printRow("Orbit(anomaly):", "---", "-"));
         satellite.appendChild(printRow("Orbit(time/period):", "---/---", "-"));
-        satellite.appendChild(printRow("Sub-Satellite(lat/lng):", "---/---", "-"));
+        satellite.appendChild(printRow("Sub-Satellite(lat/long):", "---/---", "-"));
         satellite.appendChild(printRow("Battery Charge:", "---", "-"));
         satellite.appendChild(document.createElement('meter'));
         satellite.appendChild(printRow("Solar Panel Pwr Output:", "---", "-"));
@@ -356,17 +349,16 @@ function printSatellite(chart, index) {
         // chart = createStripChart(canvas);
         // satellite.appendChild(canvas);
     // }
-    satellite.appendChild(updateStripChart(chart, i))
 
     return satellite;
 }
 
-function printSatelliteStripChart(id) {
+// function printSatelliteStripChart(id) {
 
-    updateStripChart(id)
+//     updateStripChart(id)
 
-    return 
-}
+//     return 
+// }
 
 function printVehicles() {
     var bottom = document.createElement('div');
