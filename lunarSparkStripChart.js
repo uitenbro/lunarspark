@@ -119,7 +119,13 @@ function updateStripChart(type, index) {
       // limit x-axis to the dataset boundaries
       chart.options.scales.x.min = chart.data.labels[0]
       chart.options.scales.x.max = chart.data.labels[chart.data.labels.length-1]
-
+      chart.options.scales.y.max = 0
+      if (type == "sat") {
+        chart.options.scales.y.max = 100
+      }
+      else {
+        chart.options.scales.y.max = 10
+      }
       // update chart with new data and x-axis labels
       chart.update();
 

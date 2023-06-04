@@ -310,10 +310,10 @@ function printSatellite(chart, index) {
         satellite.appendChild(printRow("Solar Panel Pwr Output:", sat.solar_panel.power_output.toFixed(0), "W"));        
         satellite.appendChild(printRow("Satellite Pwr Draw:", sat.sat_power_draw.toFixed(0), "W"));
         satellite.appendChild(printRow("Laser Power Draw (duty cycle):", (sat.laser_power_draw * lunarSpark.system.satellite.laser_duty_cycle).toFixed(0), "W")); 
-        satellite.appendChild(printRow("Total Laser Energy Draw:", (sat.cumulative_laser_energy_draw/1000).toFixed(1),"kWh"));
         satellite.appendChild(printRow("Laser Power Output:", (sat.laser_power_draw*lunarSpark.system.satellite.laser_eff).toFixed(0),"W"));
-        satellite.appendChild(printRow("Total Laser Energy Output:", (sat.cumulative_laser_energy_output/1000).toFixed(1),"kWh"));
-        satellite.appendChild(printRow("Undelivered Laser Capacity:", (sat.cumulative_undelivered_laser_capacity/1000).toFixed(1),"kWh"));
+        satellite.appendChild(printRow("Total Laser Energy Draw:", (sat.cumulative_laser_energy_draw).toFixed(0),"Wh"));
+        satellite.appendChild(printRow("Total Laser Energy Output:", (sat.cumulative_laser_energy_output).toFixed(0),"Wh"));
+        satellite.appendChild(printRow("Undelivered Laser Capacity:", (sat.cumulative_undelivered_laser_capacity).toFixed(0),"Wh"));
 
         satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "RxArea", "Int", "Pwr", true));
         satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(m2)", "(W/m2)", "(W)", true));
@@ -384,8 +384,8 @@ function printVehicle(index) {
         vehicle.appendChild(printRow("Vehicle Pwr Draw:",  (veh.power_draw).toFixed(0), "W"));
         vehicle.appendChild(printRow("Solar Panel Pwr Output:", veh.solar_panel.power_output.toFixed(0), "W"));
         vehicle.appendChild(printRow("Laser Panel Pwr Output:", (veh.laser_panel.power_output).toFixed(0), "W"));
-        vehicle.appendChild(printRow("Total Laser Panel Output:", (veh.cumulative_laser_panel_energy/1000).toFixed(1), "kWh"));
-        vehicle.appendChild(printRow("Excess Laser Panel Output:", (veh.excess_laser_panel_energy/1000).toFixed(1), "kWh"));
+        vehicle.appendChild(printRow("Total Laser Panel Output:", (veh.cumulative_laser_panel_energy).toFixed(0), "Wh"));
+        vehicle.appendChild(printRow("Excess Laser Panel Output:", (veh.excess_laser_panel_energy).toFixed(0), "Wh"));
         vehicle.appendChild(printTable("Lsr", "Rng", "Azm", "Elv", "RxArea", "Int", "Pwr", true));
         vehicle.appendChild(printTable("#.#", "(km)", "(deg)", "(deg)", "(m2)", "(W/m2)", "(W)", true));
         for (var i=0;i<maxBeamsPerVehicle;i++) {
