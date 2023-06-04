@@ -7,7 +7,15 @@ var lunarSparkInput = {
       "ascending_node": 90,
       "count":0
     },
-    "sun_angle": 0 // TODO: add solar flux and sun angle period to inputs
+    "sun_angle": 0, // TODO: add solar flux and sun angle period to inputs
+    "cumulative_laser_energy_draw" : 0,
+    "cumulative_laser_energy_output" : 0,
+    "cumulative_undelivered_laser_capacity" : 0,
+    "excess_laser_panel_energy" : 0,
+    "cumulative_laser_panel_energy" : 0,
+    "usable_energy": 0,
+    "waste_percent": 0,
+    "overall_efficiency": 0, 
   },
   "system": {
     "satellite": {
@@ -371,7 +379,9 @@ var lunarSparkInput = {
       "laser_panel": {
         "diameter": 0.6,
       },
-      "beams": []
+      "beams": [],      
+      "excess_laser_panel_energy" : 0,
+      "cumulative_laser_panel_energy" : 0,
     },  
   //   {
   //     "active": true,

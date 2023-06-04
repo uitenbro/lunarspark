@@ -4,6 +4,14 @@ function initializeDataLog() {
 	lunarSpark.environment.sun_angle_history = []
 	lunarSpark.environment.orbit.count_history = []
     lunarSpark.environment.orbit.ascending_node_history = []
+    lunarSpark.environment.cumulative_laser_energy_draw_history = []
+    lunarSpark.environment.cumulative_laser_energy_output_history = []
+    lunarSpark.environment.cumulative_undelivered_laser_capacity_history = []
+    lunarSpark.environment.excess_laser_panel_energy_history = []
+    lunarSpark.environment.cumulative_laser_panel_energy_history = []
+    lunarSpark.environment.usable_energy_history = []
+    lunarSpark.environment.waste_percent_history = []
+    lunarSpark.environment.overall_efficiency_history = []
 
 	// Satellite
     for (var i=0;i<lunarSpark.satellites.length;i++) {
@@ -39,6 +47,10 @@ function logData() {
     lunarSpark.environment.orbit.ascending_node_history.push(lunarSpark.environment.orbit.ascending_node)
 	
 	// Satellite
+	// Set overall cumulative to zero and then acrue each satellites cumulatives
+	lunarSpark.environment.cumulative_laser_energy_draw = 0
+    lunarSpark.environment.cumulative_laser_energy_output = 0 
+    lunarSpark.environment.cumulative_undelivered_laser_capacity = 0
 	for (var i=0;i<lunarSpark.satellites.length;i++) {
 	    lunarSpark.satellites[i].orbit.anomaly_history.push(lunarSpark.satellites[i].orbit.anomaly)
 	    lunarSpark.satellites[i].orbit.lat_history.push(lunarSpark.satellites[i].orbit.lat)
@@ -51,9 +63,16 @@ function logData() {
 	   	lunarSpark.satellites[i].cumulative_laser_energy_draw_history.push(lunarSpark.satellites[i].cumulative_laser_energy_draw)
 	   	lunarSpark.satellites[i].cumulative_laser_energy_output_history.push(lunarSpark.satellites[i].cumulative_laser_energy_output)   
 	   	lunarSpark.satellites[i].cumulative_undelivered_laser_capacity_history.push(lunarSpark.satellites[i].cumulative_undelivered_laser_capacity)     	
+   	
+   		lunarSpark.environment.cumulative_laser_energy_draw += lunarSpark.satellites[i].cumulative_laser_energy_draw
+    	lunarSpark.environment.cumulative_laser_energy_output += lunarSpark.satellites[i].cumulative_laser_energy_output
+    	lunarSpark.environment.cumulative_undelivered_laser_capacity += lunarSpark.satellites[i].cumulative_undelivered_laser_capacity
    	}
 	
 	// Vehicle
+	// Set overall cumulative to zero and then acrue each satellites cumulatives
+	lunarSpark.environment.excess_laser_panel_energy = 0
+   	lunarSpark.environment.cumulative_laser_panel_energy = 0
 	for (var i=0;i<lunarSpark.vehicles.length;i++) {
 		lunarSpark.vehicles[i].battery.percent_history.push(lunarSpark.vehicles[i].battery.percent)
 		lunarSpark.vehicles[i].battery.charge_history.push(lunarSpark.vehicles[i].battery.charge)
@@ -61,5 +80,32 @@ function logData() {
 		lunarSpark.vehicles[i].laser_panel.power_output_history.push(lunarSpark.vehicles[i].laser_panel.power_output)
 		lunarSpark.vehicles[i].laser_panel.excess_laser_panel_energy_history.push(lunarSpark.vehicles[i].laser_panel.excess_laser_panel_energy)
 		lunarSpark.vehicles[i].laser_panel.cumulative_laser_panel_energy_history.push(lunarSpark.vehicles[i].laser_panel.cumulative_laser_panel_energy)
+	
+	    lunarSpark.environment.excess_laser_panel_energy += lunarSpark.vehicles[i].excess_laser_panel_energy
+    	lunarSpark.environment.cumulative_laser_panel_energy += lunarSpark.vehicles[i].cumulative_laser_panel_energy
 	}
+
+    lunarSpark.environment.cumulative_laser_energy_draw_history.push(lunarSpark.environment.cumulative_laser_energy_draw)
+    lunarSpark.environment.cumulative_laser_energy_output_history.push(lunarSpark.environment.cumulative_laser_energy_output)
+    lunarSpark.environment.cumulative_undelivered_laser_capacity_history.push(lunarSpark.environment.cumulative_undelivered_laser_capacity)
+    lunarSpark.environment.excess_laser_panel_energy_history.push(lunarSpark.environment.excess_laser_panel_energy)
+    lunarSpark.environment.cumulative_laser_panel_energy_history.push(lunarSpark.environment.cumulative_laser_panel_energy)
+
+    lunarSpark.environment.usable_energy = lunarSpark.environment.cumulative_laser_panel_energy-lunarSpark.environment.excess_laser_panel_energy
+    if (lunarSpark.environment.cumulative_laser_panel_energy != 0) {
+    	lunarSpark.environment.waste_percent = (lunarSpark.environment.excess_laser_panel_energy/lunarSpark.environment.cumulative_laser_panel_energy)*100
+    }
+    else {
+    	lunarSpark.environment.waste_percent = 0
+    }
+    if (lunarSpark.environment.cumulative_laser_energy_draw !=0) {
+    	lunarSpark.environment.overall_efficiency = (lunarSpark.environment.usable_energy/lunarSpark.environment.cumulative_laser_energy_draw)*100
+	}
+	else {
+		lunarSpark.environment.overall_efficiency = 0
+	}
+    lunarSpark.environment.usable_energy_history.push(lunarSpark.environment.usable_energy)
+    lunarSpark.environment.waste_percent_history.push(lunarSpark.environment.waste_percent)
+    lunarSpark.environment.overall_efficiency_history.push(lunarSpark.environment.overall_efficiency)
+
 }

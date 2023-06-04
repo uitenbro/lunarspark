@@ -219,7 +219,6 @@ function chooseVehicle() {
 	//TODO: add selector for algorithm or sort to prioritize low power vehicles
 	var prioritizedVehicles = [...lunarSpark.vehicles].sort(method1)
 	var chosenVehicleIndex = lunarSpark.vehicles.indexOf(prioritizedVehicles[0])
-	console.log(chosenVehicleIndex)
 	return chosenVehicleIndex
 }
 function connectLasers() {

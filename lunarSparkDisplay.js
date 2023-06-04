@@ -428,6 +428,10 @@ function printSimStatus() {
     div.appendChild(printRow("Step Duration:", timeStep.toFixed(3), "min"));
     div.appendChild(printRow("Execution Rate:", execRate.toFixed(1), "Hz"));
     div.appendChild(printRow("Realtime Rate:", realTime.toFixed(1), "x"));
+    div.appendChild(printRow("Elapsed Time:", time.toFixed(0), "min"));
+    div.appendChild(printRow("Days:", Math.floor(time/(24*60)), "days"));
+    div.appendChild(printRow("Hrs:", Math.floor(time/60)%24, "hrs"));
+    div.appendChild(printRow("Min:", (time%60).toFixed(0), "min"));
     
     simStatus = document.getElementById('simStatus1');
     simStatus.replaceWith(div);
@@ -436,13 +440,17 @@ function printSimStatus() {
     var div = document.createElement('div');
     div.id = "simStatus2";
 
-    div.appendChild(printRow("Elapsed Time:", time.toFixed(0), "min"));
-    div.appendChild(printRow("Days:", Math.floor(time/(24*60)), "days"));
-    div.appendChild(printRow("Hrs:", Math.floor(time/60)%24, "hrs"));
-    div.appendChild(printRow("Min:", (time%60).toFixed(0), "min"));
+
     div.appendChild(printRow("Orbit Count:", (lunarSpark.environment.orbit.count), "-"));
     div.appendChild(printRow("Ascending Node:", (lunarSpark.environment.orbit.ascending_node).toFixed(1), "deg"));
     div.appendChild(printRow("Sun Angle:", (lunarSpark.environment.sun_angle).toFixed(1), "deg"));
+    div.appendChild(printRow("Overall Laser Energy Draw:", (lunarSpark.environment.cumulative_laser_energy_draw/1000).toFixed(1), "kW"));
+    div.appendChild(printRow("Overall Laser Energy Output:", (lunarSpark.environment.cumulative_laser_energy_output/1000).toFixed(1), "kW"));
+    div.appendChild(printRow("Overall Laser Panel Output:", (lunarSpark.environment.cumulative_laser_panel_energy/1000).toFixed(1), "kW"));
+    div.appendChild(printRow("Excess Laser Panel Output:", (lunarSpark.environment.excess_laser_panel_energy/1000).toFixed(1), "kW"));
+    div.appendChild(printRow("Usable Laser Panel Output:", ((lunarSpark.environment.usable_energy)/1000).toFixed(1), "kW"));
+    div.appendChild(printRow("Waste Percent:", (lunarSpark.environment.waste_percent).toFixed(1), "%"));
+    div.appendChild(printRow("Overall Efficiency:", (lunarSpark.environment.overall_efficiency).toFixed(1), "%"));
 
     simRight = document.getElementById('simStatus2');
     simRight.replaceWith(div);
