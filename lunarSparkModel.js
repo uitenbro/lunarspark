@@ -186,82 +186,71 @@ function setInNight(veh) {
 	}
 }
 
+function getPotentialVehicles(i) {
+	var potentialVehicles = [];
+	// Loop through vehicles
+	for (var k=0;k<lunarSpark.vehicles.length;k++) {
+		if (lunarSpark.vehicles[k].active) {
+			// Determine beam characteristics for this vehicle
+			var {vehIndex, range, azimuth, elevation, rxArea, intensity, power} = calculateBeamCharacteristics(i,k);
+			// If the vehicle is in the line of sight (elevation)
+			if (elevation >= lunarSpark.system.vehicle.laser_panel_min_elevation) { // TODO: consider shadow model (needs azimuth)
+				potentialVehicles.push({vehIndex, range, azimuth, elevation, rxArea, intensity, power});
+			}
+		}
+	}
+	return potentialVehicles
+}
+
+function method1(a,b){
+	var test = 0
+	// prefer night vehicles over day regardless of anything else
+	if (a.in_night != b.in_night) {
+		test = a.in_night - b.in_night
+	}
+	else { // prefer low battery percentages over higher
+		test = a.battery.percent - b.battery.percent 
+	}
+	return test
+}
+
+function chooseVehicle() {
+	var chosenVehicles = []
+	//TODO: add selector for algorithm or sort to prioritize low power vehicles
+	var prioritizedVehicles = [...lunarSpark.vehicles].sort(method1)
+	var chosenVehicleIndex = lunarSpark.vehicles.indexOf(prioritizedVehicles[0])
+	console.log(chosenVehicleIndex)
+	return chosenVehicleIndex
+}
 function connectLasers() {
-	var veh = -1;
 	// Loop through satellites and vehicle and
 	for (var i=0;i<lunarSpark.satellites.length;i++) {
 		if (lunarSpark.satellites[i].active) {
-			var potentialVehicles = [];
-			for (var k=0;k<lunarSpark.vehicles.length;k++) {
-				if (lunarSpark.vehicles[k].active) {
-					// Determine beam characteristics for this vehicle
-					var {vehIndex, range, azimuth, elevation, rxArea, intensity, power} = calculateBeamCharacteristics(i,k);
-					// If the vehicle is in the line of sight (elevation)
-					if (elevation >= lunarSpark.system.vehicle.laser_panel_min_elevation) { // TODO: consider shadow model (needs azimuth)
-						// If vehicle is in the lunar night 
-						if (lunarSpark.vehicles[k].location.in_night) {	
-							//if (current beam intensity + new beam intesity) < max intensity {
-							potentialVehicles.push({vehIndex, range, azimuth, elevation, rxArea, intensity, power});
+				
+			var laserConnectCount = 0;
+			// if satellite is departing the southern hemisphsere perform vehicle selection using latest information
+			var anomaly = lunarSpark.satellites[i].orbit.anomaly;
+			if (anomaly > 200 && anomaly < 215) {
+      			lunarSpark.satellites[i].chosen_vehicle = chooseVehicle();
+			}
+			else { // satellite is in southern hemisphere so check for vehicles
+				//if (lunarSpark.vehicles[lunarSpark.satellites[i].chosen_vehicle].in_night) {
+					var potentialVehicles = getPotentialVehicles(i);
+					// if the chosen vehicle is a potential vehicle
+					for (var j=0;j<potentialVehicles.length;j++) {
+						if (lunarSpark.satellites[i].chosen_vehicle == potentialVehicles[j].vehIndex) {
+							// connect the laser to the vehicle
+							connectLaser(i, 0, potentialVehicles[j].vehIndex, potentialVehicles[j].range, potentialVehicles[j].azimuth, potentialVehicles[j].elevation, potentialVehicles[j].rxArea, potentialVehicles[j].intensity, potentialVehicles[j].power);  
+							laserConnectCount++;
 						}
 					}
-				}
+				//}
 			}
-			var chosenVehicles = [];
-			// If potential vehicles exceeds number of lasers
-			if (potentialVehicles.length > lunarSpark.satellites[i].laser_count) {
-				//TODO: add algorithm or sort to prioritize low power vehicles
-				//chosenVehicles = potentialVehicles.sort(function(a,b){return lunarSpark.vehicles[a.vehIndex].battery.percent - lunarSpark.vehicles[b.vehIndex].battery.percent })
-				if (i==0) {
-					chosenVehicles.push(potentialVehicles[0])
-				}
-				else {
-					chosenVehicles.push(potentialVehicles[1])
-				}
-
-				// for (l=0;l<potentialVehicles.length;l++) {
-				// 	var potVeh = potentialVehicles[l]
-				// 	// Prefer vehicles who are already charging but not yet 100%
-				// 	// if (lunarSpark.vehicles[potVeh.vehIndex].beams.length && lunarSpark.vehicles[potVeh.vehIndex].battery.percent < 99) {
-				// 		chosenVehicles.push(potVeh)
-				// 	// }
-				// 	// else {
-				// 	// 	// Determine if a vehicle is low on power
-				// 	// 	if (lunarSpark.vehicles[potVeh.vehIndex].battery.percent<50) {  //TODO: use global threshold
-				// 	// 		// This will out prioritize already charging vehicles // TODO: prioritize low charges
-				// 	// 		chosenVehicles.push(potVeh)
-				// 	// 	}
-				// 	// }
-				// }
-				// Down select to number of available lasers
-				chosenVehicles = chosenVehicles.slice(0,lunarSpark.satellites[i].laser_count); 
+			if (laserConnectCount == 0) {
+				// otherwise disconnect the laser
+				disconnectLaser(i,0);
 			}
-			else {
-				// All potential vehicles can be chosen so allocate lasers in order
-
-				chosenVehicles = potentialVehicles;
-			}
-			// Loop through lasers to update connections
-			var laserConnectCount = 0;
-			for (var j=0;j<lunarSpark.satellites[i].laser_count;j++) {
-				// if there is a chosen vehicle
-				var chosenVeh = chosenVehicles[0];  // set the chosen vehicle to the first entry because % won't work on zero
-				if (chosenVehicles.length == 1){
-					// connect the laser to the vehicle (allow multiple lasers to single vehicle)
-					connectLaser(i, j, chosenVeh.vehIndex, chosenVeh.range, chosenVeh.azimuth, chosenVeh.elevation, chosenVeh.rxArea, chosenVeh.intensity, chosenVeh.power);  
-					laserConnectCount++;
-				}
-				else if (chosenVehicles.length > 1) {
-					chosenVeh = chosenVehicles[j%(chosenVehicles.length)]; 
-				
-					// connect the laser to the vehicle (allow multiple lasers to single vehicle)
-					connectLaser(i, j, chosenVeh.vehIndex, chosenVeh.range, chosenVeh.azimuth, chosenVeh.elevation, chosenVeh.rxArea, chosenVeh.intensity, chosenVeh.power);  
-					laserConnectCount++;
-				}
-				else {
-					// otherwise disconnect the laser
-					disconnectLaser(i,j);
-				}
-			}
+			
 			// laser power draw includes efficiency (duty cycle included on the battery draw calculation)
 			lunarSpark.satellites[i].laser_power_draw = laserConnectCount*lunarSpark.system.satellite.laser_output_power/lunarSpark.system.satellite.laser_eff; 
 			lunarSpark.satellites[i].cumulative_laser_energy_output += laserConnectCount*lunarSpark.system.satellite.laser_output_power*timeStep/60 // Watt*h

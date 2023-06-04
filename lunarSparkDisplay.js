@@ -1,5 +1,5 @@
 // Global simulation control parameters
-var time = 0 // minuites
+var time = 0 // minutes
 var refreshPeriod = 10 // 10msec (100Hz)
 var timeStep = 1; // min/refresh
 var savedTimeStep = timeStep;
@@ -313,13 +313,13 @@ function printSatellite(chart, index) {
         satellite.appendChild(printRow("Laser Power Output:", (sat.laser_power_draw*lunarSpark.system.satellite.laser_eff).toFixed(0),"W"));
         satellite.appendChild(printRow("Total Laser Energy Draw:", (sat.cumulative_laser_energy_draw).toFixed(0),"Wh"));
         satellite.appendChild(printRow("Total Laser Energy Output:", (sat.cumulative_laser_energy_output).toFixed(0),"Wh"));
-        satellite.appendChild(printRow("Undelivered Laser Capacity:", (sat.cumulative_undelivered_laser_capacity).toFixed(0),"Wh"));
+        //satellite.appendChild(printRow("Undelivered Laser Capacity:", (sat.cumulative_undelivered_laser_capacity).toFixed(0),"Wh"));
 
         satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "RxArea", "Int", "Pwr", true));
         satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(m2)", "(W/m2)", "(W)", true));
         for (var i=0;i<sat.vehicles.length;i++) {
             if (i<sat.vehicles.length && lunarSpark.vehicles[i].active == true) {
-                satellite.appendChild(printTable(sat.vehicles[i].id, (sat.vehicles[i].range/1000).toFixed(0), sat.vehicles[i].azimuth.toFixed(0), sat.vehicles[i].elevation.toFixed(0), (sat.vehicles[i].rxArea).toFixed(2), sat.vehicles[i].intensity.toFixed(0), sat.vehicles[i].power.toFixed(0)));
+                satellite.appendChild(printTable(sat.vehicles[i].id, (sat.vehicles[i].range/1000).toFixed(0), sat.vehicles[i].azimuth.toFixed(0), sat.vehicles[i].elevation.toFixed(0), (sat.vehicles[i].rxArea).toFixed(2), sat.vehicles[i].intensity.toFixed(0), sat.vehicles[i].power.toFixed(0), sat.chosen_vehicle == i));
             }
             // else {
             //     satellite.appendChild(printTable("---", "---", "---", "---", "---", "---", "---")); 

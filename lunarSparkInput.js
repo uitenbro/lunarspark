@@ -42,9 +42,9 @@ var lunarSparkInput = {
         "dod": 0.60 // TODO: Set yellow color bar based on dod
       },
       "sat_power_draw": 2814,  // SMAD S/C Pre Sizing S/C Avg Pwr
-      "laser_count": 1,
       "laser_power_draw": 0,
       "vehicles": [],
+      "chosen_vehicle" : -1,
       "lasers": [],
       "cumulative_laser_energy_draw" : 0,
       "cumulative_laser_energy_output" : 0,
@@ -65,9 +65,9 @@ var lunarSparkInput = {
         "dod": 0.60
       },
       "sat_power_draw": 2814, // SMAD S/C Pre Sizing S/C Avg Pwr
-      "laser_count": 1,
       "laser_power_draw": 0,
       "vehicles": [],
+      "chosen_vehicle" : -1,
       "lasers": [],
       "cumulative_laser_energy_draw" : 0,
       "cumulative_laser_energy_output" : 0,
