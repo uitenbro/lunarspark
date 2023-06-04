@@ -45,7 +45,10 @@ var lunarSparkInput = {
       "laser_count": 1,
       "laser_power_draw": 0,
       "vehicles": [],
-      "lasers": []
+      "lasers": [],
+      "cumulative_laser_energy_draw" : 0,
+      "cumulative_laser_energy_output" : 0,
+      "cumulative_undelivered_laser_capacity" : 0,
     },  
     {
       "active": true,
@@ -65,7 +68,10 @@ var lunarSparkInput = {
       "laser_count": 1,
       "laser_power_draw": 0,
       "vehicles": [],
-      "lasers": []
+      "lasers": [],
+      "cumulative_laser_energy_draw" : 0,
+      "cumulative_laser_energy_output" : 0,
+      "cumulative_undelivered_laser_capacity" : 0,
     },
   ],
   "vehicles": [
@@ -91,7 +97,9 @@ var lunarSparkInput = {
       "laser_panel": {
         "diameter": 0.75,
       },
-      "beams": []
+      "beams": [],
+      "excess_laser_panel_energy" : 0,
+      "cumulative_laser_panel_energy" : 0,
     },
     {
       "active": true,
@@ -115,7 +123,9 @@ var lunarSparkInput = {
       "laser_panel": {
         "diameter": 0.75,
       },
-      "beams": []
+      "beams": [],
+      "excess_laser_panel_energy" : 0,
+      "cumulative_laser_panel_energy" : 0,
     },
     {
       "active": true,
@@ -139,7 +149,9 @@ var lunarSparkInput = {
       "laser_panel": {
         "diameter": 0.6,
       },
-      "beams": []
+      "beams": [],
+      "excess_laser_panel_energy" : 0,
+      "cumulative_laser_panel_energy" : 0,
     },  
     {
       "active": true,
@@ -163,7 +175,9 @@ var lunarSparkInput = {
       "laser_panel": {
         "diameter": 0.6,
       },
-      "beams": []
+      "beams": [],
+      "excess_laser_panel_energy" : 0,
+      "cumulative_laser_panel_energy" : 0,
     },     
   //   {
   //     "active": true,

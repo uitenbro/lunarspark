@@ -1,6 +1,3 @@
-//var count = 0;
-
-
 function updateStripChart(type, index) {
     var canvas = document.getElementById(type+"_"+index+"_stripchart");
     
@@ -15,8 +12,9 @@ function updateStripChart(type, index) {
       var dataset0 = {
         label: "Solar",
         data: [],
-        borderColor: "rgb(80, 80, 80",
+        borderColor: "rgb(0, 0, 0)",
         borderWidth: 1,
+        borderDash: [7, 5],
         fill: false,
         pointRadius: 0, // Remove decorations on data points
         pointHoverRadius: 0
@@ -75,10 +73,11 @@ function updateStripChart(type, index) {
               },
               y: {
                 ticks: {
+                  display: false,
                   color: "white"
                 },
                 title: {
-                  display: true,
+                  display: false,
                   text: "Value",
                   color: "white"
                 },
@@ -104,36 +103,18 @@ function updateStripChart(type, index) {
       
       // add value to data array
       if (type == "sat") {
-              
-
-        // var chartData = lunarSpark.satellites[index].battery.percent_history.slice(slice).map(function(item) {
-        //   return item /10*10; // Multiply each item by 2
-        // });
-
         chart.data.datasets[0].data = lunarSpark.satellites[index].solar_panel.power_output_history.slice(slice).map(function(item) {return item/1000});
         chart.data.datasets[1].data = lunarSpark.satellites[index].battery.percent_history.slice(slice).map(function(item) {return item});
         chart.data.datasets[2].data = lunarSpark.satellites[index].laser_power_draw_duty_cycle_history.slice(slice).map(function(item) {return item/1000});
       }
       else if (type == "veh") {
-        chart.data.datasets[0].data = lunarSpark.vehicles[index].solar_panel.power_output_history.slice(slice).map(function(item) {return item/100});
+        chart.data.datasets[0].data = lunarSpark.vehicles[index].solar_panel.power_output_history.slice(slice).map(function(item) {return item/1000});
         chart.data.datasets[1].data = lunarSpark.vehicles[index].battery.percent_history.slice(slice).map(function(item) {return item/10});
         chart.data.datasets[2].data = lunarSpark.vehicles[index].laser_panel.power_output_history.slice(slice).map(function(item) {return item/1000});        
       }
 
-      
       // add current time to labels array
-      //chart.data.labels.push(lunarSpark.environment.time);
-
       chart.data.labels = lunarSpark.environment.time_history.slice(slice).map(function(item) {return Math.floor(item)});        
-      
-
-      // remove oldest data point if over 100 points
-      // if (chart.data.datasets[0].data.length >= 100) {
-      //   for (var i=0;i<chart.data.datasets.length;i++) {      
-      //     chart.data.datasets[i].data.shift();
-      //   }
-      //   chart.data.labels.shift();
-      // }
 
       // limit x-axis to the dataset boundaries
       chart.options.scales.x.min = chart.data.labels[0]
@@ -141,9 +122,6 @@ function updateStripChart(type, index) {
 
       // update chart with new data and x-axis labels
       chart.update();
-
-      // increment counter
-      //count++;
 
       return canvas
 }
