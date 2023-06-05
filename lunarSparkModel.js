@@ -131,8 +131,8 @@ function updateVehicles() {
 			// Loop through vehicle beams and total the power
 			var laserPanelPwr = 0;
 			for (var j=0;j<veh.beams.length;j++) {
-				// Update solar panel power production
-				laserPanelPwr = laserPanelPwr + veh.beams[j].power*lunarSpark.system.vehicle.laser_panel_eff; // Watts 
+				// Update solar panel power production (efficiency applied to power calculation)
+				laserPanelPwr = laserPanelPwr + veh.beams[j].power; // Watts 
 			}
 			// Update laser panel power production
 			veh.laser_panel.power_output = laserPanelPwr;
@@ -320,10 +320,11 @@ function calculateBeamCharacteristics(satIndex, vehIndex) {
 
 	// Calculate beam characteristics
 	var {range, azimuth, elevation} = calculateRangeAzimuthElevation(satIndex, vehIndex); // meters deg deg
-	// TODO: This is a potential beam (it may not be achieveable due to line of site)
-	// TODO: if beam is not columnated then need divergence half angle
-	var divergenceHalfAngle = lunarSpark.system.satellite.laser_wavelength/(Math.PI*lunarSpark.system.satellite.laser_output_diameter)
-	var beamDiameter = 2*range * Math.tan(divergenceHalfAngle) + lunarSpark.system.satellite.laser_output_diameter; // meters
+
+	//  divergence half angle: θ = wavelength / (pi * w0) w0 is a radius
+	var divergenceHalfAngle = lunarSpark.system.satellite.laser_wavelength/(Math.PI*(lunarSpark.system.satellite.laser_output_diameter/2))
+	// Beam diameter at range D(range) = 2 * range * tan(θ/2) + D0
+	var beamDiameter = 2 * range * Math.tan(divergenceHalfAngle) + lunarSpark.system.satellite.laser_output_diameter; // meters
 	//var beamDiameter = lunarSpark.system.satellite.laser_output_diameter // meters
 	var areaBeam = Math.PI*((beamDiameter/2)**2); 
 	var receiverDiameter = lunarSpark.vehicles[vehIndex].laser_panel.diameter;
@@ -331,7 +332,7 @@ function calculateBeamCharacteristics(satIndex, vehIndex) {
 	var rxArea = Math.PI*((receiverDiameter/2)**2)*Math.cos((90-elevation)*Math.PI/180); 
 	// Laser output constant x duty cycle with no space loss from output to panel
 	var intensity = lunarSpark.system.satellite.laser_output_power*lunarSpark.system.satellite.laser_duty_cycle/(areaBeam); // W/m2 
-	var power = rxArea*intensity; // Assume beam always covers the whole panel (pointing error accomodated by beam width)
+	var power = rxArea*intensity*lunarSpark.system.vehicle.laser_panel_eff; // Assume beam always covers the whole panel (pointing error accomodated by beam width)
 
 	return {vehIndex, azimuth, elevation, range, rxArea, intensity, power} 
 }
