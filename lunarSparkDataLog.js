@@ -9,8 +9,9 @@ function initializeDataLog() {
     lunarSpark.environment.cumulative_undelivered_laser_capacity_history = []
     lunarSpark.environment.excess_laser_panel_energy_history = []
     lunarSpark.environment.cumulative_laser_panel_energy_history = []
+    lunarSpark.environment.delivered_efficiency_history = []
     lunarSpark.environment.usable_energy_history = []
-    lunarSpark.environment.waste_percent_history = []
+    lunarSpark.environment.excesss_percent_history = []
     lunarSpark.environment.overall_efficiency_history = []
 
 	// Satellite
@@ -93,19 +94,21 @@ function logData() {
 
     lunarSpark.environment.usable_energy = lunarSpark.environment.cumulative_laser_panel_energy-lunarSpark.environment.excess_laser_panel_energy
     if (lunarSpark.environment.cumulative_laser_panel_energy != 0) {
-    	lunarSpark.environment.waste_percent = (lunarSpark.environment.excess_laser_panel_energy/lunarSpark.environment.cumulative_laser_panel_energy)*100
+    	lunarSpark.environment.excesss_percent = (lunarSpark.environment.excess_laser_panel_energy/lunarSpark.environment.cumulative_laser_panel_energy)*100
     }
     else {
-    	lunarSpark.environment.waste_percent = 0
+    	lunarSpark.environment.excesss_percent = 0
     }
     if (lunarSpark.environment.cumulative_laser_energy_draw !=0) {
+    	lunarSpark.environment.delivered_efficiency = (lunarSpark.environment.cumulative_laser_panel_energy/lunarSpark.environment.cumulative_laser_energy_draw)*100
     	lunarSpark.environment.overall_efficiency = (lunarSpark.environment.usable_energy/lunarSpark.environment.cumulative_laser_energy_draw)*100
 	}
 	else {
 		lunarSpark.environment.overall_efficiency = 0
 	}
     lunarSpark.environment.usable_energy_history.push(lunarSpark.environment.usable_energy)
-    lunarSpark.environment.waste_percent_history.push(lunarSpark.environment.waste_percent)
+    lunarSpark.environment.delivered_efficiency_history.push(lunarSpark.environment.delivered_efficiency)
+    lunarSpark.environment.excesss_percent_history.push(lunarSpark.environment.excesss_percent)
     lunarSpark.environment.overall_efficiency_history.push(lunarSpark.environment.overall_efficiency)
 
 }

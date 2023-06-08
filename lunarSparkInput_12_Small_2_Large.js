@@ -136,110 +136,110 @@ var lunarSparkInput = {
       "excess_laser_panel_energy" : 0,
       "cumulative_laser_panel_energy" : 0,
     },
-    //   {
-    //   "active": true,
-    //   "id": "SMALL1",
-    //   "location": {
-    //     "lat": -80,
-    //     "long": 0,
-    //     "shadow_model": [],
-    //     "in_night": false,
-    //     "in_shadow": false
-    //   },
-    //   "solar_panel": {
-    //     "height": 1,
-    //     "width": 2,
-    //   },
-    //   "battery": {
-    //     "capacity": 5000,
-    //     "charge": 2500,
-    //   },
-    //   "power_draw": 10,
-    //   "laser_panel": {
-    //     "diameter": 0.75,
-    //   },
-    //   "beams": [],
-    //   "excess_laser_panel_energy" : 0,
-    //   "cumulative_laser_panel_energy" : 0,
-    // },
-    // {
-    //   "active": true,
-    //   "id": "SMALL2",
-    //   "location": {
-    //     "lat": -80,
-    //     "long": 30,
-    //     "shadow_model": [],
-    //     "in_night": false,
-    //     "in_shadow": false
-    //   },
-    //   "solar_panel": {
-    //     "height": 1,
-    //     "width": 2,
-    //   },
-    //   "battery": {
-    //     "capacity": 5000,
-    //     "charge": 2500,
-    //   },
-    //   "power_draw": 10,
-    //   "laser_panel": {
-    //     "diameter": 0.75,
-    //   },
-    //   "beams": [],
-    //   "excess_laser_panel_energy" : 0,
-    //   "cumulative_laser_panel_energy" : 0,
-    // },
-    // {
-    //   "active": true,
-    //   "id": "SMALL3",
-    //   "location": {
-    //     "lat": -80,
-    //     "long": 60,
-    //     "shadow_model": [],
-    //     "in_night": false,
-    //     "in_shadow": false
-    //   },
-    //   "solar_panel": {
-    //     "height": 1,
-    //     "width": 2,
-    //   },
-    //   "battery": {
-    //     "capacity": 5000,
-    //     "charge": 2500,
-    //   },
-    //   "power_draw": 10,
-    //   "laser_panel": {
-    //     "diameter": 0.75,
-    //   },
-    //   "beams": [],
-    //   "excess_laser_panel_energy" : 0,
-    //   "cumulative_laser_panel_energy" : 0,
-    // },
-    // {
-    //   "active": true,
-    //   "id": "SMALL4",
-    //   "location": {
-    //     "lat": -80,
-    //     "long": 90,
-    //     "shadow_model": [],
-    //     "in_night": false,
-    //     "in_shadow": false
-    //   },
-    //   "solar_panel": {
-    //     "height": 1,
-    //     "width": 2,
-    //   },
-    //   "battery": {
-    //     "capacity": 5000,
-    //     "charge": 2500,
-    //   },
-    //   "power_draw": 10,
-    //   "laser_panel": {
-    //     "diameter": 0.75,
-    //   },
-    //   "beams": [],
-    //   "excess_laser_panel_energy" : 0,
-    //   "cumulative_laser_panel_energy" : 0,
-    // },
+        {
+      "active": true,
+      "id": "SMALL1",
+      "location": {
+        "lat": -80,
+        "long": 0,
+        "shadow_model": [],
+        "in_night": false,
+        "in_shadow": false
+      },
+      "solar_panel": {
+        "height": 1,
+        "width": 2,
+      },
+      "battery": {
+        "capacity": 5000,
+        "charge": 2500,
+      },
+      "power_draw": 10,
+      "laser_panel": {
+        "diameter": 0.75,
+      },
+      "beams": [],
+      "excess_laser_panel_energy" : 0,
+      "cumulative_laser_panel_energy" : 0,
+    },
+    {
+      "active": true,
+      "id": "SMALL2",
+      "location": {
+        "lat": -80,
+        "long": 30,
+        "shadow_model": [],
+        "in_night": false,
+        "in_shadow": false
+      },
+      "solar_panel": {
+        "height": 1,
+        "width": 2,
+      },
+      "battery": {
+        "capacity": 5000,
+        "charge": 2500,
+      },
+      "power_draw": 10,
+      "laser_panel": {
+        "diameter": 0.75,
+      },
+      "beams": [],
+      "excess_laser_panel_energy" : 0,
+      "cumulative_laser_panel_energy" : 0,
+    },
+    {
+      "active": true,
+      "id": "SMALL3",
+      "location": {
+        "lat": -80,
+        "long": 60,
+        "shadow_model": [],
+        "in_night": false,
+        "in_shadow": false
+      },
+      "solar_panel": {
+        "height": 1,
+        "width": 2,
+      },
+      "battery": {
+        "capacity": 5000,
+        "charge": 2500,
+      },
+      "power_draw": 10,
+      "laser_panel": {
+        "diameter": 0.75,
+      },
+      "beams": [],
+      "excess_laser_panel_energy" : 0,
+      "cumulative_laser_panel_energy" : 0,
+    },
+    {
+      "active": true,
+      "id": "SMALL4",
+      "location": {
+        "lat": -80,
+        "long": 90,
+        "shadow_model": [],
+        "in_night": false,
+        "in_shadow": false
+      },
+      "solar_panel": {
+        "height": 1,
+        "width": 2,
+      },
+      "battery": {
+        "capacity": 5000,
+        "charge": 2500,
+      },
+      "power_draw": 10,
+      "laser_panel": {
+        "diameter": 0.75,
+      },
+      "beams": [],
+      "excess_laser_panel_energy" : 0,
+      "cumulative_laser_panel_energy" : 0,
+    },
        {
       "active": true,
       "id": "SMALL5",
@@ -374,8 +374,8 @@ var lunarSparkInput = {
       "active": true,
       "id": "SMALL10",
       "location": {
-        "lat": -85,
-        "long": 120,
+        "lat": -80,
+        "long": 270,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -400,60 +400,8 @@ var lunarSparkInput = {
       "active": true,
       "id": "SMALL11",
       "location": {
-        "lat": -85,
-        "long": 150,
-        "shadow_model": [],
-        "in_night": false,
-        "in_shadow": false
-      },
-      "solar_panel": {
-        "height": 1,
-        "width": 2,
-      },
-      "battery": {
-        "capacity": 5000,
-        "charge": 2500,
-      },
-      "power_draw": 10,
-      "laser_panel": {
-        "diameter": 0.75,
-      },
-      "beams": [],
-      "excess_laser_panel_energy" : 0,
-      "cumulative_laser_panel_energy" : 0,
-    },
-    // {
-    //   "active": true,
-    //   "id": "SMALL12",
-    //   "location": {
-    //     "lat": -85,
-    //     "long": 180,
-    //     "shadow_model": [],
-    //     "in_night": false,
-    //     "in_shadow": false
-    //   },
-    //   "solar_panel": {
-    //     "height": 1,
-    //     "width": 2,
-    //   },
-    //   "battery": {
-    //     "capacity": 5000,
-    //     "charge": 2500,
-    //   },
-    //   "power_draw": 10,
-    //   "laser_panel": {
-    //     "diameter": 0.75,
-    //   },
-    //   "beams": [],
-    //   "excess_laser_panel_energy" : 0,
-    //   "cumulative_laser_panel_energy" : 0,
-    // },
-    {
-      "active": true,
-      "id": "SMALL13",
-      "location": {
-        "lat": -85,
-        "long": 210,
+        "lat": -80,
+        "long": 300,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -476,10 +424,10 @@ var lunarSparkInput = {
     },
     {
       "active": true,
-      "id": "SMALL14",
+      "id": "SMALL12",
       "location": {
-        "lat": -85,
-        "long": 240,
+        "lat": -80,
+        "long": 330,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false

@@ -447,9 +447,10 @@ function printSimStatus() {
     div.appendChild(printRow("Overall Laser Energy Draw:", (lunarSpark.environment.cumulative_laser_energy_draw/1000).toFixed(1), "kW"));
     div.appendChild(printRow("Overall Laser Energy Output:", (lunarSpark.environment.cumulative_laser_energy_output/1000).toFixed(1), "kW"));
     div.appendChild(printRow("Overall Laser Panel Output:", (lunarSpark.environment.cumulative_laser_panel_energy/1000).toFixed(1), "kW"));
-    div.appendChild(printRow("Excess Laser Panel Output:", (lunarSpark.environment.excess_laser_panel_energy/1000).toFixed(1), "kW"));
+    div.appendChild(printRow("Delivered Efficiency:", (lunarSpark.environment.delivered_efficiency).toFixed(1), "%"));
+    div.appendChild(printRow("Excess Laser Panel Output:", (lunarSpark.environment.excess_laser_panel_energy/1000).toFixed(1), "kW")); 
     div.appendChild(printRow("Usable Laser Panel Output:", ((lunarSpark.environment.usable_energy)/1000).toFixed(1), "kW"));
-    div.appendChild(printRow("Waste Percent:", (lunarSpark.environment.waste_percent).toFixed(1), "%"));
+    div.appendChild(printRow("Excesss Percent:", (lunarSpark.environment.excesss_percent).toFixed(1), "%"));
     div.appendChild(printRow("Overall Efficiency:", (lunarSpark.environment.overall_efficiency).toFixed(1), "%"));
 
     simRight = document.getElementById('simStatus2');
