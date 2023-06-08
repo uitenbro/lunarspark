@@ -239,8 +239,7 @@ function connectLasers() {
 					for (var j=0;j<potentialVehicles.length;j++) {
 						if (lunarSpark.satellites[i].chosen_vehicle == potentialVehicles[j].vehIndex) {
 							// connect the laser to the vehicle
-							connectLaser(i, 0, potentialVehicles[j].vehIndex, potentialVehicles[j].range, potentialVehicles[j].azimuth, potentialVehicles[j].elevation, potentialVehicles[j].rxArea, potentialVehicles[j].intensity, potentialVehicles[j].power);  
-							laserConnectCount++;
+							laserConnectCount += connectLaser(i, 0, potentialVehicles[j].vehIndex, potentialVehicles[j].range, potentialVehicles[j].azimuth, potentialVehicles[j].elevation, potentialVehicles[j].rxArea, potentialVehicles[j].intensity, potentialVehicles[j].power);  
 						}
 					}
 				//}
@@ -261,18 +260,27 @@ function connectLasers() {
 function connectLaser(satellite, laser, vehicle, range, azimuth, elevation, rxArea, intensity, power) {
 	// TODO: error connecting if satellite is too low on power
 
+	laserConnectCount = 0
 	// disconnect laser from old vehicle
 	disconnectLaser(satellite, laser);
 
-	// Update satellite data store
-	lunarSpark.satellites[satellite].lasers.push({"laser": laser, "vehicle": vehicle, "range": range, "azimuth":azimuth , "elevation": elevation, "rxArea": rxArea, "intensity": intensity, "power": power });
-	// Update vehicle data store
-	lunarSpark.vehicles[vehicle].beams.push({"satellite": satellite, "laser": laser, "range": range, "rxArea": rxArea, "azimuth":azimuth , "elevation": elevation, "intensity": intensity, "power": power});
+	// TODO: check vehicle for other non-delivery criteria and decide not to connect and update undelivered capacity
+	if (lunarSpark.vehicles[vehicle].location.in_shadow == true || lunarSpark.vehicles[vehicle].location.in_night == true) {
+		// Update satellite data store
+		lunarSpark.satellites[satellite].lasers.push({"laser": laser, "vehicle": vehicle, "range": range, "azimuth":azimuth , "elevation": elevation, "rxArea": rxArea, "intensity": intensity, "power": power });
+		// Update vehicle data store
+		lunarSpark.vehicles[vehicle].beams.push({"satellite": satellite, "laser": laser, "range": range, "rxArea": rxArea, "azimuth":azimuth , "elevation": elevation, "intensity": intensity, "power": power});
+		laserConnectCount = 1
+	}
+	else {
+		lunarSpark.satellites[satellite].cumulative_undelivered_laser_capacity += power*timeStep/60 // Whr
+	}	
 
 	// if more than maxBeamsPerVehicle report a message TODO: reword error message
 	if (lunarSpark.vehicles[vehicle].beams.length > maxBeamsPerVehicle) {
 		console.log("More beams connected than can be displayed.  Consider expanding maxBeamsPerVehicle.")
 	}
+	return laserConnectCount
 }
 function disconnectLaser(satellite, laser) {
 	var sat = lunarSpark.satellites[satellite];
@@ -332,8 +340,9 @@ function calculateBeamCharacteristics(satIndex, vehIndex) {
 	var rxArea = Math.PI*((receiverDiameter/2)**2)*Math.cos((90-elevation)*Math.PI/180); 
 	// Laser output constant x duty cycle with no space loss from output to panel
 	var intensity = lunarSpark.system.satellite.laser_output_power*lunarSpark.system.satellite.laser_duty_cycle/(areaBeam); // W/m2 
-	var power = rxArea*intensity*lunarSpark.system.vehicle.laser_panel_eff; // Assume beam always covers the whole panel (pointing error accomodated by beam width)
-
+	// Assume beam always covers the whole panel (pointing error accomodated by beam width)
+	// Apply laser panel efficiency
+	var power = rxArea*intensity*lunarSpark.system.vehicle.laser_panel_eff; 
 	return {vehIndex, azimuth, elevation, range, rxArea, intensity, power} 
 }
 
