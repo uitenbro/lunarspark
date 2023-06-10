@@ -112,3 +112,60 @@ function logData() {
     lunarSpark.environment.overall_efficiency_history.push(lunarSpark.environment.overall_efficiency)
 
 }
+
+function saveFile() {
+  const defaultFilename = lunarSpark.test_case.filename;
+  const filename = prompt("Enter a filename (without extension):", defaultFilename);
+  if (filename === null) {
+    // Prompt was cancelled
+    return;
+  }
+
+  if (!filename.trim()) {
+    alert("Invalid filename. Please try again.");
+    return;
+  }
+  var object = {"lunarSparkInput": JSON.parse(localStorage.getItem("lunarSparkInput")),
+				"lunarSpark": lunarSpark}
+
+  const json = JSON.stringify(object, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `${filename}.json`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+function loadFile(event) {
+  const file = event.target.files[0];
+  if (!file) {
+    return; // No file selected
+  }
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const contents = e.target.result;
+    const parsedData = JSON.parse(contents);
+
+    // setup initial input and current state to match the config file
+    lunarSparkInput = parsedData.lunarSparkInput;
+    localStorage.setItem("lunarSparkInput", JSON.stringify(lunarSparkInput));
+    if (parsedData.lunarSpark) {
+	    lunarSpark = parsedData.lunarSpark;
+	}
+    else {
+    	lunarSpark = lunarSparkInput
+    }
+    // set time to configured time
+    time = lunarSpark.environment.time
+    prevTime = lunarSpark.environment.time
+    // update the screen
+    clearCanvas();
+    drawAll();
+    printAll()
+  };
+  reader.readAsText(file);
+   
+}

@@ -140,19 +140,38 @@ function slower() {
 }
 
 function printButton(label, action, id) {
-    var a = document.createElement('a')
-    a.href = action; 
-    if (id == "pauseButton") {
-        a.className = "buttonDisabled";
-    }    
-    else if (id == "saveButton") {
-        a.className = "buttonUnderline";
+    if (id == "configButton"){
+        var a = document.createElement('input')
+        a.type="file" 
+        accept=".json" 
+        a.id = id
+        a.className = "custom-file-input" 
+        a.addEventListener('change', loadFile)
     }
-    else {
+    else if (id == "configButtonLabel"){
+        var a = document.createElement('label')
+        a.htmlFor = "configButton";
         a.className = "button"
+        a.textContent = label
+
+        //  <label for="fileInput" class="custom-file-label">Load JSON</label>
+        //  <input type="file" id="fileInput" accept=".json" class="custom-file-input" onchange="loadJSONFile(event)">
     }
-    a.id = id;
-    a.appendChild(document.createTextNode(label));
+    else {    
+        var a = document.createElement('a')
+        a.href = action; 
+        if (id == "pauseButton") {
+            a.className = "buttonDisabled";
+        }    
+        else if (id == "saveButton") {
+            a.className = "buttonUnderline";
+        }
+        else {
+            a.className = "button"
+        }
+        a.id = id;
+        a.appendChild(document.createTextNode(label));
+    }
     return a    
 }
 function printSimControl() {
@@ -161,6 +180,7 @@ function printSimControl() {
     simControl.id = "simControl";
 
     simControl.appendChild(printButton("\u2699", "javascript:loadFile();", "configButton")); // TODO: Add load configuration
+    simControl.appendChild(printButton("\u2699", "javascript:loadFile();", "configButtonLabel")); // TODO: Add load configuration
     simControl.appendChild(printButton("\u25B6","javascript:startSim();", "runButton"));
     simControl.appendChild(printButton("\u23FD\u23FD", "javascript:pauseSim();", "pauseButton"));
     simControl.appendChild(printButton("\u20D5", "javascript:stepSim();", "stepButton"));
@@ -458,6 +478,7 @@ function printSimStatus() {
     var div = document.createElement('div');
     div.id = "simStatus2";
 
+    div.appendChild(printRow("Config Filename:", lunarSpark.test_case.vehicle_configuration, ""));
     div.appendChild(printRow("Vehicle Configuration:", lunarSpark.test_case.vehicle_configuration, ""));
     div.appendChild(printRow("Pwr Delivery Strategy:", lunarSpark.test_case.power_delivery_strategy, ""));
     div.appendChild(printRow("-----------------------", "------------------", ""));
@@ -465,12 +486,11 @@ function printSimStatus() {
     div.appendChild(printRow("Laser Energy Output:", (lunarSpark.environment.cumulative_laser_energy_output/1000).toFixed(1), "kWh"));
     div.appendChild(printRow("Laser Panel Output:", (lunarSpark.environment.cumulative_laser_panel_energy/1000).toFixed(1), "kWh"));
     div.appendChild(printRow("Undelivered Capacity:", (lunarSpark.environment.cumulative_undelivered_laser_capacity/1000).toFixed(1), "kWh"));
-    div.appendChild(printRow("Delivered Efficiency:", (lunarSpark.environment.delivered_efficiency).toFixed(3), "%"));
-    div.appendChild(printRow("-----------------------", "------------------", ""));
     div.appendChild(printRow("Excess Laser Panel Output:", (lunarSpark.environment.excess_laser_panel_energy/1000).toFixed(1), "kWh")); 
     div.appendChild(printRow("Usable Laser Panel Output:", ((lunarSpark.environment.usable_energy)/1000).toFixed(1), "kWh"));
-    div.appendChild(printRow("Excesss Laser Panel Percent:", (lunarSpark.environment.excesss_percent).toFixed(3), "%"));
     div.appendChild(printRow("-----------------------", "------------------", ""));
+    div.appendChild(printRow("Excesss Laser Panel Percent:", (lunarSpark.environment.excesss_percent).toFixed(3), "%"));
+    div.appendChild(printRow("Delivered Efficiency:", (lunarSpark.environment.delivered_efficiency).toFixed(3), "%"));
     div.appendChild(printRow("Usable Efficiency:", (lunarSpark.environment.overall_efficiency).toFixed(3), "%"));
 
     simRight = document.getElementById('simStatus2');

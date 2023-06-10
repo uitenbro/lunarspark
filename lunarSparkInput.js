@@ -1,5 +1,6 @@
 var lunarSparkInput = {
   "test_case" :{
+    "filename": "lunarSparkDefault",
     "power_delivery_strategy" : "Battery Percent",
     "vehicle_configuration" : "Lg:1/85 Sp:NA",
   },

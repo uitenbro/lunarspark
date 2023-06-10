@@ -218,7 +218,6 @@ function vehicleSort(a,b){
 }
 
 function chooseVehicle() {
-	//var chosenVehicles = []
 	// sort to prioritize vehicles based on chosen method
 	var prioritizedVehicles = [...lunarSpark.vehicles].sort(vehicleSort)
 	
@@ -230,7 +229,7 @@ function chooseVehicle() {
 		if ((veh.location.in_shadow == true || veh.location.in_night == true) && 
 			// TODO: check vehicle for other non-delivery criteria and make this configurable
 			// if battery charge is low enough to take a full beam (prevent excess delivery)
-			(veh.battery.percent < 90))
+			(veh.battery.percent < 95))
 		{
 			var chosenVehicleIndex = lunarSpark.vehicles.indexOf(veh)
 			break;
