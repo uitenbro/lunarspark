@@ -1,4 +1,8 @@
 var lunarSparkInput = {
+  "test_case" :{
+    "power_delivery_strategy" : "Battery Percent",
+    "vehicle_configuration" : "Lg:1/85 Sp:NA",
+  },
   "environment": {
     "time": 0,
     "orbit": { // TODO: move this to satellite and calculate based on altitude
@@ -110,32 +114,32 @@ var lunarSparkInput = {
       "excess_laser_panel_energy" : 0,
       "cumulative_laser_panel_energy" : 0,
     },
-    // {
-    //   "active": true,
-    //   "id": "VIPER1",
-    //   "location": {
-    //     "lat": -85,
-    //     "long": 180,
-    //     "shadow_model": [],
-    //     "in_night": false,
-    //     "in_shadow": false
-    //   },
-    //   "solar_panel": {
-    //     "height": 1,
-    //     "width": 2,
-    //   },
-    //   "battery": {
-    //     "capacity": 5000,
-    //     "charge": 2500,
-    //   },
-    //   "power_draw": 80,
-    //   "laser_panel": {
-    //     "diameter": 0.75,
-    //   },
-    //   "beams": [],
-    //   "excess_laser_panel_energy" : 0,
-    //   "cumulative_laser_panel_energy" : 0,
-    // },
+    {
+      "active": true,
+      "id": "VIPER1",
+      "location": {
+        "lat": -85,
+        "long": 180,
+        "shadow_model": [],
+        "in_night": false,
+        "in_shadow": false
+      },
+      "solar_panel": {
+        "height": 1,
+        "width": 2,
+      },
+      "battery": {
+        "capacity": 5000,
+        "charge": 2500,
+      },
+      "power_draw": 80,
+      "laser_panel": {
+        "diameter": 0.75,
+      },
+      "beams": [],
+      "excess_laser_panel_energy" : 0,
+      "cumulative_laser_panel_energy" : 0,
+    },
     // //   {
     // //   "active": true,
     // //   "id": "SMALL1",

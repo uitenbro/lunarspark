@@ -175,6 +175,7 @@ function printAll() {
     printSimData();   
     printSatellites();
     printVehicles();
+    printSimStripCharts();
 }
 
 
@@ -433,7 +434,9 @@ function printSimStatus() {
     div.appendChild(printRow("Hrs:", Math.floor(time/60)%24, "hrs"));
     div.appendChild(printRow("Min:", (time%60).toFixed(0), "min"));
     div.appendChild(printRow("Orbit Count:", (lunarSpark.environment.orbit.count), "-"));
-
+    div.appendChild(printRow("Ascending Node:", (lunarSpark.environment.orbit.ascending_node).toFixed(1), "deg"));
+    div.appendChild(printRow("Sun Angle:", (lunarSpark.environment.sun_angle).toFixed(1), "deg"));
+  
     simStatus = document.getElementById('simStatus1');
     simStatus.replaceWith(div);
 
@@ -441,20 +444,35 @@ function printSimStatus() {
     var div = document.createElement('div');
     div.id = "simStatus2";
 
-
-    div.appendChild(printRow("Ascending Node:", (lunarSpark.environment.orbit.ascending_node).toFixed(1), "deg"));
-    div.appendChild(printRow("Sun Angle:", (lunarSpark.environment.sun_angle).toFixed(1), "deg"));
-    div.appendChild(printRow("Overall Laser Energy Draw:", (lunarSpark.environment.cumulative_laser_energy_draw/1000).toFixed(1), "kW"));
-    div.appendChild(printRow("Overall Laser Energy Output:", (lunarSpark.environment.cumulative_laser_energy_output/1000).toFixed(1), "kW"));
-    div.appendChild(printRow("Overall Laser Panel Output:", (lunarSpark.environment.cumulative_laser_panel_energy/1000).toFixed(1), "kW"));
-    div.appendChild(printRow("Undelivered Laser Capacity:", (lunarSpark.environment.cumulative_undelivered_laser_capacity/1000).toFixed(1), "kW"));
+    div.appendChild(printRow("Vehicle Configuration:", lunarSpark.test_case.vehicle_configuration, ""));
+    div.appendChild(printRow("Pwr Delivery Strategy:", lunarSpark.test_case.power_delivery_strategy, ""));
+    div.appendChild(printRow("-----------------------", "------------------", ""));
+    div.appendChild(printRow("Laser Energy Draw:", (lunarSpark.environment.cumulative_laser_energy_draw/1000).toFixed(1), "kWh"));
+    div.appendChild(printRow("Laser Energy Output:", (lunarSpark.environment.cumulative_laser_energy_output/1000).toFixed(1), "kWh"));
+    div.appendChild(printRow("Laser Panel Output:", (lunarSpark.environment.cumulative_laser_panel_energy/1000).toFixed(1), "kWh"));
+    div.appendChild(printRow("Undelivered Capacity:", (lunarSpark.environment.cumulative_undelivered_laser_capacity/1000).toFixed(1), "kWh"));
     div.appendChild(printRow("Delivered Efficiency:", (lunarSpark.environment.delivered_efficiency).toFixed(1), "%"));
-    div.appendChild(printRow("Excess Laser Panel Output:", (lunarSpark.environment.excess_laser_panel_energy/1000).toFixed(1), "kW")); 
-    div.appendChild(printRow("Usable Laser Panel Output:", ((lunarSpark.environment.usable_energy)/1000).toFixed(1), "kW"));
-    div.appendChild(printRow("Excesss Percent:", (lunarSpark.environment.excesss_percent).toFixed(1), "%"));
-    div.appendChild(printRow("Overall Efficiency:", (lunarSpark.environment.overall_efficiency).toFixed(1), "%"));
+    div.appendChild(printRow("-----------------------", "------------------", ""));
+    div.appendChild(printRow("Excess Laser Panel Output:", (lunarSpark.environment.excess_laser_panel_energy/1000).toFixed(1), "kWh")); 
+    div.appendChild(printRow("Usable Laser Panel Output:", ((lunarSpark.environment.usable_energy)/1000).toFixed(1), "kWh"));
+    div.appendChild(printRow("Excesss Laser Panel Percent:", (lunarSpark.environment.excesss_percent).toFixed(1), "%"));
+    div.appendChild(printRow("-----------------------", "------------------", ""));
+    div.appendChild(printRow("Usable Efficiency:", (lunarSpark.environment.overall_efficiency).toFixed(1), "%"));
 
     simRight = document.getElementById('simStatus2');
     simRight.replaceWith(div);
 
+}
+
+function printSimStripCharts() {
+    var div = document.createElement('div');
+    div.id = "simStatusStripCharts";
+    
+    for (var chart of ["laser_energy", "efficiency", "capacity"]) {
+        var stripchart = document.createElement('div');
+        stripchart.className = "simStatusStripChart";
+        stripchart.appendChild(updateSimStatusStripChart(chart))
+        div.appendChild(stripchart)
+    }
+    document.getElementById('bottom').appendChild(div)
 }
