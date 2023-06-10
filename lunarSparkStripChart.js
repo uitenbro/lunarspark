@@ -249,29 +249,29 @@ function updateSimStatusStripChart(type) {
 
       // add value to data array
       if (type == "laser_energy") {
-        chart.data.datasets[0].data = lunarSpark.environment.cumulative_laser_panel_energy_history.slice(slice).filter(function(_, index) {return (index + 1) % 10 === 0;}).map(function(item) {return item/1000});
-        chart.data.datasets[1].data = lunarSpark.environment.usable_energy_history.slice(slice).filter(function(_, index) {return (index + 1) % 10 === 0;}).map(function(item) {return item/1000});
+        chart.data.datasets[0].data = lunarSpark.environment.cumulative_laser_panel_energy_history.slice(slice).filter(function(_, index) {return (index ) % 10 === 0;}).map(function(item) {return item/1000});
+        chart.data.datasets[1].data = lunarSpark.environment.usable_energy_history.slice(slice).filter(function(_, index) {return (index ) % 10 === 0;}).map(function(item) {return item/1000});
         chart.data.datasets[0].label = "Laser Panel Out"
         chart.data.datasets[1].label = "Laser Panel Usable"
         chart.options.scales.y.title.text = "kWh"
       }
       else if (type == "efficiency") {
-        chart.data.datasets[0].data = lunarSpark.environment.delivered_efficiency_history.slice(slice).filter(function(_, index) {return (index + 1) % 10 === 0;});
-        chart.data.datasets[1].data = lunarSpark.environment.overall_efficiency_history.slice(slice).filter(function(_, index) {return (index + 1) % 10 === 0;});
+        chart.data.datasets[0].data = lunarSpark.environment.delivered_efficiency_history.slice(slice).filter(function(_, index) {return (index ) % 10 === 0;});
+        chart.data.datasets[1].data = lunarSpark.environment.overall_efficiency_history.slice(slice).filter(function(_, index) {return (index ) % 10 === 0;});
         chart.data.datasets[0].label = "Delivered Efficiency"
         chart.data.datasets[1].label = "Usable Efficiency"     
         chart.options.scales.y.title.text = "% Efficiency"
       }
       else if (type == "capacity") {
-        chart.data.datasets[0].data = lunarSpark.environment.excess_laser_panel_energy_history.slice(slice).filter(function(_, index) {return (index + 1) % 10 === 0;}).map(function(item) {return item/1000});
-        chart.data.datasets[1].data = lunarSpark.environment.cumulative_undelivered_laser_capacity_history.slice(slice).filter(function(_, index) {return (index + 1) % 10 === 0;}).map(function(item) {return item/1000});
+        chart.data.datasets[0].data = lunarSpark.environment.excess_laser_panel_energy_history.slice(slice).filter(function(_, index) {return (index ) % 10 === 0;}).map(function(item) {return item/1000});
+        chart.data.datasets[1].data = lunarSpark.environment.cumulative_undelivered_laser_capacity_history.slice(slice).filter(function(_, index) {return (index ) % 10 === 0;}).map(function(item) {return item/1000});
         chart.data.datasets[0].label = "Excess Laser Panel Out"
         chart.data.datasets[1].label = "Undelivered Laser Capacity"
         chart.options.scales.y.title.text = "kWh"
       }
 
       // add current time to labels array
-      chart.data.labels = lunarSpark.environment.time_history.slice(slice).filter(function(_, index) {return (index + 1) % 10 === 0;});;        
+      chart.data.labels = lunarSpark.environment.time_history.slice(slice).filter(function(_, index) {return (index ) % 10 === 0;});;        
 
       // limit x-axis to the dataset boundaries
       chart.options.scales.x.min = chart.data.labels[0]

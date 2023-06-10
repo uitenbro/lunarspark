@@ -72,9 +72,18 @@ div#simControl .button {
 	text-align: center;
 	color: white;
 	border: 1px solid white;
-	margin: 5px 5px 5px 5px;
+	margin: 5px 2px 5px 2px;
 	padding: 5px 10px 5px 10px;
 	text-decoration: none;
+}
+div#simControl .buttonUnderline {
+	font-size: 20px;
+	text-align: center;
+	color: white;
+	border: 1px solid white;
+	margin: 5px 2px 5px 2px;
+	padding: 5px 10px 5px 10px;
+	text-decoration: underline;
 }
 div#simControl .buttonDisabled {
 	font-size: 20px;

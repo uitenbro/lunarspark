@@ -2,6 +2,7 @@
 var time = 0 // minutes
 var refreshPeriod = 10 // 10msec (100Hz)
 var timeStep = 1; // min/refresh
+var timeSteps = [0.1, 0.25,0.5,1,2,3,4,5,6]
 var savedTimeStep = timeStep;
 var simState = "pause";
 var previousStartTime = 0;
@@ -12,6 +13,7 @@ var execRate = 100; // Hz
 var realTime = execRate * timeStep*60// step/sec * min/step
 var frameCount = 0;
 var spinLock = true;
+var simStatusStriptChartOn = false
 
 // Display thresholds
 const battRedThreshold = 25 // %
@@ -119,13 +121,19 @@ function pauseSim() {
 }
 
 function faster() {
-    timeStep = timeStep*2;
+    var index = timeSteps.indexOf(timeStep)+1
+    if (index < timeSteps.length) {
+        timeStep = timeSteps[index];
+    }
     savedTimeStep = timeStep;
     realTime = execRate * timeStep*60
     printSimData();
 }
 function slower() {
-    timeStep = timeStep/2;
+    var index = timeSteps.indexOf(timeStep)-1
+    if (index >= 0) {
+        timeStep = timeSteps[index];
+    }
     savedTimeStep = timeStep;
     realTime = execRate * timeStep*60
     printSimData();
@@ -136,6 +144,9 @@ function printButton(label, action, id) {
     a.href = action; 
     if (id == "pauseButton") {
         a.className = "buttonDisabled";
+    }    
+    else if (id == "saveButton") {
+        a.className = "buttonUnderline";
     }
     else {
         a.className = "button"
@@ -149,14 +160,17 @@ function printSimControl() {
     var simControl = document.createElement('div')
     simControl.id = "simControl";
 
-    simControl.appendChild(printButton("\u2699", "javascript:initSim();", "configButton")); // TODO: Add load configuration
+    simControl.appendChild(printButton("\u2699", "javascript:loadFile();", "configButton")); // TODO: Add load configuration
     simControl.appendChild(printButton("\u25B6","javascript:startSim();", "runButton"));
     simControl.appendChild(printButton("\u23FD\u23FD", "javascript:pauseSim();", "pauseButton"));
     simControl.appendChild(printButton("\u20D5", "javascript:stepSim();", "stepButton"));
     simControl.appendChild(printButton("\u21CA", "javascript:slower();", "slowerButton"));    
     simControl.appendChild(printButton("\u21C8", "javascript:faster();", "fasterButton"));
+    //simControl.appendChild(printButton("\uD83D\uDCBE", "javascript:saveFile();", "saveButton"));
+    simControl.appendChild(printButton("\u2193", "javascript:saveFile();", "saveButton"));
     simControl.appendChild(printButton("\u21BA", "javascript:initSim();", "recycleButton"));
-    
+    simControl.appendChild(printButton("\u296F", "javascript:simStatusStriptChartToggle()", "simStatusStripChart"));
+
     document.getElementById("simControl").replaceWith(simControl);
 
 }
@@ -451,28 +465,34 @@ function printSimStatus() {
     div.appendChild(printRow("Laser Energy Output:", (lunarSpark.environment.cumulative_laser_energy_output/1000).toFixed(1), "kWh"));
     div.appendChild(printRow("Laser Panel Output:", (lunarSpark.environment.cumulative_laser_panel_energy/1000).toFixed(1), "kWh"));
     div.appendChild(printRow("Undelivered Capacity:", (lunarSpark.environment.cumulative_undelivered_laser_capacity/1000).toFixed(1), "kWh"));
-    div.appendChild(printRow("Delivered Efficiency:", (lunarSpark.environment.delivered_efficiency).toFixed(1), "%"));
+    div.appendChild(printRow("Delivered Efficiency:", (lunarSpark.environment.delivered_efficiency).toFixed(3), "%"));
     div.appendChild(printRow("-----------------------", "------------------", ""));
     div.appendChild(printRow("Excess Laser Panel Output:", (lunarSpark.environment.excess_laser_panel_energy/1000).toFixed(1), "kWh")); 
     div.appendChild(printRow("Usable Laser Panel Output:", ((lunarSpark.environment.usable_energy)/1000).toFixed(1), "kWh"));
-    div.appendChild(printRow("Excesss Laser Panel Percent:", (lunarSpark.environment.excesss_percent).toFixed(1), "%"));
+    div.appendChild(printRow("Excesss Laser Panel Percent:", (lunarSpark.environment.excesss_percent).toFixed(3), "%"));
     div.appendChild(printRow("-----------------------", "------------------", ""));
-    div.appendChild(printRow("Usable Efficiency:", (lunarSpark.environment.overall_efficiency).toFixed(1), "%"));
+    div.appendChild(printRow("Usable Efficiency:", (lunarSpark.environment.overall_efficiency).toFixed(3), "%"));
 
     simRight = document.getElementById('simStatus2');
     simRight.replaceWith(div);
 
 }
+function simStatusStriptChartToggle() {
+    simStatusStriptChartOn = !simStatusStriptChartOn
+    printAll()
+}
 
 function printSimStripCharts() {
-    var div = document.createElement('div');
-    div.id = "simStatusStripCharts";
-    
-    for (var chart of ["laser_energy", "efficiency", "capacity"]) {
-        var stripchart = document.createElement('div');
-        stripchart.className = "simStatusStripChart";
-        stripchart.appendChild(updateSimStatusStripChart(chart))
-        div.appendChild(stripchart)
+    if (simStatusStriptChartOn) {
+        var div = document.createElement('div');
+        div.id = "simStatusStripCharts";
+        
+        for (var chart of ["laser_energy", "efficiency", "capacity"]) {
+            var stripchart = document.createElement('div');
+            stripchart.className = "simStatusStripChart";
+            stripchart.appendChild(updateSimStatusStripChart(chart))
+            div.appendChild(stripchart)
+        }
+        document.getElementById('bottom').appendChild(div)
     }
-    document.getElementById('bottom').appendChild(div)
 }
