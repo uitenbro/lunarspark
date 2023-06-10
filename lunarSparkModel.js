@@ -202,24 +202,48 @@ function getPotentialVehicles(i) {
 	return potentialVehicles
 }
 
-function method1(a,b){
+function vehicleSort(a,b){
 	var test = 0
-	// prefer night vehicles over day regardless of anything else
-	if (a.in_night != b.in_night) {
-		test = a.in_night - b.in_night
+	a.inDark = a.in_night || a.in_shadow
+	b.inDark = b.in_night || b.in_shadow
+	// prefer vehicles in darkness over any in daylight regardless of anything else
+	if (a.inDark != b.inDark) {
+		test = b.inDark - a.inDark
 	}
-	else { // prefer low battery percentages over higher
+	// prefer low battery percentages over higher
+	else { 
 		test = a.battery.percent - b.battery.percent 
 	}
 	return test
 }
 
 function chooseVehicle() {
-	var chosenVehicles = []
-	//TODO: add selector for algorithm or sort to prioritize low power vehicles
-	var prioritizedVehicles = [...lunarSpark.vehicles].sort(method1)
-	var chosenVehicleIndex = lunarSpark.vehicles.indexOf(prioritizedVehicles[0])
-	return chosenVehicleIndex
+	//var chosenVehicles = []
+	// sort to prioritize vehicles based on chosen method
+	var prioritizedVehicles = [...lunarSpark.vehicles].sort(vehicleSort)
+	
+	// disqualify vehicles and choose the next best vehicle 
+	var chosenVehicleIndex = -1
+	var executeDelivery = true
+	for (var veh of prioritizedVehicles) {
+			// if the vehicle is in the dark (prevent delivery in the light)
+		if ((veh.location.in_shadow == true || veh.location.in_night == true) && 
+			// TODO: check vehicle for other non-delivery criteria and make this configurable
+			// if battery charge is low enough to take a full beam (prevent excess delivery)
+			(veh.battery.percent < 90))
+		{
+			var chosenVehicleIndex = lunarSpark.vehicles.indexOf(veh)
+			break;
+		}
+	}
+	// if no vehicle was chosen (all disqualified) 
+	if (chosenVehicleIndex < 0) {
+		// inidcate to not actually deliver power (just calculate undelivered capacity) 
+		executeDelivery = false
+		// choose the highest priority to accumulate undelivered capacity
+		chosenVehicleIndex = lunarSpark.vehicles.indexOf(prioritizedVehicles[0])		
+	}
+	return {"index": chosenVehicleIndex, "deliver": executeDelivery}
 }
 function connectLasers() {
 	// Loop through satellites and vehicle and
@@ -232,15 +256,18 @@ function connectLasers() {
 			if (anomaly > 200 && anomaly < 215) {
       			lunarSpark.satellites[i].chosen_vehicle = chooseVehicle();
 			}
-			else { // satellite is in southern hemisphere so check for vehicles
+			// satellite has chosen a target vehicle so check for vehicle
+			else { 
 				//if (lunarSpark.vehicles[lunarSpark.satellites[i].chosen_vehicle].in_night) {
 					var potentialVehicles = getPotentialVehicles(i);
 					// if the chosen vehicle is a potential vehicle
 					for (var j=0;j<potentialVehicles.length;j++) {
-						if (lunarSpark.satellites[i].chosen_vehicle == potentialVehicles[j].vehIndex) {
+						if (lunarSpark.satellites[i].chosen_vehicle.index == potentialVehicles[j].vehIndex) {
 							// connect the laser to the vehicle
-							laserConnectCount += connectLaser(i, 0, potentialVehicles[j].vehIndex, potentialVehicles[j].range, potentialVehicles[j].azimuth, potentialVehicles[j].elevation, potentialVehicles[j].rxArea, potentialVehicles[j].intensity, potentialVehicles[j].power);  
+							laserConnectCount += connectLaser(lunarSpark.satellites[i].chosen_vehicle.deliver, i, 0, potentialVehicles[j].vehIndex, potentialVehicles[j].range, potentialVehicles[j].azimuth, potentialVehicles[j].elevation, potentialVehicles[j].rxArea, potentialVehicles[j].intensity, potentialVehicles[j].power);  
 						}
+						// TODO: choose new vehicle and try again until there is no more options to choose (return undelivered power from connectLaser)
+						// lunarSpark.satellites[satellite].cumulative_undelivered_laser_capacity += power*timeStep/60 // Whr
 					}
 				//}
 			}
@@ -251,28 +278,28 @@ function connectLasers() {
 			
 			// laser power draw includes efficiency (duty cycle included on the battery draw calculation)
 			lunarSpark.satellites[i].laser_power_draw = laserConnectCount*lunarSpark.system.satellite.laser_output_power/lunarSpark.system.satellite.laser_eff; 
-			lunarSpark.satellites[i].cumulative_laser_energy_output += laserConnectCount*lunarSpark.system.satellite.laser_output_power*timeStep/60 // Watt*h
-			//TODO: collect undelivered potential
-			// if (laserConnectCount == 0 and potentialVehicles.length > 0) 
+			lunarSpark.satellites[i].cumulative_laser_energy_output += laserConnectCount*lunarSpark.system.satellite.laser_output_power*timeStep/60 // Watt*h 
 		}
 	}
 }
-function connectLaser(satellite, laser, vehicle, range, azimuth, elevation, rxArea, intensity, power) {
+function connectLaser(executeDelivery, satellite, laser, vehicle, range, azimuth, elevation, rxArea, intensity, power) {
 	// TODO: error connecting if satellite is too low on power
 
 	laserConnectCount = 0
 	// disconnect laser from old vehicle
 	disconnectLaser(satellite, laser);
 
-	// TODO: check vehicle for other non-delivery criteria and decide not to connect and update undelivered capacity
-	if (lunarSpark.vehicles[vehicle].location.in_shadow == true || lunarSpark.vehicles[vehicle].location.in_night == true) {
+	// TODO: check vehicle for other non-delivery criteria
+	// if no vehicle was chosen for delivery or the vehicle is in the light
+	if (executeDelivery && (lunarSpark.vehicles[vehicle].location.in_shadow == true || lunarSpark.vehicles[vehicle].location.in_night == true)) {
 		// Update satellite data store
 		lunarSpark.satellites[satellite].lasers.push({"laser": laser, "vehicle": vehicle, "range": range, "azimuth":azimuth , "elevation": elevation, "rxArea": rxArea, "intensity": intensity, "power": power });
 		// Update vehicle data store
 		lunarSpark.vehicles[vehicle].beams.push({"satellite": satellite, "laser": laser, "range": range, "rxArea": rxArea, "azimuth":azimuth , "elevation": elevation, "intensity": intensity, "power": power});
 		laserConnectCount = 1
 	}
-	else {
+	// no vehicle was chosen or the vehicle cancelled the transmission
+	else { 
 		lunarSpark.satellites[satellite].cumulative_undelivered_laser_capacity += power*timeStep/60 // Whr
 	}	
 

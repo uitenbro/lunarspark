@@ -44,7 +44,7 @@ var lunarSparkInput = {
       "active": true,
       "id": "Spark1",
       "orbit": {
-        "min": 0,
+      "min": 0,
       },
       "solar_panel": {
         "area": 37.58,
@@ -67,7 +67,7 @@ var lunarSparkInput = {
       "active": true,
       "id": "Spark2",
       "orbit": {
-        "min": 90,
+      "min": 89.93,
       },
       "solar_panel": {
         "area": 37.58,
@@ -80,7 +80,10 @@ var lunarSparkInput = {
       "sat_power_draw": 2814, // SMAD S/C Pre Sizing S/C Avg Pwr
       "laser_power_draw": 0,
       "vehicles": [],
-      "chosen_vehicle" : -1,
+      "chosen_vehicle" : {
+        "index": -1,
+        "deliver": false,
+      },
       "lasers": [],
       "cumulative_laser_energy_draw" : 0,
       "cumulative_laser_energy_output" : 0,
