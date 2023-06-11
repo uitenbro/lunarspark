@@ -478,7 +478,7 @@ function printSimStatus() {
     var div = document.createElement('div');
     div.id = "simStatus2";
 
-    div.appendChild(printRow("Config Filename:", lunarSpark.test_case.vehicle_configuration, ""));
+    div.appendChild(printRow("Config File:", lunarSpark.test_case.filename.slice(0,-5), ""));
     div.appendChild(printRow("Vehicle Configuration:", lunarSpark.test_case.vehicle_configuration, ""));
     div.appendChild(printRow("Pwr Delivery Strategy:", lunarSpark.test_case.power_delivery_strategy, ""));
     div.appendChild(printRow("-----------------------", "------------------", ""));

@@ -115,7 +115,7 @@ function logData() {
 
 function saveFile() {
   const defaultFilename = lunarSpark.test_case.filename;
-  const filename = prompt("Enter a filename (without extension):", defaultFilename);
+  const filename = prompt("Enter a filename (with .json extension):", defaultFilename);
   if (filename === null) {
     // Prompt was cancelled
     return;
@@ -125,6 +125,8 @@ function saveFile() {
     alert("Invalid filename. Please try again.");
     return;
   }
+  // filename is good so assign it to the datastore
+  lunarSpark.test_case.filename = filename
   var object = {"lunarSparkInput": JSON.parse(localStorage.getItem("lunarSparkInput")),
 				"lunarSpark": lunarSpark}
 
@@ -133,9 +135,10 @@ function saveFile() {
 
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = `${filename}.json`;
+  link.download = `${filename}`;
   link.click();
   URL.revokeObjectURL(link.href);
+  printAll()
 }
 
 function loadFile(event) {
@@ -158,6 +161,13 @@ function loadFile(event) {
     else {
     	lunarSpark = lunarSparkInput
     }
+    if (file.name != lunarSpark.test_case.filename) {
+		const promptMessage = "Internal test case filename does not match actual filename.\n" +
+  							  "Click OK to change the internal filename to:\n" + file.name + "\n" +
+  							  "Click Cancel to leave it the way it is.";
+    	const userChoice = window.confirm(promptMessage);
+    	handlePromptResponse(userChoice, file.name);
+    }
     // set time to configured time
     time = lunarSpark.environment.time
     prevTime = lunarSpark.environment.time
@@ -165,7 +175,20 @@ function loadFile(event) {
     clearCanvas();
     drawAll();
     printAll()
+
   };
   reader.readAsText(file);
    
+}
+function handlePromptResponse(result, filename) {
+  if (result) {
+  	lunarSpark.test_case.filename = filename
+    // User clicked "Yes"
+    console.log("Yes");
+    // Perform your desired actions for "Yes"
+  } else {
+    // User clicked "No" or closed the prompt
+    console.log("No");
+    // Perform your desired actions for "No" or prompt cancellation
+  }
 }
