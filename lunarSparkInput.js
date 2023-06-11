@@ -63,6 +63,15 @@ var lunarSparkInput = {
       "cumulative_laser_energy_draw" : 0,
       "cumulative_laser_energy_output" : 0,
       "cumulative_undelivered_laser_capacity" : 0,
+      "beam_metrics": {
+        "start_time": -1,
+        "beam_count": 0,
+        "last_beam": 0,
+        "min_beam": 0,
+        "max_beam": 0,
+        "avg_beam": 0,
+        "avg_power": 0
+      },
     },  
     {
       "active": true,
@@ -89,6 +98,15 @@ var lunarSparkInput = {
       "cumulative_laser_energy_draw" : 0,
       "cumulative_laser_energy_output" : 0,
       "cumulative_undelivered_laser_capacity" : 0,
+      "beam_metrics": {
+        "start_time": -1,
+        "beam_count": 0,
+        "last_beam": 0,
+        "min_beam": 0,
+        "max_beam": 0,
+        "avg_beam": 0,
+        "avg_power": 0
+      }
     },
   ],
   "vehicles": [

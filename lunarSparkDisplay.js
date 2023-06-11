@@ -350,6 +350,11 @@ function printSatellite(chart, index) {
         satellite.appendChild(printRow("Total Laser Energy Draw:", (sat.cumulative_laser_energy_draw).toFixed(0),"Wh"));
         satellite.appendChild(printRow("Total Laser Energy Output:", (sat.cumulative_laser_energy_output).toFixed(0),"Wh"));
 
+        satellite.appendChild(printTable("Beams", "Last", "Min", "Max",  "Avg", "", "-", true));
+        satellite.appendChild(printTable("#", "(min)", "(min)", "(min)", "(min)", "", "-", true));
+        
+        satellite.appendChild(printTable(sat.beam_metrics.beam_count, "", sat.beam_metrics.last_beam.toFixed(1), sat.beam_metrics.min_beam.toFixed(1), sat.beam_metrics.max_beam.toFixed(1), sat.beam_metrics.avg_beam.toFixed(1), "-"));
+        
         satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "RxArea", "Int", "Pwr", true));
         satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(m2)", "(W/m2)", "(W)", true));
         for (var i=0;i<sat.vehicles.length;i++) {

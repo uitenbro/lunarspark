@@ -272,7 +272,7 @@ function connectLasers() {
 			}
 			if (laserConnectCount == 0) {
 				// otherwise disconnect the laser
-				disconnectLaser(i,0);
+				disconnectLaser(i,0, true);
 			}
 			
 			// laser power draw includes efficiency (duty cycle included on the battery draw calculation)
@@ -285,20 +285,27 @@ function connectLaser(executeDelivery, satellite, laser, vehicle, range, azimuth
 	// TODO: error connecting if satellite is too low on power
 
 	laserConnectCount = 0
-	// disconnect laser from old vehicle
-	disconnectLaser(satellite, laser);
+
 
 	// TODO: check vehicle for other non-delivery criteria
 	// if no vehicle was chosen for delivery or the vehicle is in the light
 	if (executeDelivery && (lunarSpark.vehicles[vehicle].location.in_shadow == true || lunarSpark.vehicles[vehicle].location.in_night == true)) {
+		// disconnect laser from old vehicle
+		disconnectLaser(satellite, laser, false);
 		// Update satellite data store
 		lunarSpark.satellites[satellite].lasers.push({"laser": laser, "vehicle": vehicle, "range": range, "azimuth":azimuth , "elevation": elevation, "rxArea": rxArea, "intensity": intensity, "power": power });
 		// Update vehicle data store
 		lunarSpark.vehicles[vehicle].beams.push({"satellite": satellite, "laser": laser, "range": range, "rxArea": rxArea, "azimuth":azimuth , "elevation": elevation, "intensity": intensity, "power": power});
 		laserConnectCount = 1
+		// set start time for metrics
+		if (lunarSpark.satellites[satellite].beam_metrics.start_time == -1) {
+			lunarSpark.satellites[satellite].beam_metrics.start_time = time
+		}
 	}
 	// no vehicle was chosen or the vehicle cancelled the transmission
 	else { 
+		// disconnect laser from old vehicle
+		disconnectLaser(satellite, laser, true);
 		lunarSpark.satellites[satellite].cumulative_undelivered_laser_capacity += power*timeStep/60 // Whr
 	}	
 
@@ -308,7 +315,7 @@ function connectLaser(executeDelivery, satellite, laser, vehicle, range, azimuth
 	}
 	return laserConnectCount
 }
-function disconnectLaser(satellite, laser) {
+function disconnectLaser(satellite, laser, stopBeamTime) {
 	var sat = lunarSpark.satellites[satellite];
 	var veh = null;
 	for (var i=0;i<sat.lasers.length;i++) {
@@ -319,6 +326,21 @@ function disconnectLaser(satellite, laser) {
 			// remove laser entry
 			sat.lasers.splice(i,1);
 		}
+	}
+	if (stopBeamTime && sat.beam_metrics.start_time != -1) {
+		sat.beam_metrics.last_beam = time - sat.beam_metrics.start_time
+		if (sat.beam_metrics.beam_count == 0) {
+			sat.beam_metrics.min_beam = sat.beam_metrics.last_beam
+			sat.beam_metrics.max_beam = sat.beam_metrics.last_beam
+			sat.beam_metrics.avg_beam = sat.beam_metrics.last_beam
+		}
+		else {
+			if (sat.beam_metrics.min_beam > sat.beam_metrics.last_beam) { sat.beam_metrics.min_beam = sat.beam_metrics.last_beam}
+			if (sat.beam_metrics.max_beam < sat.beam_metrics.last_beam) { sat.beam_metrics.max_beam = sat.beam_metrics.last_beam}
+			sat.beam_metrics.avg_beam = (sat.beam_metrics.avg_beam*sat.beam_metrics.beam_count +sat.beam_metrics.last_beam)/(sat.beam_metrics.beam_count+1)
+		}
+		sat.beam_metrics.beam_count += 1
+		sat.beam_metrics.start_time = -1
 	}
 
 	// if a vehicle connection is defined
