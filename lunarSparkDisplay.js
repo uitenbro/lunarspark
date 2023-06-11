@@ -478,9 +478,9 @@ function printSimStatus() {
     var div = document.createElement('div');
     div.id = "simStatus2";
 
-    div.appendChild(printRow("Config File:", lunarSpark.test_case.filename.slice(0,-5), ""));
-    div.appendChild(printRow("Vehicle Configuration:", lunarSpark.test_case.vehicle_configuration, ""));
-    div.appendChild(printRow("Pwr Delivery Strategy:", lunarSpark.test_case.power_delivery_strategy, ""));
+    div.appendChild(printRow("Config File:", lunarSpark.test_case.filename, ""));
+    div.appendChild(printRow("Veh Config:", lunarSpark.test_case.vehicle_configuration, ""));
+    div.appendChild(printRow("Pwr Delivery:", lunarSpark.test_case.power_delivery_strategy, ""));
     div.appendChild(printRow("-----------------------", "------------------", ""));
     div.appendChild(printRow("Laser Energy Draw:", (lunarSpark.environment.cumulative_laser_energy_draw/1000).toFixed(1), "kWh"));
     div.appendChild(printRow("Laser Energy Output:", (lunarSpark.environment.cumulative_laser_energy_output/1000).toFixed(1), "kWh"));
