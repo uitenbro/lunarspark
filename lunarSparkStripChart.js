@@ -248,12 +248,12 @@ function updateSimStatusStripChart(type) {
       }
 
       // add value to data array
-      if (type == "laser_energy") {
-        chart.data.datasets[0].data = lunarSpark.environment.cumulative_laser_panel_energy_history.slice(slice).filter(function(_, index) {return (index ) % 10 === 0;}).map(function(item) {return item/1000});
-        chart.data.datasets[1].data = lunarSpark.environment.usable_energy_history.slice(slice).filter(function(_, index) {return (index ) % 10 === 0;}).map(function(item) {return item/1000});
-        chart.data.datasets[0].label = "Laser Panel Out"
-        chart.data.datasets[1].label = "Laser Panel Usable"
-        chart.options.scales.y.title.text = "kWh"
+      if (type == "ttl") {
+        chart.data.datasets[0].data = lunarSpark.environment.ttl_below_threshold_history.slice(slice).filter(function(_, index) {return (index ) % 10 === 0;}).map(function(item) {return item});
+        chart.data.datasets[1].data = lunarSpark.environment.ttl_below_zero_history.slice(slice).filter(function(_, index) {return (index ) % 10 === 0;}).map(function(item) {return item});
+        chart.data.datasets[0].label = "TTL Below Threshold"
+        chart.data.datasets[1].label = "TTL Below Zero"
+        chart.options.scales.y.title.text = "min"
       }
       else if (type == "efficiency") {
         chart.data.datasets[0].data = lunarSpark.environment.delivered_efficiency_history.slice(slice).filter(function(_, index) {return (index ) % 10 === 0;});

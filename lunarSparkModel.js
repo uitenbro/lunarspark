@@ -166,7 +166,18 @@ function updateVehicles() {
 			}
 
 			// Update vehicle battery percentage
-			veh.battery.percent = (veh.battery.charge/veh.battery.capacity)*100;
+			veh.battery.percent = (veh.battery.charge/veh.battery.capacity)*100; // %
+
+			// Update Time to Live
+			veh.ttl = veh.battery.charge/veh.power_draw*60; // min
+			veh.ttl_percent = veh.ttl / (veh.battery.capacity/veh.power_draw*60)*100 // %
+			if (veh.ttl < lunarSpark.test_case.ttl_threshold) {
+				veh.ttl_below_threshold += timeStep
+			}
+			if (veh.ttl == 0) {
+				veh.ttl_below_zero += timeStep
+			}
+
 		}
 	}
 }
@@ -212,7 +223,8 @@ function vehicleSort(a,b){
 	}
 	// prefer low battery percentages over higher
 	else { 
-		test = a.battery.percent - b.battery.percent 
+		//test = a.battery.percent - b.battery.percent 
+		test = a.ttl - b.ttl
 	}
 	return test
 }

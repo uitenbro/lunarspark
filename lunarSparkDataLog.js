@@ -13,6 +13,8 @@ function initializeDataLog() {
     lunarSpark.environment.usable_energy_history = []
     lunarSpark.environment.excesss_percent_history = []
     lunarSpark.environment.overall_efficiency_history = []
+    lunarSpark.environment.ttl_below_threshold_history = []
+    lunarSpark.environment.ttl_below_zero_history = []
 
 	// Satellite
     for (var i=0;i<lunarSpark.satellites.length;i++) {
@@ -74,6 +76,8 @@ function logData() {
 	// Set overall cumulative to zero and then acrue each satellites cumulatives
 	lunarSpark.environment.excess_laser_panel_energy = 0
    	lunarSpark.environment.cumulative_laser_panel_energy = 0
+   	lunarSpark.environment.ttl_below_threshold = 0
+    lunarSpark.environment.ttl_below_zero = 0
 	for (var i=0;i<lunarSpark.vehicles.length;i++) {
 		lunarSpark.vehicles[i].battery.percent_history.push(lunarSpark.vehicles[i].battery.percent)
 		lunarSpark.vehicles[i].battery.charge_history.push(lunarSpark.vehicles[i].battery.charge)
@@ -84,6 +88,9 @@ function logData() {
 	
 	    lunarSpark.environment.excess_laser_panel_energy += lunarSpark.vehicles[i].excess_laser_panel_energy
     	lunarSpark.environment.cumulative_laser_panel_energy += lunarSpark.vehicles[i].cumulative_laser_panel_energy
+
+    	lunarSpark.environment.ttl_below_threshold += lunarSpark.vehicles[i].ttl_below_threshold
+    	lunarSpark.environment.ttl_below_zero += lunarSpark.vehicles[i].ttl_below_zero
 	}
 
     lunarSpark.environment.cumulative_laser_energy_draw_history.push(lunarSpark.environment.cumulative_laser_energy_draw)
@@ -110,6 +117,8 @@ function logData() {
     lunarSpark.environment.delivered_efficiency_history.push(lunarSpark.environment.delivered_efficiency)
     lunarSpark.environment.excesss_percent_history.push(lunarSpark.environment.excesss_percent)
     lunarSpark.environment.overall_efficiency_history.push(lunarSpark.environment.overall_efficiency)
+    lunarSpark.environment.ttl_below_threshold_history.push(lunarSpark.environment.ttl_below_threshold)
+    lunarSpark.environment.ttl_below_zero_history.push(lunarSpark.environment.ttl_below_zero)
 
 }
 

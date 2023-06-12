@@ -350,10 +350,10 @@ function printSatellite(chart, index) {
         satellite.appendChild(printRow("Total Laser Energy Draw:", (sat.cumulative_laser_energy_draw).toFixed(0),"Wh"));
         satellite.appendChild(printRow("Total Laser Energy Output:", (sat.cumulative_laser_energy_output).toFixed(0),"Wh"));
 
-        satellite.appendChild(printTable("Beams", "Last", "Min", "Max",  "Avg", "", "-", true));
-        satellite.appendChild(printTable("#", "(min)", "(min)", "(min)", "(min)", "", "-", true));
+        satellite.appendChild(printTable("-", "Beams", "Last", "Min", "Max",  "Avg", "-", true));
+        satellite.appendChild(printTable("-", "(#)", "(min)", "(min)", "(min)", "(min)", "-", true));
         
-        satellite.appendChild(printTable(sat.beam_metrics.beam_count, "", sat.beam_metrics.last_beam.toFixed(1), sat.beam_metrics.min_beam.toFixed(1), sat.beam_metrics.max_beam.toFixed(1), sat.beam_metrics.avg_beam.toFixed(1), "-"));
+        satellite.appendChild(printTable("-", sat.beam_metrics.beam_count, sat.beam_metrics.last_beam.toFixed(1), sat.beam_metrics.min_beam.toFixed(1), sat.beam_metrics.max_beam.toFixed(1), sat.beam_metrics.avg_beam.toFixed(1), "-"));
         
         satellite.appendChild(printTable("Veh", "Rng", "Azm", "Elv", "RxArea", "Int", "Pwr", true));
         satellite.appendChild(printTable("(#)", "(km)", "(deg)", "(deg)", "(m2)", "(W/m2)", "(W)", true));
@@ -420,8 +420,12 @@ function printVehicle(index) {
         vehicle.appendChild(printRow("Vehicle["+index+"]: "+veh.id, "("+veh.location.lat+"/"+veh.location.long+")", "deg", true));
         var row = printRow("Battery Charge:", veh.battery.percent.toFixed(1)+"% "+ veh.battery.charge.toFixed(0)+"/"+veh.battery.capacity.toFixed(0), "Wh");
         vehicle.appendChild(row);
-        vehicle.appendChild(printBatteryGuage(veh.battery.percent));
+        //vehicle.appendChild(printBatteryGuage(veh.battery.percent));
         vehicle.appendChild(printRow("Vehicle Pwr Draw:",  (veh.power_draw).toFixed(0), "W"));
+        vehicle.appendChild(printRow("Time to Live (TTL):", veh.ttl.toFixed(1), "min"));
+        vehicle.appendChild(printRow("TTL below "+lunarSpark.test_case.ttl_threshold+" min:", veh.ttl_below_threshold.toFixed(1), "min"));
+        vehicle.appendChild(printRow("TTL below zero:", veh.ttl_below_zero.toFixed(1), "min"));
+        vehicle.appendChild(printBatteryGuage(veh.ttl_percent));
         vehicle.appendChild(printRow("Solar Panel Pwr Output:", veh.solar_panel.power_output.toFixed(0), "W"));
         vehicle.appendChild(printRow("Laser Panel Pwr Output:", (veh.laser_panel.power_output).toFixed(0), "W"));
         vehicle.appendChild(printRow("Total Laser Panel Output:", (veh.cumulative_laser_panel_energy).toFixed(0), "Wh"));
@@ -487,16 +491,28 @@ function printSimStatus() {
     div.appendChild(printRow("Veh Config:", lunarSpark.test_case.vehicle_configuration, ""));
     div.appendChild(printRow("Pwr Delivery:", lunarSpark.test_case.power_delivery_strategy, ""));
     div.appendChild(printRow("-----------------------", "------------------", ""));
-    div.appendChild(printRow("Laser Energy Draw:", (lunarSpark.environment.cumulative_laser_energy_draw/1000).toFixed(1), "kWh"));
-    div.appendChild(printRow("Laser Energy Output:", (lunarSpark.environment.cumulative_laser_energy_output/1000).toFixed(1), "kWh"));
-    div.appendChild(printRow("Laser Panel Output:", (lunarSpark.environment.cumulative_laser_panel_energy/1000).toFixed(1), "kWh"));
-    div.appendChild(printRow("Undelivered Capacity:", (lunarSpark.environment.cumulative_undelivered_laser_capacity/1000).toFixed(1), "kWh"));
-    div.appendChild(printRow("Excess Laser Panel Output:", (lunarSpark.environment.excess_laser_panel_energy/1000).toFixed(1), "kWh")); 
-    div.appendChild(printRow("Usable Laser Panel Output:", ((lunarSpark.environment.usable_energy)/1000).toFixed(1), "kWh"));
+    div.appendChild(printTable("Laser Draw", "Laser Output", "Undlv Cap", "LsrPnl Output ", "Excess LsrPnl ", "Usable LsrPnl", "", true));
+    div.appendChild(printTable("(kWh)", "(kWh)", "(KWh)", "(kWh)", "(kWh)", "(kWh)", "", true));
+    div.appendChild(printTable((lunarSpark.environment.cumulative_laser_energy_draw/1000).toFixed(0), 
+                               (lunarSpark.environment.cumulative_laser_energy_output/1000).toFixed(0),
+                               (lunarSpark.environment.cumulative_undelivered_laser_capacity/1000).toFixed(1),
+                               (lunarSpark.environment.cumulative_laser_panel_energy/1000).toFixed(1),
+                               (lunarSpark.environment.excess_laser_panel_energy/1000).toFixed(1),
+                               (lunarSpark.environment.usable_energy/1000).toFixed(1),""));
+
+    // div.appendChild(printRow("Laser Energy Draw:", (lunarSpark.environment.cumulative_laser_energy_draw/1000).toFixed(1), "kWh"));
+    // div.appendChild(printRow("Laser Energy Output:", (lunarSpark.environment.cumulative_laser_energy_output/1000).toFixed(1), "kWh"));
+    // div.appendChild(printRow("Laser Panel Output:", (lunarSpark.environment.cumulative_laser_panel_energy/1000).toFixed(1), "kWh"));
+    // div.appendChild(printRow("Undelivered Capacity:", (lunarSpark.environment.cumulative_undelivered_laser_capacity/1000).toFixed(1), "kWh"));
+    // div.appendChild(printRow("Excess Laser Panel Output:", (lunarSpark.environment.excess_laser_panel_energy/1000).toFixed(1), "kWh")); 
+    // div.appendChild(printRow("Usable Laser Panel Output:", ((lunarSpark.environment.usable_energy)/1000).toFixed(1), "kWh"));
     div.appendChild(printRow("-----------------------", "------------------", ""));
-    div.appendChild(printRow("Excesss Laser Panel Percent:", (lunarSpark.environment.excesss_percent).toFixed(3), "%"));
+    div.appendChild(printRow("Excess Laser Panel Percent:", (lunarSpark.environment.excesss_percent).toFixed(3), "%"));
     div.appendChild(printRow("Delivered Efficiency:", (lunarSpark.environment.delivered_efficiency).toFixed(3), "%"));
     div.appendChild(printRow("Usable Efficiency:", (lunarSpark.environment.overall_efficiency).toFixed(3), "%"));
+    // div.appendChild(printRow("-----------------------", "------------------", ""));
+    div.appendChild(printRow("TTL Below "+lunarSpark.test_case.ttl_threshold+" min:", (lunarSpark.environment.ttl_below_threshold).toFixed(1), "min"));
+    div.appendChild(printRow("TTL Below Zero:", (lunarSpark.environment.ttl_below_zero).toFixed(1), "min"));
 
     simRight = document.getElementById('simStatus2');
     simRight.replaceWith(div);
@@ -512,7 +528,7 @@ function printSimStripCharts() {
         var div = document.createElement('div');
         div.id = "simStatusStripCharts";
         
-        for (var chart of ["laser_energy", "efficiency", "capacity"]) {
+        for (var chart of ["ttl", "efficiency", "capacity"]) {
             var stripchart = document.createElement('div');
             stripchart.className = "simStatusStripChart";
             stripchart.appendChild(updateSimStatusStripChart(chart))

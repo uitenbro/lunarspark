@@ -3,6 +3,7 @@ var lunarSparkInput = {
     "filename": "lunarSparkDefault.json",
     "power_delivery_strategy" : "Battery Percent",
     "vehicle_configuration" : "Lg:1/85 Sp:NA",
+    "ttl_threshold": 180, 
   },
   "environment": {
     "time": 0,
@@ -22,6 +23,8 @@ var lunarSparkInput = {
     "usable_energy": 0,
     "excesss_percent": 0,
     "overall_efficiency": 0, 
+    "ttl_below_threshold": 0,
+    "ttl_below_zero": 0,
   },
   "system": {
     "satellite": {
@@ -129,6 +132,9 @@ var lunarSparkInput = {
         "charge": 2500,
       },
       "power_draw": 80,
+      "ttl": 0,
+      "ttl_below_threshold": 0,
+      "ttl_below_zero": 0,
       "laser_panel": {
         "diameter": 0.75,
       },
@@ -155,6 +161,68 @@ var lunarSparkInput = {
         "charge": 2500,
       },
       "power_draw": 80,
+      "ttl": 0,
+      "ttl_below_threshold": 0,       
+      "ttl_below_zero": 0,
+      "laser_panel": {
+        "diameter": 0.75,
+      },
+      "beams": [],
+      "excess_laser_panel_energy" : 0,
+      "cumulative_laser_panel_energy" : 0,
+    },
+    
+    {
+      "active": true,
+      "id": "VIPER1",
+      "location": {
+        "lat": -80,
+        "long": 180,
+        "shadow_model": [],
+        "in_night": false,
+        "in_shadow": false
+      },
+      "solar_panel": {
+        "height": 1,
+        "width": 2,
+      },
+      "battery": {
+        "capacity": 6000,
+        "charge": 3500,
+      },
+      "power_draw": 80,
+      "ttl": 0,
+      "ttl_below_threshold": 0,       
+      "ttl_below_zero": 0,
+      "laser_panel": {
+        "diameter": 0.75,
+      },
+      "beams": [],
+      "excess_laser_panel_energy" : 0,
+      "cumulative_laser_panel_energy" : 0,
+    },    
+    {
+      "active": true,
+      "id": "VIPER1",
+      "location": {
+        "lat": -82.5,
+        "long": 180,
+        "shadow_model": [],
+        "in_night": false,
+        "in_shadow": false
+      },
+      "solar_panel": {
+        "height": 1,
+        "width": 2,
+      },
+      "battery": {
+        "capacity": 7000,
+        "charge": 3500,
+      },
+      "power_draw": 80,
+      "ttl": 0,
+      "ttl_below_threshold": 0,       
+      "ttl_below_zero": 0,
       "laser_panel": {
         "diameter": 0.75,
       },
