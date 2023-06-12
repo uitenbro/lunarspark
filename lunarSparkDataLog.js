@@ -134,9 +134,11 @@ function saveFile() {
     alert("Invalid filename. Please try again.");
     return;
   }
-  // filename is good so assign it to the datastore
+  // filename is good so assign it to the datastores
   lunarSpark.test_case.filename = filename
-  var object = {"lunarSparkInput": JSON.parse(localStorage.getItem("lunarSparkInput")),
+  var lunarSparkInputSave = JSON.parse(localStorage.getItem("lunarSparkInput"))
+  lunarSparkInputSave.test_case.filename = filename
+  var object = {"lunarSparkInput": lunarSparkInputSave,
 				"lunarSpark": lunarSpark}
 
   const json = JSON.stringify(object, null, 2);
@@ -167,8 +169,12 @@ function loadFile(event) {
     if (parsedData.lunarSpark) {
 	    lunarSpark = parsedData.lunarSpark;
 	}
+	// no runtime data so intialize everythin
     else {
     	lunarSpark = lunarSparkInput
+    	initializeDataLog();
+  	    stepSim(0)
+
     }
     if (file.name != lunarSpark.test_case.filename) {
 		const promptMessage = "Internal test case filename does not match actual filename.\n" +
