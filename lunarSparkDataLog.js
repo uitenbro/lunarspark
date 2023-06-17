@@ -35,6 +35,7 @@ function initializeDataLog() {
 	for (var i=0;i<lunarSpark.vehicles.length;i++) {
 		lunarSpark.vehicles[i].battery.percent_history = []
 		lunarSpark.vehicles[i].battery.charge_history = []
+		lunarSpark.vehicles[i].ttl_history = []
 		lunarSpark.vehicles[i].solar_panel.power_output_history = []
 		lunarSpark.vehicles[i].laser_panel.power_output_history = []
 		lunarSpark.vehicles[i].laser_panel.excess_laser_panel_energy_history = []
@@ -81,6 +82,7 @@ function logData() {
 	for (var i=0;i<lunarSpark.vehicles.length;i++) {
 		lunarSpark.vehicles[i].battery.percent_history.push(lunarSpark.vehicles[i].battery.percent)
 		lunarSpark.vehicles[i].battery.charge_history.push(lunarSpark.vehicles[i].battery.charge)
+		lunarSpark.vehicles[i].ttl_history.push(lunarSpark.vehicles[i].ttl)
 		lunarSpark.vehicles[i].solar_panel.power_output_history.push(lunarSpark.vehicles[i].solar_panel.power_output)
 		lunarSpark.vehicles[i].laser_panel.power_output_history.push(lunarSpark.vehicles[i].laser_panel.power_output)
 		lunarSpark.vehicles[i].laser_panel.excess_laser_panel_energy_history.push(lunarSpark.vehicles[i].laser_panel.excess_laser_panel_energy)

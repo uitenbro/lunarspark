@@ -236,14 +236,15 @@ function chooseVehicle() {
 	// disqualify vehicles and choose the next best vehicle 
 	var chosenVehicleIndex = -1
 	var executeDelivery = true
-	for (var veh of prioritizedVehicles) {
+	for (var i=0;i<prioritizedVehicles.length;i++) {
 			// if the vehicle is in the dark (prevent delivery in the light)
-		if ((veh.location.in_shadow == true || veh.location.in_night == true) && 
+		if ((prioritizedVehicles[i].location.in_shadow == true || prioritizedVehicles[i].location.in_night == true) && 
 			// TODO: check vehicle for other non-delivery criteria and make this configurable
+			// TODO: Use Wh to capacity rather than percent
 			// if battery charge is low enough to take a full beam (prevent excess delivery)
-			(veh.battery.percent < 95))
+			(prioritizedVehicles[i].battery.percent < 95))
 		{
-			var chosenVehicleIndex = lunarSpark.vehicles.indexOf(veh)
+			var chosenVehicleIndex = lunarSpark.vehicles.indexOf(prioritizedVehicles[i])
 			break;
 		}
 	}

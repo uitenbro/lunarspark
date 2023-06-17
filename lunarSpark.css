@@ -143,6 +143,12 @@ meter {
 	width: 54px;
 }
 .underline {
+	/*text-decoration: underline;*/
+	font-weight: bold;
+	border-bottom: 1px solid white;
+	border-top: 1px solid white;
+}
+.bold {
 	text-decoration: underline;
 	font-weight: bold;
 }
@@ -176,8 +182,8 @@ meter {
 	color: white;
 }
 .notinshadow {
-	background-color: #DDA300;
-	color: black;
+	background-color: #DCA300;
+	color: white;
 }
 .orange {
 	background-color: orange;
