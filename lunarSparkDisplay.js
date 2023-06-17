@@ -533,22 +533,22 @@ function simStatusStriptChartToggle() {
 }
 
 function printSimStripCharts() {
-    if (simStatusStriptChartOn) {
+    // if (simStatusStriptChartOn) {
         var div = document.createElement('div');
         div.id = "simStatusStripCharts";
         
         for (var chart of ["ttl", "efficiency", "capacity"]) {
             var stripchart = document.createElement('div');
             stripchart.className = "simStatusStripChart";
-            stripchart.appendChild(updateSimStatusStripChart(chart))
+            stripchart.appendChild(updateSimStatusStripChart(chart,simStatusStriptChartOn))
             div.appendChild(stripchart)
         }
         document.getElementById('bottom').appendChild(div)
-        printTtlDeliveryStripCharts(true)
-    }
-    else {
-        printTtlDeliveryStripCharts()
-    }
+        printTtlDeliveryStripCharts(simStatusStriptChartOn)
+    //}
+    // else {
+    //     printTtlDeliveryStripCharts()
+    // }
 }
 
 function printTtlDeliveryStripCharts(total=false) {

@@ -132,7 +132,7 @@ function updateStripChart(type, index) {
       return canvas
 }
 
-function updateSimStatusStripChart(type) {
+function updateSimStatusStripChart(type,total=false) {
     var canvas = document.getElementById(type+"_stripchart");
     
     // initial setup functionality
@@ -240,11 +240,16 @@ function updateSimStatusStripChart(type) {
       // cyclic update funcionality
       var chart = Chart.getChart(canvas)
       
-      if (lunarSpark.environment.time_history.length < 7200) {
-        slice = 0
+      if (total != true) {
+        if (lunarSpark.environment.time_history.length < 1000) {
+          slice = 0
+        }
+        else {
+          slice = lunarSpark.environment.time_history.length - 1000
+        }
       }
       else {
-        slice = lunarSpark.environment.time_history.length - 7200
+        slice = 0
       }
 
       // add value to data array
@@ -397,10 +402,11 @@ function updateTtlDeliveryStripChart(type, total) {
         chart.options.scales.x.max = chart.data.labels[chart.data.labels.length-1]
 
         // zoom y-scale to minimum TTL area of interest
-        chart.options.scales.y.min = 0
+        //chart.options.scales.y.min = 0
         chart.options.scales.y.max = Math.floor(ttlMin + 800)
       }
       else {
+        slice = 0
         if (type == "veh_ttl") {
           for (var i=0; i<lunarSpark.vehicles.length; i++) {
             chart.data.datasets[i].data = lunarSpark.vehicles[i].ttl_history.slice(slice).filter(function(_, index) {return (index ) % 10 === 0;}).map(function(item) {return item});
