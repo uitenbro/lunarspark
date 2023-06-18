@@ -160,7 +160,7 @@ function printButton(label, action, id) {
     else {    
         var a = document.createElement('a')
         a.href = action; 
-        if (id == "pauseButton") {
+        if (id == "pauseButton" || id == "simStatusStripChartDown") {
             a.className = "buttonDisabled";
         }    
         else if (id == "saveButton") {
@@ -189,7 +189,12 @@ function printSimControl() {
     //simControl.appendChild(printButton("\uD83D\uDCBE", "javascript:saveFile();", "saveButton"));
     simControl.appendChild(printButton("\u2193", "javascript:saveFile();", "saveButton"));
     simControl.appendChild(printButton("\u21BA", "javascript:initSim();", "recycleButton"));
-    simControl.appendChild(printButton("\u296F", "javascript:simStatusStriptChartToggle()", "simStatusStripChart"));
+    // simControl.appendChild(printButton("\u27F9", "javascript:simStatusStripChartToggle()", "simStatusStripChartUp"));
+    // simControl.appendChild(printButton("\u27FA", "javascript:simStatusStripChartToggle()", "simStatusStripChartDown"));
+    // simControl.appendChild(printButton("\u2192", "javascript:simStatusStripChartToggle()", "simStatusStripChartUp"));
+    // simControl.appendChild(printButton("\u2194", "javascript:simStatusStripChartToggle()", "simStatusStripChartDown"));
+    simControl.appendChild(printButton("\u21D2", "javascript:simStatusStripChartToggle()", "simStatusStripChartUp"));
+    simControl.appendChild(printButton("\u21D4", "javascript:simStatusStripChartToggle()", "simStatusStripChartDown"));
 
     document.getElementById("simControl").replaceWith(simControl);
 
@@ -522,13 +527,22 @@ function printSimStatus() {
     div.appendChild(printRow("", "", "", true));
     div.appendChild(printRow("TTL Below "+lunarSpark.test_case.ttl_threshold+" min:", (lunarSpark.environment.ttl_below_threshold).toFixed(1), "min"));
     div.appendChild(printRow("TTL Below Zero:", (lunarSpark.environment.ttl_below_zero).toFixed(1), "min"));
+    div.appendChild(printRow("Vehicles Frozen:", getTtlBelowZeroCount(), "veh"));
 
     simRight = document.getElementById('simStatus2');
     simRight.replaceWith(div);
 
 }
-function simStatusStriptChartToggle() {
+function simStatusStripChartToggle() {
     simStatusStriptChartOn = !simStatusStriptChartOn
+    if (document.getElementById('simStatusStripChartUp').className == "button") {
+        document.getElementById('simStatusStripChartUp').className = "buttonDisabled";
+        document.getElementById('simStatusStripChartDown').className = "button";
+    }
+    else {
+        document.getElementById('simStatusStripChartUp').className = "button";
+        document.getElementById('simStatusStripChartDown').className = "buttonDisabled";
+    }
     printAll()
 }
 
@@ -560,4 +574,14 @@ function printTtlDeliveryStripCharts(total=false) {
     stripchart.appendChild(updateTtlDeliveryStripChart("veh_ttl", total))
     div.appendChild(stripchart)
     document.getElementById('bottom').insertBefore(div, document.getElementById('bottom').firstChild)
+}
+
+function getTtlBelowZeroCount() {
+    var count = 0
+    for (var i=0;i<lunarSpark.vehicles.length;i++) {
+        if (lunarSpark.vehicles[i].ttl_below_zero > 0) {
+            count += 1
+        }
+    }
+    return count.toFixed(0) + "/" + lunarSpark.vehicles.length
 }

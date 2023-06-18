@@ -387,7 +387,8 @@ function updateTtlDeliveryStripChart(type, total) {
           for (var i=0; i<lunarSpark.vehicles.length; i++) {
             chart.data.datasets[i].data = lunarSpark.vehicles[i].ttl_history.slice(slice).map(function(item) {return item});
             if (lunarSpark.vehicles[i].location.in_night || lunarSpark.vehicles[i].location.in_shadow) {
-              if (lunarSpark.vehicles[i].ttl_history[lunarSpark.vehicles[i].ttl_history.length-1] < ttlMin) {
+              if (lunarSpark.vehicles[i].ttl_history[lunarSpark.vehicles[i].ttl_history.length-1] < ttlMin && 
+                lunarSpark.vehicles[i].ttl_history[lunarSpark.vehicles[i].ttl_history.length-1] != 0) { 
                 ttlMin = lunarSpark.vehicles[i].ttl_history[lunarSpark.vehicles[i].ttl_history.length-1]
               }
             }
@@ -402,7 +403,12 @@ function updateTtlDeliveryStripChart(type, total) {
         chart.options.scales.x.max = chart.data.labels[chart.data.labels.length-1]
 
         // zoom y-scale to minimum TTL area of interest
-        //chart.options.scales.y.min = 0
+        if ((ttlMin - 800) < 0) {
+          chart.options.scales.y.min = 0
+        }
+        else {
+          chart.options.scales.y.min = Math.floor(ttlMin - 800)
+        }
         chart.options.scales.y.max = Math.floor(ttlMin + 800)
       }
       else {

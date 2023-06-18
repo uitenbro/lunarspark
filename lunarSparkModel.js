@@ -233,16 +233,19 @@ function chooseVehicle() {
 	// sort to prioritize vehicles based on chosen method
 	var prioritizedVehicles = [...lunarSpark.vehicles].sort(vehicleSort)
 	
-	// disqualify vehicles and choose the next best vehicle 
+	// loop through prioritized vehicles and disqualify vehicles until one is choosen 
 	var chosenVehicleIndex = -1
 	var executeDelivery = true
 	for (var i=0;i<prioritizedVehicles.length;i++) {
-			// if the vehicle is in the dark (prevent delivery in the light)
+		// if the vehicle is in the dark (prevent delivery in the light)
 		if ((prioritizedVehicles[i].location.in_shadow == true || prioritizedVehicles[i].location.in_night == true) && 
 			// TODO: check vehicle for other non-delivery criteria and make this configurable
 			// TODO: Use Wh to capacity rather than percent
+			// TODO: Stop servicing vehicles that can't be saved
 			// if battery charge is low enough to take a full beam (prevent excess delivery)
-			(prioritizedVehicles[i].battery.percent < 95))
+			(prioritizedVehicles[i].battery.capacity - prioritizedVehicles[i].battery.charge > 2500/15) &&  
+			// if the ttl is less than than time for the next satellite to arrive 
+			(prioritizedVehicles[i].ttl > 75))
 		{
 			var chosenVehicleIndex = lunarSpark.vehicles.indexOf(prioritizedVehicles[i])
 			break;
@@ -301,8 +304,9 @@ function connectLaser(executeDelivery, satellite, laser, vehicle, range, azimuth
 
 
 	// TODO: check vehicle for other non-delivery criteria
-	// if no vehicle was chosen for delivery or the vehicle is in the light
-	if (executeDelivery && (lunarSpark.vehicles[vehicle].location.in_shadow == true || lunarSpark.vehicles[vehicle].location.in_night == true)) {
+	// if a vehicle was chosen for delivery and the vehicle is in the dark and vehicle is alive
+	if (executeDelivery && (lunarSpark.vehicles[vehicle].location.in_shadow == true || lunarSpark.vehicles[vehicle].location.in_night == true) &&
+		(lunarSpark.vehicles[vehicle].ttl > 0)) {
 		// disconnect laser from old vehicle
 		disconnectLaser(satellite, laser, false);
 		// Update satellite data store
