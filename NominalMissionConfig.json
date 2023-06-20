@@ -245,8 +245,8 @@
           "width": 1
         },
         "battery": {
-          "capacity": 125,
-          "charge": 125
+          "capacity": 250,
+          "charge": 250
         },
         "power_draw": 12.5,
         "ttl": 0,

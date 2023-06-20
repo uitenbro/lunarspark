@@ -183,7 +183,9 @@ function printSimControl() {
     simControl.appendChild(printButton("\u2699", "javascript:loadFile();", "configButtonLabel")); // TODO: Add load configuration
     simControl.appendChild(printButton("\u25B6","javascript:startSim();", "runButton"));
     simControl.appendChild(printButton("\u23FD\u23FD", "javascript:pauseSim();", "pauseButton"));
-    simControl.appendChild(printButton("\u20D5", "javascript:stepSim();", "stepButton"));
+    // simControl.appendChild(printButton("\u20D5", "javascript:stepSim();", "stepButton"));
+    // simControl.appendChild(printButton("\u21E5", "javascript:stepSim();", "stepButton"));
+    simControl.appendChild(printButton("\u276F", "javascript:stepSim();", "stepButton"));
     simControl.appendChild(printButton("\u21CA", "javascript:slower();", "slowerButton"));    
     simControl.appendChild(printButton("\u21C8", "javascript:faster();", "fasterButton"));
     //simControl.appendChild(printButton("\uD83D\uDCBE", "javascript:saveFile();", "saveButton"));
