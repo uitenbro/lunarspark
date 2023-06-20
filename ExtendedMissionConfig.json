@@ -1,7 +1,7 @@
 {
   "lunarSparkInput": {
     "test_case": {
-      "filename": "NominalMissionConfig.json",
+      "filename": "ExtendedMissionConfig.json",
       "power_delivery_strategy": "Battery Percent",
       "vehicle_configuration": "Nominal Missions",
       "ttl_threshold": 180
@@ -254,6 +254,96 @@
           "charge": 250
         },
         "power_draw": 12.5,
+        "ttl": 0,
+        "ttl_below_threshold": 0,
+        "ttl_below_zero": 0,
+        "laser_panel": {
+          "diameter": 0.75
+        },
+        "beams": [],
+        "excess_laser_panel_energy": 0,
+        "cumulative_laser_panel_energy": 0
+      },
+      {
+        "active": true,
+        "id": "Outland MPP",
+        "location": {
+          "name": "",
+          "lat": -85,
+          "long": 320,
+          "shadow_model": [],
+          "in_night": false,
+          "in_shadow": false
+        },
+        "solar_panel": {
+          "height": 1.5,
+          "width": 1
+        },
+        "battery": {
+          "capacity": 250,
+          "charge": 250
+        },
+        "power_draw": 25,
+        "ttl": 0,
+        "ttl_below_threshold": 0,
+        "ttl_below_zero": 0,
+        "laser_panel": {
+          "diameter": 0.75
+        },
+        "beams": [],
+        "excess_laser_panel_energy": 0,
+        "cumulative_laser_panel_energy": 0
+      },
+      {
+        "active": true,
+        "id": "Astrobotic Griffin",
+        "location": {
+          "name": "",
+          "lat": -90,
+          "long": 0,
+          "shadow_model": [],
+          "in_night": false,
+          "in_shadow": false
+        },
+        "solar_panel": {
+          "height": 1.5,
+          "width": 1
+        },
+        "battery": {
+          "capacity": 6250,
+          "charge": 6250
+        },
+        "power_draw": 150,
+        "ttl": 0,
+        "ttl_below_threshold": 0,
+        "ttl_below_zero": 0,
+        "laser_panel": {
+          "diameter": 0.75
+        },
+        "beams": [],
+        "excess_laser_panel_energy": 0,
+        "cumulative_laser_panel_energy": 0
+      },
+      {
+        "active": true,
+        "id": "Astrobotic Perrigrine",
+        "location": {
+          "name": "",
+          "lat": -85,
+          "long": 120,
+          "shadow_model": [],
+          "in_night": false,
+          "in_shadow": false
+        },
+        "solar_panel": {
+          "height": 1.5,
+          "width": 1
+        },
+        "battery": {
+          "capacity": 1250,
+          "charge": 1250
+        },
+        "power_draw": 25,
         "ttl": 0,
         "ttl_below_threshold": 0,
         "ttl_below_zero": 0,

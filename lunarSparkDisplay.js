@@ -427,7 +427,8 @@ function printVehicle(index) {
             vehicle.className = "vehicle notinshadow";
         }
 
-        vehicle.appendChild(printRow("Vehicle["+index+"]: "+veh.id, "("+veh.location.lat+"/"+veh.location.long+")", "deg", false));
+        vehicle.appendChild(printRow("Veh["+index+"]:", veh.id, "-", false));
+        vehicle.appendChild(printRow("Location:", veh.location.name + " (" + veh.location.lat+"/"+veh.location.long+")", "deg", false));
         vehicle.appendChild(printRow("", "", "", true));
         var row = printRow("Battery Charge:", veh.battery.percent.toFixed(1)+"% "+ veh.battery.charge.toFixed(0)+"/"+veh.battery.capacity.toFixed(0), "Wh");
         vehicle.appendChild(row);
