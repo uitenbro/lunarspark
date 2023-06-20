@@ -242,8 +242,9 @@ function chooseVehicle() {
 			// TODO: check vehicle for other non-delivery criteria and make this configurable
 			// TODO: Use Wh to capacity rather than percent
 			// TODO: Stop servicing vehicles that can't be saved
-			// if battery charge is low enough to take a full beam (prevent excess delivery)
-			(prioritizedVehicles[i].battery.capacity - prioritizedVehicles[i].battery.charge > 2500/15) &&  
+			// if battery capacity is really small or the charge is low enough to take a full beam (prevent excess delivery)
+			((prioritizedVehicles[i].battery.capacity < 2500/15) ||
+			(prioritizedVehicles[i].battery.capacity - prioritizedVehicles[i].battery.charge > 2500/15)) &&  
 			// if the ttl is less than than time for the next satellite to arrive 
 			(prioritizedVehicles[i].ttl > 75))
 		{
