@@ -118,7 +118,7 @@ var lunarSparkInput = {
       "id": "VIPER0",
       "location": {
         "name": "",
-        "lat": -85,
+        "lat": -90,
         "long": 0,
         "shadow_model": [],
         "in_night": false,
@@ -148,8 +148,8 @@ var lunarSparkInput = {
       "id": "VIPER1",
       "location": {
         "name": "",
-        "lat": -85,
-        "long": 180,
+        "lat": -80,
+        "long": 90,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -180,7 +180,7 @@ var lunarSparkInput = {
       "location": {
         "name": "",
         "lat": -80,
-        "long": 180,
+        "long": 270,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false
@@ -209,7 +209,7 @@ var lunarSparkInput = {
       "id": "VIPER1",
       "location": {
         "name": "",
-        "lat": -82.5,
+        "lat": -80,
         "long": 180,
         "shadow_model": [],
         "in_night": false,
@@ -221,7 +221,7 @@ var lunarSparkInput = {
       },
       "battery": {
         "capacity": 7000,
-        "charge": 3500,
+        "charge": 500,
       },
       "power_draw": 80,
       "ttl": 0,
