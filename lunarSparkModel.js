@@ -221,17 +221,31 @@ function vehicleSort(a,b){
 	if (a.inDark != b.inDark) {
 		test = b.inDark - a.inDark
 	}
-	// prefer low battery percentages over higher
+	// prefer low ttl over higher
 	else { 
 		//test = a.battery.percent - b.battery.percent 
 		test = a.ttl - b.ttl
+		//test = a.ttl_pred - b.ttl_pred
 	}
 	return test
 }
 
-function chooseVehicle() {
+function updateSatelliteDatastore(sat) {
+	var vehData = [...lunarSpark.vehicles]
+	// predict key factors for next orbit approach
+	for (var i=0;i<vehData.length;i++) {
+		vehData[i].battery_charge_pred = (vehData[i].battery.charge - vehData[i].power_draw*lunarSpark.environment.predict_time/60) // (Wh - Wh) 
+		vehData[i].ttl_pred = (vehData[i].battery_charge_pred / vehData[i].power_draw) * 60 // (Wh) / W
+		vehData[i].battery_available_pred = vehData[i].battery.capacity - vehData[i].battery_charge_pred // Wh
+	}
+	return [...vehData]
+}
+
+function chooseVehicle(sat) {
+	
 	// sort to prioritize vehicles based on chosen method
-	var prioritizedVehicles = [...lunarSpark.vehicles].sort(vehicleSort)
+	var prioritizedVehicles = [...lunarSpark.satellites[sat].vehData]
+	prioritizedVehicles.sort(vehicleSort)
 	
 	// loop through prioritized vehicles and disqualify vehicles until one is choosen 
 	var chosenVehicleIndex = -1
@@ -243,24 +257,25 @@ function chooseVehicle() {
 			// TODO: Use Wh to capacity rather than percent
 			// TODO: Stop servicing vehicles that can't be saved
 			// if battery capacity is really small or the charge is low enough to take a full beam (prevent excess delivery)
-			((prioritizedVehicles[i].battery.capacity < 2500/15) ||
-			(prioritizedVehicles[i].battery.capacity - prioritizedVehicles[i].battery.charge > 2500/15)) &&  
-			// if the ttl is less than than time for the next satellite to arrive 
-			(prioritizedVehicles[i].ttl > 75))
+			((prioritizedVehicles[i].battery.capacity < 500) ||
+			(prioritizedVehicles[i].battery.capacity - prioritizedVehicles[i].battery.charge > 250)) &&  
+			// if the ttl pred indicates the veh will be alive for the next satellite to arrive 
+			(prioritizedVehicles[i].ttl - lunarSpark.environment.predict_time > 0))
 		{
-			var chosenVehicleIndex = lunarSpark.vehicles.indexOf(prioritizedVehicles[i])
+			var chosenVehicleIndex = lunarSpark.satellites[sat].vehData.indexOf(prioritizedVehicles[i])
 			break;
 		}
 	}
 	// if no vehicle was chosen (all disqualified) 
 	if (chosenVehicleIndex < 0) {
-		// inidcate to not actually deliver power (just calculate undelivered capacity) 
+		// indicate to not actually deliver power (just calculate undelivered capacity) 
 		executeDelivery = false
 		// choose the highest priority to accumulate undelivered capacity
-		chosenVehicleIndex = lunarSpark.vehicles.indexOf(prioritizedVehicles[0])		
+		chosenVehicleIndex = lunarSpark.satellites[sat].vehData.indexOf(prioritizedVehicles[0])		
 	}
 	return {"index": chosenVehicleIndex, "deliver": executeDelivery}
 }
+
 function connectLasers() {
 	// Loop through satellites and vehicle and
 	for (var i=0;i<lunarSpark.satellites.length;i++) {
@@ -269,8 +284,10 @@ function connectLasers() {
 			var laserConnectCount = 0;
 			// if satellite is departing the southern hemisphsere perform vehicle selection using latest information
 			var anomaly = lunarSpark.satellites[i].orbit.anomaly;
+			// TODO:  add these numbers to comfig
 			if (anomaly > 200 && anomaly < 215) {
-      			lunarSpark.satellites[i].chosen_vehicle = chooseVehicle();
+				lunarSpark.satellites[i].vehData = updateSatelliteDatastore(i)
+      			lunarSpark.satellites[i].chosen_vehicle = chooseVehicle(i);
 			}
 			// satellite has chosen a target vehicle so check for vehicle
 			else { 
@@ -304,7 +321,7 @@ function connectLaser(executeDelivery, satellite, laser, vehicle, range, azimuth
 	laserConnectCount = 0
 
 
-	// TODO: check vehicle for other non-delivery criteria
+	// check vehicle for non-delivery criteria
 	// if a vehicle was chosen for delivery and the vehicle is in the dark and vehicle is alive
 	if (executeDelivery && (lunarSpark.vehicles[vehicle].location.in_shadow == true || lunarSpark.vehicles[vehicle].location.in_night == true) &&
 		(lunarSpark.vehicles[vehicle].ttl > 0)) {
@@ -315,9 +332,14 @@ function connectLaser(executeDelivery, satellite, laser, vehicle, range, azimuth
 		// Update vehicle data store
 		lunarSpark.vehicles[vehicle].beams.push({"satellite": satellite, "laser": laser, "range": range, "rxArea": rxArea, "azimuth":azimuth , "elevation": elevation, "intensity": intensity, "power": power});
 		laserConnectCount = 1
-		// set start time for metrics
+		// set start time for metrics and zero the last beam energy to start accumulating
 		if (lunarSpark.satellites[satellite].beam_metrics.start_time == -1) {
 			lunarSpark.satellites[satellite].beam_metrics.start_time = time
+			lunarSpark.vehicles[vehicle].beam_metrics.last_beam_energy = power*timeStep/60 // Whr
+		}
+		// capture power delivery metrics for this beam for this step
+		else {
+			lunarSpark.vehicles[vehicle].beam_metrics.last_beam_energy += power*timeStep/60 // Wh
 		}
 	}
 	// no vehicle was chosen or the vehicle cancelled the transmission
@@ -345,6 +367,7 @@ function disconnectLaser(satellite, laser, stopBeamTime) {
 			sat.lasers.splice(i,1);
 		}
 	}
+	// calculate beam duration
 	if (stopBeamTime && sat.beam_metrics.start_time != -1) {
 		sat.beam_metrics.last_beam = time - sat.beam_metrics.start_time
 		if (sat.beam_metrics.beam_count == 0) {
@@ -359,6 +382,19 @@ function disconnectLaser(satellite, laser, stopBeamTime) {
 		}
 		sat.beam_metrics.beam_count += 1
 		sat.beam_metrics.start_time = -1
+
+		// capture beam energy metrics
+		if (lunarSpark.vehicles[veh].beam_metrics.beam_count == 0) {
+			lunarSpark.vehicles[veh].beam_metrics.min_beam_energy = lunarSpark.vehicles[veh].beam_metrics.last_beam_energy
+			lunarSpark.vehicles[veh].beam_metrics.max_beam_energy = lunarSpark.vehicles[veh].beam_metrics.last_beam_energy
+			lunarSpark.vehicles[veh].beam_metrics.avg_beam_energy = lunarSpark.vehicles[veh].beam_metrics.last_beam_energy
+		}
+		else {
+			if (lunarSpark.vehicles[veh].beam_metrics.min_beam_energy > lunarSpark.vehicles[veh].beam_metrics.last_beam_energy) { lunarSpark.vehicles[veh].beam_metrics.min_beam_energy = lunarSpark.vehicles[veh].beam_metrics.last_beam_energy}
+			if (lunarSpark.vehicles[veh].beam_metrics.max_beam_energy < lunarSpark.vehicles[veh].beam_metrics.last_beam_energy) { lunarSpark.vehicles[veh].beam_metrics.max_beam_energy = lunarSpark.vehicles[veh].beam_metrics.last_beam_energy}
+			lunarSpark.vehicles[veh].beam_metrics.avg_beam_energy = (lunarSpark.vehicles[veh].beam_metrics.avg_beam_energy*lunarSpark.vehicles[veh].beam_metrics.beam_count +lunarSpark.vehicles[veh].beam_metrics.last_beam_energy)/(lunarSpark.vehicles[veh].beam_metrics.beam_count+1)
+		}
+		lunarSpark.vehicles[veh].beam_metrics.beam_count += 1
 	}
 
 	// if a vehicle connection is defined

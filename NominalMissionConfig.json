@@ -8,6 +8,7 @@
     },
     "environment": {
       "time": 0,
+      "predict_time": 120,
       "orbit": {
         "period": 179.86,
         "altitude": 700000,
@@ -44,8 +45,7 @@
         "eps_eff": 0.9
       }
     },
-    "satellites": [
-      {
+    "satellites": [{
         "active": true,
         "id": "Spark1",
         "orbit": {
@@ -62,6 +62,7 @@
         "sat_power_draw": 2814,
         "laser_power_draw": 0,
         "vehicles": [],
+        "vehData": -1,
         "chosen_vehicle": -1,
         "lasers": [],
         "cumulative_laser_energy_draw": 0,
@@ -94,10 +95,8 @@
         "sat_power_draw": 2814,
         "laser_power_draw": 0,
         "vehicles": [],
-        "chosen_vehicle": {
-          "index": -1,
-          "deliver": false
-        },
+        "vehData": -1,
+        "chosen_vehicle": -1,
         "lasers": [],
         "cumulative_laser_energy_draw": 0,
         "cumulative_laser_energy_output": 0,
@@ -113,8 +112,7 @@
         }
       }
     ],
-    "vehicles": [
-      {
+    "vehicles": [{
         "active": true,
         "id": "IM Nova-C",
         "location": {
@@ -141,6 +139,13 @@
           "diameter": 0.75
         },
         "beams": [],
+        "beam_metrics": {
+          "beam_count": 0,
+          "last_beam_energy": 0,
+          "min_beam_energy": 0,
+          "max_beam_energy": 0,
+          "avg_beam_energy": 0
+        },
         "excess_laser_panel_energy": 0,
         "cumulative_laser_panel_energy": 0
       },
@@ -171,6 +176,13 @@
           "diameter": 0.75
         },
         "beams": [],
+        "beam_metrics": {
+          "beam_count": 0,
+          "last_beam_energy": 0,
+          "min_beam_energy": 0,
+          "max_beam_energy": 0,
+          "avg_beam_energy": 0
+        },
         "excess_laser_panel_energy": 0,
         "cumulative_laser_panel_energy": 0
       },
@@ -201,6 +213,13 @@
           "diameter": 0.75
         },
         "beams": [],
+        "beam_metrics": {
+          "beam_count": 0,
+          "last_beam_energy": 0,
+          "min_beam_energy": 0,
+          "max_beam_energy": 0,
+          "avg_beam_energy": 0
+        },
         "excess_laser_panel_energy": 0,
         "cumulative_laser_panel_energy": 0
       },
@@ -208,7 +227,7 @@
         "active": true,
         "id": "Draper S2",
         "location": {
-          "name":  "Schrödinger",
+          "name": "Schrödinger",
           "lat": -81,
           "long": 245,
           "shadow_model": [],
@@ -231,6 +250,13 @@
           "diameter": 0.75
         },
         "beams": [],
+        "beam_metrics": {
+          "beam_count": 0,
+          "last_beam_energy": 0,
+          "min_beam_energy": 0,
+          "max_beam_energy": 0,
+          "avg_beam_energy": 0
+        },
         "excess_laser_panel_energy": 0,
         "cumulative_laser_panel_energy": 0
       },
@@ -261,6 +287,13 @@
           "diameter": 0.75
         },
         "beams": [],
+        "beam_metrics": {
+          "beam_count": 0,
+          "last_beam_energy": 0,
+          "min_beam_energy": 0,
+          "max_beam_energy": 0,
+          "avg_beam_energy": 0
+        },
         "excess_laser_panel_energy": 0,
         "cumulative_laser_panel_energy": 0
       }

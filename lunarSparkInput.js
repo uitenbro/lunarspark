@@ -7,6 +7,7 @@ var lunarSparkInput = {
   },
   "environment": {
     "time": 0,
+    "predict_time": 120, // min 
     "orbit": { // TODO: move this to satellite and calculate based on altitude
       "period": 179.86,
       "altitude": 700000,
@@ -61,6 +62,7 @@ var lunarSparkInput = {
       "sat_power_draw": 2814,  // SMAD S/C Pre Sizing S/C Avg Pwr
       "laser_power_draw": 0,
       "vehicles": [],
+      "vehData": -1,  
       "chosen_vehicle" : -1,
       "lasers": [],
       "cumulative_laser_energy_draw" : 0,
@@ -93,10 +95,8 @@ var lunarSparkInput = {
       "sat_power_draw": 2814, // SMAD S/C Pre Sizing S/C Avg Pwr
       "laser_power_draw": 0,
       "vehicles": [],
-      "chosen_vehicle" : {
-        "index": -1,
-        "deliver": false,
-      },
+      "vehData": -1,
+      "chosen_vehicle": -1,
       "lasers": [],
       "cumulative_laser_energy_draw" : 0,
       "cumulative_laser_energy_output" : 0,
@@ -140,6 +140,13 @@ var lunarSparkInput = {
         "diameter": 0.75,
       },
       "beams": [],
+      "beam_metrics": {
+        "beam_count": 0,
+        "last_beam_energy": 0,
+        "min_beam_energy": 0,
+        "max_beam_energy": 0,
+        "avg_beam_energy": 0,
+      },
       "excess_laser_panel_energy" : 0,
       "cumulative_laser_panel_energy" : 0,
     },
@@ -170,6 +177,13 @@ var lunarSparkInput = {
         "diameter": 0.75,
       },
       "beams": [],
+      "beam_metrics": {
+        "beam_count": 0,
+        "last_beam_energy": 0,
+        "min_beam_energy": 0,
+        "max_beam_energy": 0,
+        "avg_beam_energy": 0,
+      },
       "excess_laser_panel_energy" : 0,
       "cumulative_laser_panel_energy" : 0,
     },
@@ -201,6 +215,13 @@ var lunarSparkInput = {
         "diameter": 0.75,
       },
       "beams": [],
+      "beam_metrics": {
+        "beam_count": 0,
+        "last_beam_energy": 0,
+        "min_beam_energy": 0,
+        "max_beam_energy": 0,
+        "avg_beam_energy": 0,
+      },
       "excess_laser_panel_energy" : 0,
       "cumulative_laser_panel_energy" : 0,
     },    
@@ -231,6 +252,13 @@ var lunarSparkInput = {
         "diameter": 0.75,
       },
       "beams": [],
+      "beam_metrics": {
+        "beam_count": 0,
+        "last_beam_energy": 0,
+        "min_beam_energy": 0,
+        "max_beam_energy": 0,
+        "avg_beam_energy": 0,
+      },
       "excess_laser_panel_energy" : 0,
       "cumulative_laser_panel_energy" : 0,
     },
