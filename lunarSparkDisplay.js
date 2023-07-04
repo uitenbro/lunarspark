@@ -604,7 +604,7 @@ function printTtlDeliveryStripCharts(total=false) {
     div.id = "ttlDelvieryStripCharts";
 
     var stripchart = document.createElement('div');
-    stripchart.className = "simStatusStripChart";
+    stripchart.className = "ttlDeliveryStripChart";
     stripchart.appendChild(updateTtlDeliveryStripChart("veh_ttl", total))
     div.appendChild(stripchart)
     document.getElementById('bottom').insertBefore(div, document.getElementById('bottom').firstChild)
