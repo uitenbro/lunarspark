@@ -4,7 +4,7 @@
       "filename": "ExtendedMissionConfig.json",
       "power_delivery_strategy": "Battery Percent",
       "vehicle_configuration": "Nominal Missions",
-      "ttl_threshold": 180
+      "ttl_threshold": 360
     },
     "environment": {
       "time": 0,
