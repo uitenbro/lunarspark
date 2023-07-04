@@ -107,7 +107,7 @@ function updateStripChart(type, index) {
         chart.data.datasets[1].data = lunarSpark.satellites[index].battery.percent_history.slice(slice).map(function(item) {return item});
         chart.data.datasets[2].data = lunarSpark.satellites[index].laser_power_draw_duty_cycle_history.slice(slice).map(function(item) {return item/1000});
       }
-      else if (type == "veh") {
+      else if (type == "veh" && lunarSpark.vehicles[index].active == true) {
         chart.data.datasets[0].data = lunarSpark.vehicles[index].solar_panel.power_output_history.slice(slice).map(function(item) {return item/1000});
         chart.data.datasets[1].data = lunarSpark.vehicles[index].battery.percent_history.slice(slice).map(function(item) {return item/10});
         chart.data.datasets[2].data = lunarSpark.vehicles[index].laser_panel.power_output_history.slice(slice).map(function(item) {return item/1000});        
@@ -304,16 +304,17 @@ function updateTtlDeliveryStripChart(type, total) {
                         "rgb(0, 255, 0)",     "rgb(255, 0, 0)",   "rgb(0, 0, 255)",   "rgb(255, 165, 0)"]
       for (var i=0; i<lunarSpark.vehicles.length; i++) {
         // create initial empty dataset with label
-        var dataset  = {
-          label: "Veh "+i+" TTL",
-          data: [],
-          borderColor: lineColors[i],
-          borderWidth: 1,
-          fill: false,
-          pointRadius: 0, // Remove decorations on data points
-          pointHoverRadius: 0
-        };     
-        datasets[i] = dataset 
+        if (lunarSpark.vehicles[i].active == true)
+          var dataset  = {
+            label: "Veh "+i+" TTL",
+            data: [],
+            borderColor: lineColors[i],
+            borderWidth: 1,
+            fill: false,
+            pointRadius: 0, // Remove decorations on data points
+            pointHoverRadius: 0
+          };     
+          datasets[i] = dataset 
       }
       
       // create initial chart with empty dataset and x-axis labels
@@ -386,11 +387,13 @@ function updateTtlDeliveryStripChart(type, total) {
         // add value to data array
         if (type == "veh_ttl") {
           for (var i=0; i<lunarSpark.vehicles.length; i++) {
-            chart.data.datasets[i].data = lunarSpark.vehicles[i].ttl_history.slice(slice).map(function(item) {return item});
-            if (lunarSpark.vehicles[i].location.in_night || lunarSpark.vehicles[i].location.in_shadow) {
-              if (lunarSpark.vehicles[i].ttl_history[lunarSpark.vehicles[i].ttl_history.length-1] < ttlMin && 
-                lunarSpark.vehicles[i].ttl_history[lunarSpark.vehicles[i].ttl_history.length-1] != 0) { 
-                ttlMin = lunarSpark.vehicles[i].ttl_history[lunarSpark.vehicles[i].ttl_history.length-1]
+            if (lunarSpark.vehicles[i].active == true) {
+              chart.data.datasets[i].data = lunarSpark.vehicles[i].ttl_history.slice(slice).map(function(item) {return item});
+              if (lunarSpark.vehicles[i].location.in_night || lunarSpark.vehicles[i].location.in_shadow) {
+                if (lunarSpark.vehicles[i].ttl_history[lunarSpark.vehicles[i].ttl_history.length-1] < ttlMin && 
+                  lunarSpark.vehicles[i].ttl_history[lunarSpark.vehicles[i].ttl_history.length-1] != 0) { 
+                  ttlMin = lunarSpark.vehicles[i].ttl_history[lunarSpark.vehicles[i].ttl_history.length-1]
+                }
               }
             }
           }
@@ -416,7 +419,9 @@ function updateTtlDeliveryStripChart(type, total) {
         slice = 0
         if (type == "veh_ttl") {
           for (var i=0; i<lunarSpark.vehicles.length; i++) {
-            chart.data.datasets[i].data = lunarSpark.vehicles[i].ttl_history.slice(slice).filter(function(_, index) {return (index ) % 10 === 0;}).map(function(item) {return item});
+            if (lunarSpark.vehicles[i].active == true) {
+              chart.data.datasets[i].data = lunarSpark.vehicles[i].ttl_history.slice(slice).filter(function(_, index) {return (index ) % 10 === 0;}).map(function(item) {return item});
+            }
           }
       
           // add current time to labels array

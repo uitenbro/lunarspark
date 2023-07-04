@@ -217,8 +217,11 @@ function vehicleSort(a,b){
 	var test = 0
 	a.inDark = a.in_night || a.in_shadow
 	b.inDark = b.in_night || b.in_shadow
-	// prefer vehicles in darkness over any in daylight regardless of anything else
-	if (a.inDark != b.inDark) {
+	// prefer active vehicles in darkness over any inactive or daylight regardless of anything else
+	if (a.active != b.active) {
+		test = b.inDark - a.inDark
+	}	
+	else if (a.inDark != b.inDark) {
 		test = b.inDark - a.inDark
 	}
 	// prefer low ttl over higher
@@ -252,7 +255,8 @@ function chooseVehicle(sat) {
 	var executeDelivery = true
 	for (var i=0;i<prioritizedVehicles.length;i++) {
 		// if the vehicle is in the dark (prevent delivery in the light)
-		if ((prioritizedVehicles[i].location.in_shadow == true || prioritizedVehicles[i].location.in_night == true) && 
+		if (prioritizedVehicles[i].active == true && 
+			(prioritizedVehicles[i].location.in_shadow == true || prioritizedVehicles[i].location.in_night == true) && 
 			// TODO: check vehicle for other non-delivery criteria and make this configurable
 			// TODO: Use Wh to capacity rather than percent
 			// TODO: Stop servicing vehicles that can't be saved
