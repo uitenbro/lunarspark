@@ -433,7 +433,7 @@ function printVehicle(index) {
     var veh = lunarSpark.vehicles[index];
     var vehicle = document.createElement('div');
     if (veh.active) {
-        if (veh.location.in_night) {
+        if (veh.location.in_night || veh.location.in_shadow) {
             vehicle.className = "vehicle inshadow";
         }
         else {

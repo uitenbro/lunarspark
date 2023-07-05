@@ -118,7 +118,7 @@ function updateVehicles() {
 
 			// Update solar panel output power
 			// If the vehicle is not in lunar night
-			if (!veh.location.in_night) {
+			if (!veh.location.in_night && !veh.location.in_shadow) {
 				// Update solar panel power production
 				veh.solar_panel.power_output = veh.solar_panel.height*veh.solar_panel.width * lunarSpark.system.vehicle.solar_panel_eff * solarFluxInLunarOrbit ; // Watts 
 			}
