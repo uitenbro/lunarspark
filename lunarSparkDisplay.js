@@ -14,6 +14,7 @@ var realTime = execRate * timeStep*60// step/sec * min/step
 var frameCount = 0;
 var spinLock = true;
 var simStatusStriptChartOn = false
+var formatToggle = true
 
 // Display thresholds
 const battRedThreshold = 25 // %
@@ -197,6 +198,7 @@ function printSimControl() {
     // simControl.appendChild(printButton("\u2194", "javascript:simStatusStripChartToggle()", "simStatusStripChartDown"));
     simControl.appendChild(printButton("\u21D2", "javascript:simStatusStripChartToggle()", "simStatusStripChartUp"));
     simControl.appendChild(printButton("\u21D4", "javascript:simStatusStripChartToggle()", "simStatusStripChartDown"));
+    simControl.appendChild(printButton("O", "javascript:displayFormatToggle()", "displayButton"));
 
     document.getElementById("simControl").replaceWith(simControl);
 
@@ -416,20 +418,28 @@ function printSatellite(chart, index) {
 }
 
 function printVehicles() {
-    var bottom = document.createElement('div');
-    bottom.id = "bottom";
-
+    var vehDiv = document.createElement('div');
+    vehDiv.id = "vehicles";
     for (i=0;i<lunarSpark.vehicles.length;i++) {
-        bottom.appendChild(printVehicle(i));
+        vehDiv.appendChild(printVehicle(i));
+    }   
+    
+    // clear vehicles from previous cycle
+    console.log(document.getElementById("vehicles"))
+    if (document.getElementById("vehicles") != null){
+        document.getElementById("vehicles").replaceWith(document.createElement("div"));
     }
-    document.getElementById("bottom").replaceWith(bottom);
 
-    // var right = document.createElement('div');
-    // right.id = "vehRight";
-    // for (i=lunarSpark.vehicles.length/2;i<lunarSpark.vehicles.length;i++) {
-    //     right.appendChild(printVehicle(i));
-    // }
-    // document.getElementById("vehRight").replaceWith(right);
+    // decide where to print the vehicles
+    if (formatToggle) {
+        document.getElementById("bottom").replaceChildren(vehDiv);
+    }
+    else {
+        // clear bottom div to fix stripcharts
+        document.getElementById("bottom").replaceChildren(document.createElement("div"));
+        // add vehicles to the middle
+        document.getElementById("middle").appendChild(vehDiv);
+    }
 }
 
 function printVehicle(index) {
@@ -621,4 +631,18 @@ function getTtlBelowZeroCount() {
         }
     }
     return count.toFixed(0) + "/" + lunarSpark.vehicles.length
+}
+
+function displayFormatToggle() {
+    if (document.getElementById('simCanvas').style.display == 'inline') {
+        document.getElementById('simCanvas').style.display = 'none' 
+        document.getElementById('simRight').style.float = 'left' 
+        formatToggle = false
+    }
+    else {
+        document.getElementById('simCanvas').style.display = 'inline'
+        document.getElementById('simRight').style.float = 'right' 
+        formatToggle = true
+    }
+    printAll();
 }
