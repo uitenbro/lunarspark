@@ -366,7 +366,8 @@ function drawLaser(anomaly, ascendingNode, laserNum, lat, long) {
     context.moveTo(satX, satY);
     context.lineTo(vehicleX, vehicleY);
     context.stroke();
-    context.strokeStyle = "Magenta";
+    context.strokeStyle = "#8F76D6";
+    //context.strokeStyle = "blue";
     context.lineWidth = 3.0;
     context.beginPath();
     context.moveTo(satX, satY);

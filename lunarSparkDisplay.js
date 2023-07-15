@@ -203,10 +203,13 @@ function printSimControl() {
 }
 
 function updateDisplay() {
-    clearCanvas();
-    drawAll(time);
-    // if stepping or every 0.20 second 
-    if (simState != "run" || (frameCount%(200/refreshPeriod))==0) {
+    // if stepping or every so many frames depending on refreshPeriod and achieved realtime rate 
+    if (simState != "run" || (frameCount%(40/refreshPeriod))==0) {
+        clearCanvas();
+        drawAll(time);    
+    }    
+    // if stepping or every so many frames depending on refreshPeriod and achieved realtime rate 
+    if (simState != "run" || (frameCount%(400/refreshPeriod))==0) {
         printAll(time);
     }
     frameCount = frameCount+1;
