@@ -1,8 +1,8 @@
 var lunarSparkInput = {
   "test_case" :{
-    "filename": "lunarSparkDefault.json",
-    "power_delivery_strategy" : "Battery Percent",
-    "vehicle_configuration" : "Lg:1/85 Sp:NA",
+    "filename": "lunarSparkInput.js",
+    "power_delivery_strategy" : "TTL",
+    "vehicle_configuration" : "default",
     "ttl_threshold": 360, 
   },
   "environment": {
