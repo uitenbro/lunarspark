@@ -118,7 +118,7 @@ var lunarSparkInput = {
       "id": "VIPER0",
       "location": {
         "name": "",
-        "lat": -90,
+        "lat": -89.75,
         "long": 0,
         "shadow_model": [],
         "in_night": false,
@@ -304,8 +304,8 @@ var lunarSparkInput = {
       "id": "VIPER1",
       "location": {
         "name": "",
-        "lat": -85,
-        "long": 0,
+        "lat": -89.75,
+        "long": 180,
         "shadow_model": [],
         "in_night": false,
         "in_shadow": false

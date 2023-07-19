@@ -18,7 +18,7 @@ const minPerSinodicLunarCycle = daysPerSinodicLunarCycle*minPerDay;
 const minPerSidrealLunarCycle = daysPerSidrealLunarCycle*minPerDay;
 
 const sunAngleDegreesPerMinute = 360/minPerSinodicLunarCycle; // deg per min respect to sun
-const ascendingNodeDegreesPerMinute = 360/minPerSidrealLunarCycle; // deg per min respect to orit
+const ascendingNodeDegreesPerMinute = 360/minPerSidrealLunarCycle; // deg per min respect to orbit
 const solarFluxInLunarOrbit = 1361; // W/m2 - https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
 const moonRadius = 1736000; // meters - https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
 
