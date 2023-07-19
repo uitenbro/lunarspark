@@ -36,7 +36,13 @@ function initSim() {
     // Reset globals to initial state
     time = 0 // minuites
     refreshPeriod = 10 // 10msec (100Hz)
-    timeStep = 1; // min/refresh
+    if (lunarSpark.environment.time_step != undefined) {
+        timeStep =  lunarSpark.environment.time_step;
+    }
+    else {
+        timeStep = 1
+    }
+    // timeStep = 1; // min/refresh 
     savedTimeStep = timeStep;
     simState = "pause";
     previousStartTime = 0;

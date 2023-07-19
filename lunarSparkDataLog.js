@@ -170,13 +170,20 @@ function loadFile(event) {
     localStorage.setItem("lunarSparkInput", JSON.stringify(lunarSparkInput));
     if (parsedData.lunarSpark) {
 	    lunarSpark = parsedData.lunarSpark;
-	}
-	// no runtime data so intialize everythin
+      if (lunarSpark.environment.time_step != undefined) {
+        timeStep =  lunarSpark.environment.time_step;
+        realTime = execRate * timeStep*60;
+      }
+	  }
+	  // no runtime data so intialize everything
     else {
     	lunarSpark = lunarSparkInput
-    	initializeDataLog();
-  	    stepSim(0)
-
+    	if (lunarSpark.environment.time_step != undefined) {
+        timeStep =  lunarSpark.environment.time_step;
+        realTime = execRate * timeStep*60;
+      }
+      initializeDataLog();
+  	  stepSim(0);
     }
     if (file.name != lunarSpark.test_case.filename) {
 		const promptMessage = "Internal test case filename does not match actual filename.\n" +

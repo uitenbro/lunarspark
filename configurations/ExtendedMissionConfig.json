@@ -8,6 +8,7 @@
     },
     "environment": {
       "time": 0,
+      "time_step": 3,
       "predict_time": 0,
       "orbit": {
         "period": 179.86,

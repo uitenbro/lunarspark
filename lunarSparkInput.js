@@ -7,6 +7,7 @@ var lunarSparkInput = {
   },
   "environment": {
     "time": 0,
+    "time_step": 1,
     "predict_time": 120, // min 
     "orbit": { // TODO: move this to satellite and calculate based on altitude
       "period": 179.86,
