@@ -11,7 +11,6 @@
       "time_step": 3,
       "predict_time": 0,
       "orbit": {
-        "period": 179.86,
         "altitude": 700000,
         "ascending_node": 90,
         "count": 0
@@ -51,7 +50,7 @@
         "active": true,
         "id": "Spark1",
         "orbit": {
-          "min": 0
+          "anamoly": 0,
         },
         "solar_panel": {
           "area": 37.58
@@ -84,7 +83,7 @@
         "active": true,
         "id": "Spark2",
         "orbit": {
-          "min": 89.93
+          "anamoly": 180,
         },
         "solar_panel": {
           "area": 37.58

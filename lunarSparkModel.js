@@ -21,6 +21,8 @@ const sunAngleDegreesPerMinute = 360/minPerSinodicLunarCycle; // deg per min res
 const ascendingNodeDegreesPerMinute = 360/minPerSidrealLunarCycle; // deg per min respect to orbit
 const solarFluxInLunarOrbit = 1361; // W/m2 - https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
 const moonRadius = 1736000; // meters - https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
+const moonMu = 4900000000000 // m^3/sec^2  - https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
+const eclipseTime = 45.42 // min SMAD solar array
 
 // Orbit constants
 const orbitRadius = moonRadius + lunarSpark.environment.orbit.altitude; // meters
@@ -45,7 +47,7 @@ function updateSatellites () {
 	for (var i=0;i<lunarSpark.satellites.length;i++) {
 		var sat = lunarSpark.satellites[i]
 
-		// Update orbit position and count
+		// Update orbit position and min
 		sat.orbit.min = (sat.orbit.min+timeStep)%lunarSpark.environment.orbit.period;
 		sat.orbit.anomaly = sat.orbit.min/lunarSpark.environment.orbit.period*360;
 		
@@ -73,9 +75,10 @@ function updateSatellites () {
 			}
 		}	
 		// TODO: inEclipse(sat)
+		const eclipseFactor = (lunarSpark.environment.orbit.period - eclipseTime) / lunarSpark.environment.orbit.period
 
 		// Update Power Production
-		sat.solar_panel.power_output = sat.solar_panel.area * lunarSpark.system.satellite.solar_panel_eff * solarFluxInLunarOrbit ; // Watts 
+		sat.solar_panel.power_output = sat.solar_panel.area * lunarSpark.system.satellite.solar_panel_eff * solarFluxInLunarOrbit * eclipseFactor; // Watts 
 
 		// Update Power Storage
 		// if the solar panel is producing power

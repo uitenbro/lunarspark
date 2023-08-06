@@ -9,8 +9,7 @@ var lunarSparkInput = {
     "time": 0,
     "time_step": 1,
     "predict_time": 120, // min 
-    "orbit": { // TODO: move this to satellite and calculate based on altitude
-      "period": 179.86,
+    "orbit": { 
       "altitude": 700000,
       "ascending_node": 90,
       "count":0
@@ -50,17 +49,17 @@ var lunarSparkInput = {
       "active": true,
       "id": "Spark1",
       "orbit": {
-      "min": 0,
+        "anamoly": 0,
       },
       "solar_panel": {
-        "area": 37.58,
+        "area": 50,
       },
       "battery": {
-        "capacity": 16150,
-        "charge": 16150,
+        "capacity": 26750, // 16150,
+        "charge": 26750, // 16150,
         "dod": 0.60 // TODO: Set yellow color bar based on dod
       },
-      "sat_power_draw": 2814,  // SMAD S/C Pre Sizing S/C Avg Pwr
+      "sat_power_draw": 3980,  // SMAD 2.6 S/C Final Sizing S/C Avg Pwr //2814,  // SMAD S/C Pre Sizing S/C Avg Pwr
       "laser_power_draw": 0,
       "vehicles": [],
       "vehData": -1,  
@@ -83,17 +82,18 @@ var lunarSparkInput = {
       "active": true,
       "id": "Spark2",
       "orbit": {
-      "min": 89.93,
+        //"min": 89.93,
+        "anamoly": 180,
       },
       "solar_panel": {
-        "area": 37.58,
+        "area": 50,
       },
       "battery": {
-        "capacity": 16150, // SMAD Secondary Battery Sizing
-        "charge": 16150,
+        "capacity": 26750, // 16150, // SMAD Secondary Battery Sizing
+        "charge": 26750, // 16150,
         "dod": 0.60
       },
-      "sat_power_draw": 2814, // SMAD S/C Pre Sizing S/C Avg Pwr
+      "sat_power_draw": 3980,  // SMAD 2.6 S/C Final Sizing S/C Avg Pwr //2814,  // SMAD S/C Pre Sizing S/C Avg Pwr
       "laser_power_draw": 0,
       "vehicles": [],
       "vehData": -1,

@@ -63,6 +63,7 @@ function initSim() {
 
     // step sim with zero time to initialize all dervived parameters
     initializeDataLog();
+    initOrbit();
     stepSim(0);
     disconnectAllLasers();
 
@@ -71,6 +72,21 @@ function initSim() {
     drawMoon();
     drawAll();
     printAll();  
+}
+function initOrbit() {
+    // Calculate orbit period based on altitude (should only happen at initialization)
+    if (lunarSpark.environment.orbit.period == undefined) {
+        // Calculate orbit period SMAD sheet - Orbit Dynamics 
+        var majorAxis = (moonRadius+lunarSpark.environment.orbit.altitude);  // m
+        lunarSpark.environment.orbit.period = 2*Math.PI*Math.sqrt( (majorAxis**3) / moonMu)/60 // min
+    }
+    // Calculate sat orbit min within the period based on anamoly (should only happen at initialization)
+    for (var i=0;i<lunarSpark.satellites.length;i++) {
+        var sat = lunarSpark.satellites[i]
+        if (sat.orbit.min == undefined) {
+            sat.orbit.min = sat.orbit.anamoly/360*lunarSpark.environment.orbit.period // min
+       }
+    }
 }
 
 function stepSim(step) {
@@ -357,7 +373,7 @@ function printSatellite(chart, index) {
         // satellite.appendChild(printRow("", "", "", true));
         satellite.appendChild(printRow("Orbit(anomaly):", sat.orbit.anomaly.toFixed(1), "deg"));
         satellite.appendChild(printRow("Sub-Satellite(lat/long):", sat.orbit.lat.toFixed(1)+"/"+sat.orbit.long.toFixed(1), "deg"));
-        satellite.appendChild(printRow("Orbit(time/period):", sat.orbit.min.toFixed(0)+"/"+lunarSpark.environment.orbit.period, "min"));
+        satellite.appendChild(printRow("Orbit(time/period):", sat.orbit.min.toFixed(0)+"/"+lunarSpark.environment.orbit.period.toFixed(0), "min"));
         satellite.appendChild(printBatteryGuage(sat.battery.percent)); 
         var row = printRow("Battery Charge:", sat.battery.percent.toFixed(1)+"% "+ sat.battery.charge.toFixed(0)+"/"+sat.battery.capacity.toFixed(0), "Wh");
         satellite.appendChild(row); 
@@ -431,7 +447,6 @@ function printVehicles() {
     }   
     
     // clear vehicles from previous cycle
-    console.log(document.getElementById("vehicles"))
     if (document.getElementById("vehicles") != null){
         document.getElementById("vehicles").replaceWith(document.createElement("div"));
     }
@@ -630,13 +645,17 @@ function printTtlDeliveryStripCharts(total=false) {
 }
 
 function getTtlBelowZeroCount() {
-    var count = 0
+    var countActive = 0
+    var countFrozen = 0
     for (var i=0;i<lunarSpark.vehicles.length;i++) {
-        if (lunarSpark.vehicles[i].ttl_below_zero > 0) {
-            count += 1
+        if  (lunarSpark.vehicles[i].active) {
+            countActive += 1
+            if (lunarSpark.vehicles[i].ttl_below_zero > 0) {
+                countFrozen += 1
+            }
         }
     }
-    return count.toFixed(0) + "/" + lunarSpark.vehicles.length
+    return countFrozen + "/" + countActive
 }
 
 function displayFormatToggle() {
