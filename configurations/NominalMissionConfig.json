@@ -49,10 +49,10 @@
         "active": true,
         "id": "Spark1",
         "orbit": {
-          "anamoly": 0,
+          "anamoly": 0
         },
         "solar_panel": {
-          "area": 37.58
+          "area": 50
         },
         "battery": {
           "capacity": 16150,
@@ -82,10 +82,10 @@
         "active": true,
         "id": "Spark2",
         "orbit": {
-          "anamoly": 180,
+          "anamoly": 180
         },
         "solar_panel": {
-          "area": 37.58
+          "area": 50
         },
         "battery": {
           "capacity": 16150,

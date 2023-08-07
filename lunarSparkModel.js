@@ -218,15 +218,11 @@ function getPotentialVehicles(i) {
 
 function vehicleSort(a,b){
 	var test = 0
-	a.inDark = a.in_night || a.in_shadow
-	b.inDark = b.in_night || b.in_shadow
-	// prefer active vehicles in darkness over any inactive or daylight regardless of anything else
+
+	// prefer active vehicles regardless of anything else
 	if (a.active != b.active) {
-		test = b.inDark - a.inDark
+		test = b.active - a.active
 	}	
-	else if (a.inDark != b.inDark) {
-		test = b.inDark - a.inDark
-	}
 	// prefer low ttl over higher
 	else { 
 		//test = a.battery.percent - b.battery.percent 
@@ -256,21 +252,39 @@ function chooseVehicle(sat) {
 	// loop through prioritized vehicles and disqualify vehicles until one is choosen 
 	var chosenVehicleIndex = -1
 	var executeDelivery = true
+	var adequate_capacity = 450 // Wh
+	var chance_to_live = 75 // min
+	if (lunarSpark.environment.adequate_capacity != undefined) {adequate_capacity = lunarSpark.environment.adequate_capacity}
+	if (lunarSpark.environment.chance_to_live != undefined) {chance_to_live = lunarSpark.environment.chance_to_live}
+	var small_capacity = 2*adequate_capacity // Wh
 	for (var i=0;i<prioritizedVehicles.length;i++) {
-		// if the vehicle is in the dark (prevent delivery in the light)
-		if (prioritizedVehicles[i].active == true && 
-			(prioritizedVehicles[i].location.in_shadow == true || prioritizedVehicles[i].location.in_night == true) && 
-			// TODO: check vehicle for other non-delivery criteria and make this configurable
-			// TODO: Use Wh to capacity rather than percent
-			// TODO: Stop servicing vehicles that can't be saved
-			// if battery capacity is really small or the charge is low enough to take a full beam (prevent excess delivery)
-			((prioritizedVehicles[i].battery.capacity < 500) ||
-			(prioritizedVehicles[i].battery.capacity - prioritizedVehicles[i].battery.charge > 250)) &&  
-			// if the ttl pred indicates the veh will be alive for the next satellite to arrive 
-			(prioritizedVehicles[i].ttl - lunarSpark.environment.predict_time > 0))
-		{
-			var chosenVehicleIndex = lunarSpark.satellites[sat].vehData.indexOf(prioritizedVehicles[i])
-			break;
+		if (prioritizedVehicles[i].active == true) { 
+
+			// if the vehicle is in the dark (prevent delivery in the light)
+			if (prioritizedVehicles[i].location.in_shadow == true || prioritizedVehicles[i].location.in_night == true) { 
+			
+				// if battery capacity is really small or the charge is low enough to take a full beam (prevent excess delivery)
+				if ((prioritizedVehicles[i].battery.capacity < small_capacity) ||				
+					 (prioritizedVehicles[i].battery.capacity - 
+						(prioritizedVehicles[i].battery.charge - prioritizedVehicles[i].power_draw*lunarSpark.environment.predict_time/60) > adequate_capacity)) {
+
+					// if the ttl pred indicates the veh will be alive for the next power delivery opportunity 
+					if (prioritizedVehicles[i].ttl - chance_to_live > 0) {
+						var chosenVehicleIndex = lunarSpark.satellites[sat].vehData.indexOf(prioritizedVehicles[i])
+						break;
+					}
+					else {
+						console.log("Chance to Live:(TTL))", prioritizedVehicles[i].ttl)
+					}
+				}
+				else {
+					console.log("Adquate Capacity:(small battery)",prioritizedVehicles[i].battery.capacity)
+					console.log("Adquate Capacity:(capacity))",(prioritizedVehicles[i].battery.charge - prioritizedVehicles[i].power_draw*lunarSpark.environment.predict_time/60))
+				}
+			}
+			else {
+				console.log("In Dark:",prioritizedVehicles[i].location.in_shadow, prioritizedVehicles[i].location.in_night)
+			}
 		}
 	}
 	// if no vehicle was chosen (all disqualified) 

@@ -183,6 +183,7 @@ function loadFile(event) {
         realTime = execRate * timeStep*60;
       }
       initializeDataLog();
+      initOrbit();
   	  stepSim(0);
     }
     if (file.name != lunarSpark.test_case.filename) {

@@ -9,6 +9,7 @@ var lunarSparkInput = {
     "time": 0,
     "time_step": 1,
     "predict_time": 120, // min 
+    "adequate_capacity": 450, // Wh
     "orbit": { 
       "altitude": 700000,
       "ascending_node": 90,
@@ -55,11 +56,11 @@ var lunarSparkInput = {
         "area": 50,
       },
       "battery": {
-        "capacity": 26750, // 16150,
-        "charge": 26750, // 16150,
+        "capacity": 26750, 
+        "charge": 26750, 
         "dod": 0.60 // TODO: Set yellow color bar based on dod
       },
-      "sat_power_draw": 3980,  // SMAD 2.6 S/C Final Sizing S/C Avg Pwr //2814,  // SMAD S/C Pre Sizing S/C Avg Pwr
+      "sat_power_draw": 3980,  // SMAD 2.6 S/C Final Sizing S/C Avg Pwr
       "laser_power_draw": 0,
       "vehicles": [],
       "vehData": -1,  
@@ -89,11 +90,11 @@ var lunarSparkInput = {
         "area": 50,
       },
       "battery": {
-        "capacity": 26750, // 16150, // SMAD Secondary Battery Sizing
-        "charge": 26750, // 16150,
+        "capacity": 26750, //  SMAD Secondary Battery Sizing
+        "charge": 26750, // 
         "dod": 0.60
       },
-      "sat_power_draw": 3980,  // SMAD 2.6 S/C Final Sizing S/C Avg Pwr //2814,  // SMAD S/C Pre Sizing S/C Avg Pwr
+      "sat_power_draw": 3980,  // SMAD 2.6 S/C Final Sizing S/C Avg Pwr 
       "laser_power_draw": 0,
       "vehicles": [],
       "vehData": -1,
@@ -191,7 +192,7 @@ var lunarSparkInput = {
     
     {
       "active": true,
-      "id": "VIPER1",
+      "id": "VIPER2",
       "location": {
         "name": "",
         "lat": -80,
@@ -228,7 +229,7 @@ var lunarSparkInput = {
     },    
     {
       "active": true,
-      "id": "VIPER1",
+      "id": "VIPER3",
       "location": {
         "name": "",
         "lat": -80,
@@ -265,7 +266,7 @@ var lunarSparkInput = {
     },
     {
       "active": true,
-      "id": "VIPER1",
+      "id": "VIPER4",
       "location": {
         "name": "",
         "lat": -80,
@@ -302,7 +303,7 @@ var lunarSparkInput = {
     },    
     {
       "active": true,
-      "id": "VIPER1",
+      "id": "VIPER5",
       "location": {
         "name": "",
         "lat": -89.75,
@@ -339,7 +340,7 @@ var lunarSparkInput = {
     },
      {
       "active": false,
-      "id": "VIPER1",
+      "id": "VIPER6",
       "location": {
         "name": "",
         "lat": -89.75,
@@ -376,7 +377,7 @@ var lunarSparkInput = {
     },
     {
       "active": false,
-      "id": "VIPER1",
+      "id": "VIPER7",
       "location": {
         "name": "",
         "lat": -89.75,
