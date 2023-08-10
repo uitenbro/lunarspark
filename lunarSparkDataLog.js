@@ -168,12 +168,15 @@ function loadFile(event) {
     // setup initial input and current state to match the config file
     lunarSparkInput = parsedData.lunarSparkInput;
     localStorage.setItem("lunarSparkInput", JSON.stringify(lunarSparkInput));
+
     if (parsedData.lunarSpark) {
 	    lunarSpark = parsedData.lunarSpark;
       if (lunarSpark.environment.time_step != undefined) {
         timeStep =  lunarSpark.environment.time_step;
         realTime = execRate * timeStep*60;
       }
+      initOrbit();
+      initVehicleSelectionCriteria();
 	  }
 	  // no runtime data so intialize everything
     else {
@@ -182,8 +185,8 @@ function loadFile(event) {
         timeStep =  lunarSpark.environment.time_step;
         realTime = execRate * timeStep*60;
       }
-      initializeDataLog();
       initOrbit();
+      initVehicleSelectionCriteria();
   	  stepSim(0);
     }
     if (file.name != lunarSpark.test_case.filename) {
@@ -208,6 +211,12 @@ function loadFile(event) {
 function handlePromptResponse(result, filename) {
   if (result) {
   	lunarSpark.test_case.filename = filename
+    // update filename in datastore
+    var lunarSparkInputSave = JSON.parse(localStorage.getItem("lunarSparkInput"))
+    lunarSparkInputSave.test_case.filename = lunarSpark.test_case.filename
+    localStorage.setItem("lunarSparkInput", JSON.stringify(lunarSparkInputSave));
+    
+
     // User clicked "Yes"
     console.log("Yes");
     // Perform your desired actions for "Yes"

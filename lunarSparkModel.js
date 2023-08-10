@@ -252,11 +252,7 @@ function chooseVehicle(sat) {
 	// loop through prioritized vehicles and disqualify vehicles until one is choosen 
 	var chosenVehicleIndex = -1
 	var executeDelivery = true
-	var adequate_capacity = 450 // Wh
-	var chance_to_live = 75 // min
-	if (lunarSpark.environment.adequate_capacity != undefined) {adequate_capacity = lunarSpark.environment.adequate_capacity}
-	if (lunarSpark.environment.chance_to_live != undefined) {chance_to_live = lunarSpark.environment.chance_to_live}
-	var small_capacity = 2*adequate_capacity // Wh
+
 	for (var i=0;i<prioritizedVehicles.length;i++) {
 		if (prioritizedVehicles[i].active == true) { 
 
@@ -264,12 +260,12 @@ function chooseVehicle(sat) {
 			if (prioritizedVehicles[i].location.in_shadow == true || prioritizedVehicles[i].location.in_night == true) { 
 			
 				// if battery capacity is really small or the charge is low enough to take a full beam (prevent excess delivery)
-				if ((prioritizedVehicles[i].battery.capacity < small_capacity) ||				
+				if ((prioritizedVehicles[i].battery.capacity < lunarSpark.environment.small_capacity) ||				
 					 (prioritizedVehicles[i].battery.capacity - 
-						(prioritizedVehicles[i].battery.charge - prioritizedVehicles[i].power_draw*lunarSpark.environment.predict_time/60) > adequate_capacity)) {
+						(prioritizedVehicles[i].battery.charge - prioritizedVehicles[i].power_draw*lunarSpark.environment.predict_time/60) > lunarSpark.environment.adequate_capacity)) {
 
 					// if the ttl pred indicates the veh will be alive for the next power delivery opportunity 
-					if (prioritizedVehicles[i].ttl - chance_to_live > 0) {
+					if (prioritizedVehicles[i].ttl - lunarSpark.environment.chance_to_live > 0) {
 						var chosenVehicleIndex = lunarSpark.satellites[sat].vehData.indexOf(prioritizedVehicles[i])
 						break;
 					}

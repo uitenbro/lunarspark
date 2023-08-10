@@ -7,6 +7,9 @@ var savedTimeStep = timeStep;
 var simState = "pause";
 var previousStartTime = 0;
 var elapsedTime = 0; // msec
+var wallClockTime = 0 // min
+var wallClockTimeStart = 0 // min
+var prevWallClockTime = 0 // min
 var prevAvgElapsedTime = 10; // msec
 var avgElapsedTime = 10; // msec
 var execRate = 100; // Hz
@@ -64,6 +67,7 @@ function initSim() {
     // step sim with zero time to initialize all dervived parameters
     initializeDataLog();
     initOrbit();
+    initVehicleSelectionCriteria()
     stepSim(0);
     disconnectAllLasers();
 
@@ -87,6 +91,11 @@ function initOrbit() {
             sat.orbit.min = sat.orbit.anamoly/360*lunarSpark.environment.orbit.period // min
        }
     }
+}
+function initVehicleSelectionCriteria() {
+    if (lunarSpark.environment.adequate_capacity == undefined) {lunarSpark.environment.adequate_capacity = 325} // Wh
+    if (lunarSpark.environment.small_capacity == undefined) {lunarSpark.environment.small_capacity = 450} // Wh
+    if (lunarSpark.environment.chance_to_live == undefined) {lunarSpark.environment.chance_to_live = 75} // min
 }
 
 function stepSim(step) {
@@ -122,6 +131,7 @@ function runSim() {
     realTime = execRate * timeStep*60
     previousStartTime = startTime;
     prevAvgElapsedTime = avgElapsedTime;
+    wallClockTime = prevWallClockTime + (Date.now() - wallClockTimeStart)/1000/60  // min 
     stepSim();
     if ((time >= minPerSinodicLunarCycle) || (simState != "run")) {
         clearInterval(simRun);
@@ -133,12 +143,14 @@ function runSim() {
 }
 function startSim() {
     simState = "run"
+    wallClockTimeStart = Date.now()
     simRun = setInterval(runSim, refreshPeriod);
     document.getElementById('runButton').className = "buttonDisabled"
     document.getElementById('pauseButton').className = "button"
 }
 function pauseSim() {
     simState = "pause"
+    prevWallClockTime = wallClockTime;
     document.getElementById('runButton').className = "button"
     document.getElementById('pauseButton').className = "buttonDisabled"
 }
@@ -366,8 +378,6 @@ function printSatellite(chart, index) {
         // else {
             satellite.className = "satellite inview";
         // }
-
-        // TODO: add orbit count
         
         satellite.appendChild(printRow("Satellite["+index+"]:", sat.id, "-", false));
         // satellite.appendChild(printRow("", "", "", true));
@@ -542,11 +552,19 @@ function printSimStatus() {
     var div = document.createElement('div');
     div.id = "simStatus1";
 
+    // div.appendChild(printRow("Veh Config:", lunarSpark.test_case.vehicle_configuration, ""));
     div.appendChild(printRow("Step Duration:", timeStep.toFixed(3), "min"));
     div.appendChild(printRow("Execution Rate:", execRate.toFixed(1), "Hz"));
     div.appendChild(printRow("Realtime Rate:", realTime.toFixed(1), "x"));
+    var hours = Math.floor(wallClockTime/60)
+    var min = Math.floor(wallClockTime%60)
+    var sec = ((wallClockTime*60)%60).toFixed(0)
+    hours = String(hours).padStart(2, '0')
+    min = String(min).padStart(2, '0')
+    sec = String(sec).padStart(2, '0')
+    div.appendChild(printRow("Wall Clock Elapsed Time:", hours+":"+min+":"+sec, "h:m:s"));    
     div.appendChild(printRow("", "", "", true));
-    div.appendChild(printRow("Elapsed Time:", time.toFixed(0), "min"));
+    div.appendChild(printRow("Simulation Elapsed Time:", time.toFixed(0), "min"));
     div.appendChild(printRow("Days:", Math.floor(time/(24*60)), "days"));
     div.appendChild(printRow("Hrs:", Math.floor(time/60)%24, "hrs"));
     div.appendChild(printRow("Min:", (time%60).toFixed(0), "min"));
@@ -561,10 +579,11 @@ function printSimStatus() {
     // Right sim status
     var div = document.createElement('div');
     div.id = "simStatus2";
-
     div.appendChild(printRow("Config File:", lunarSpark.test_case.filename, ""));
-    div.appendChild(printRow("Veh Config:", lunarSpark.test_case.vehicle_configuration, ""));
-    //div.appendChild(printRow("Pwr Delivery:", lunarSpark.test_case.power_delivery_strategy, ""));
+    div.appendChild(printRow("", "", "", true));
+    div.appendChild(printRow("Adequate Capacity Threshold:", lunarSpark.environment.adequate_capacity, "Wh"));
+    div.appendChild(printRow("Small Battery Threshold:", lunarSpark.environment.small_capacity, "Wh"));
+    div.appendChild(printRow("Chance to Live Threshold:", lunarSpark.environment.chance_to_live, "min"));
     div.appendChild(printRow("", "", "", true));
     div.appendChild(printRow("Total Laser Energy Draw:", (lunarSpark.environment.cumulative_laser_energy_draw/1000).toFixed(1), "kWh"));
     div.appendChild(printRow("Total Laser Energy Output:", (lunarSpark.environment.cumulative_laser_energy_output/1000).toFixed(1), "kWh"));
@@ -594,7 +613,7 @@ function printSimStatus() {
     div.appendChild(printRow("Usable Energy Efficiency:", (lunarSpark.environment.overall_efficiency).toFixed(3), "%"));
     div.appendChild(printRow("", "", "", true));
     div.appendChild(printRow("TTL Below "+lunarSpark.test_case.ttl_threshold+" min:", (lunarSpark.environment.ttl_below_threshold).toFixed(1), "min"));
-    div.appendChild(printRow("TTL Below Zero:", (lunarSpark.environment.ttl_below_zero).toFixed(1), "min"));
+    // div.appendChild(printRow("TTL Below Zero:", (lunarSpark.environment.ttl_below_zero).toFixed(1), "min"));
     div.appendChild(printRow("Vehicles Frozen:", getTtlBelowZeroCount(), "veh"));
 
     simRight = document.getElementById('simStatus2');

@@ -9,7 +9,9 @@ var lunarSparkInput = {
     "time": 0,
     "time_step": 1,
     "predict_time": 120, // min 
-    "adequate_capacity": 450, // Wh
+    "adequate_capacity": 325, // Wh
+    "small_battery": 450, // Wh
+    "chance_to_live": 75, //min
     "orbit": { 
       "altitude": 700000,
       "ascending_node": 90,
