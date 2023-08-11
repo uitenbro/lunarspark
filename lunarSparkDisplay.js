@@ -556,13 +556,13 @@ function printSimStatus() {
     div.appendChild(printRow("Step Duration:", timeStep.toFixed(3), "min"));
     div.appendChild(printRow("Execution Rate:", execRate.toFixed(1), "Hz"));
     div.appendChild(printRow("Realtime Rate:", realTime.toFixed(1), "x"));
-    var hours = Math.floor(wallClockTime/60)
-    var min = Math.floor(wallClockTime%60)
+    //var hours = Math.floor(wallClockTime/60)
+    var min = Math.floor(wallClockTime)
     var sec = ((wallClockTime*60)%60).toFixed(0)
-    hours = String(hours).padStart(2, '0')
+    //hours = String(hours).padStart(2, '0')
     min = String(min).padStart(2, '0')
     sec = String(sec).padStart(2, '0')
-    div.appendChild(printRow("Wall Clock Elapsed Time:", hours+":"+min+":"+sec, "h:m:s"));    
+    div.appendChild(printRow("Wall Clock Elapsed Time:", min+":"+sec, "mm:ss"));    
     div.appendChild(printRow("", "", "", true));
     div.appendChild(printRow("Simulation Elapsed Time:", time.toFixed(0), "min"));
     div.appendChild(printRow("Days:", Math.floor(time/(24*60)), "days"));
