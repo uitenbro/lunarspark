@@ -1,419 +1,414 @@
 var lunarSparkInput = {
-  "test_case" :{
-    "filename": "lunarSparkInput.js",
-    "power_delivery_strategy" : "TTL",
-    "vehicle_configuration" : "default",
-    "ttl_threshold": 360, 
-  },
-  "environment": {
-    "time": 0,
-    "time_step": 1,
-    "predict_time": 120, // min 
-    "adequate_capacity": 325, // Wh
-    "small_battery": 450, // Wh
-    "chance_to_live": 75, //min
-    "orbit": { 
-      "altitude": 700000,
-      "ascending_node": 90,
-      "count":0
+    "test_case": {
+      "filename": "ExtendedMissionConfig.json",
+      "power_delivery_strategy": "Battery Percent",
+      "vehicle_configuration": "Nominal Missions",
+      "ttl_threshold": 360
     },
-    "sun_angle": 0, // TODO: add solar flux and sun angle period to inputs
-    "cumulative_laser_energy_draw" : 0,
-    "cumulative_laser_energy_output" : 0,
-    "cumulative_undelivered_laser_capacity" : 0,
-    "excess_laser_panel_energy" : 0,
-    "cumulative_laser_panel_energy" : 0,
-    "delivered_efficiency": 0, 
-    "usable_energy": 0,
-    "excesss_percent": 0,
-    "overall_efficiency": 0, 
-    "ttl_below_threshold": 0,
-    "ttl_below_zero": 0,
-  },
-  "system": {
-    "satellite": {
-      "solar_panel_eff": 0.28, // cos(10deg off pointing) x 39% ideal x 77% inherant x 93% degradation-8 years
-      "eps_eff": 0.90,
-      "laser_eff": 0.30,
-      "laser_output_power": 12800,
-      "laser_duty_cycle": 1.00,
-      "laser_output_diameter": 0.30, 
-      "laser_wavelength" : 445/1000000000,
+    "environment": {
+      "time": 0,
+      "time_step": 3,
+      "predict_time": 0,
+      "orbit": {
+        "altitude": 700000,
+        "ascending_node": 90,
+        "count": 0
+      },
+      "sun_angle": 0,
+      "cumulative_laser_energy_draw": 0,
+      "cumulative_laser_energy_output": 0,
+      "cumulative_undelivered_laser_capacity": 0,
+      "excess_laser_panel_energy": 0,
+      "cumulative_laser_panel_energy": 0,
+      "delivered_efficiency": 0,
+      "usable_energy": 0,
+      "excesss_percent": 0,
+      "overall_efficiency": 0,
+      "ttl_below_threshold": 0,
+      "ttl_below_zero": 0
     },
-    "vehicle": {
-      "solar_panel_eff": 0.28,  // same as satellite
-      "laser_panel_eff": 0.60,
-      "laser_panel_min_elevation" : 45,
-      "eps_eff": 0.90,
-    }
-  },
-  "satellites": [
-    {
-      "active": true,
-      "id": "Spark1",
-      "orbit": {
-        "anamoly": 0,
+    "system": {
+      "satellite": {
+        "solar_panel_eff": 0.28,
+        "eps_eff": 0.9,
+        "laser_eff": 0.3,
+        "laser_output_power": 12800,
+        "laser_duty_cycle": 1,
+        "laser_output_diameter": 0.3,
+        "laser_wavelength": 4.45e-7
       },
-      "solar_panel": {
-        "area": 50,
-      },
-      "battery": {
-        "capacity": 26750, 
-        "charge": 26750, 
-        "dod": 0.60 // TODO: Set yellow color bar based on dod
-      },
-      "sat_power_draw": 3980,  // SMAD 2.6 S/C Final Sizing S/C Avg Pwr
-      "laser_power_draw": 0,
-      "vehicles": [],
-      "vehData": -1,  
-      "chosen_vehicle" : -1,
-      "lasers": [],
-      "cumulative_laser_energy_draw" : 0,
-      "cumulative_laser_energy_output" : 0,
-      "cumulative_undelivered_laser_capacity" : 0,
-      "beam_metrics": {
-        "start_time": -1,
-        "beam_count": 0,
-        "last_beam": 0,
-        "min_beam": 0,
-        "max_beam": 0,
-        "avg_beam": 0,
-        "avg_power": 0
-      },
-    },  
-    {
-      "active": true,
-      "id": "Spark2",
-      "orbit": {
-        //"min": 89.93,
-        "anamoly": 180,
-      },
-      "solar_panel": {
-        "area": 50,
-      },
-      "battery": {
-        "capacity": 26750, //  SMAD Secondary Battery Sizing
-        "charge": 26750, // 
-        "dod": 0.60
-      },
-      "sat_power_draw": 3980,  // SMAD 2.6 S/C Final Sizing S/C Avg Pwr 
-      "laser_power_draw": 0,
-      "vehicles": [],
-      "vehData": -1,
-      "chosen_vehicle": -1,
-      "lasers": [],
-      "cumulative_laser_energy_draw" : 0,
-      "cumulative_laser_energy_output" : 0,
-      "cumulative_undelivered_laser_capacity" : 0,
-      "beam_metrics": {
-        "start_time": -1,
-        "beam_count": 0,
-        "last_beam": 0,
-        "min_beam": 0,
-        "max_beam": 0,
-        "avg_beam": 0,
-        "avg_power": 0
+      "vehicle": {
+        "solar_panel_eff": 0.28,
+        "laser_panel_eff": 0.6,
+        "laser_panel_min_elevation": 45,
+        "eps_eff": 0.9
       }
     },
-  ],
-  "vehicles": [
-    {
-      "active": true,
-      "id": "VIPER0",
-      "location": {
-        "name": "",
-        "lat": -89.75,
-        "long": 0,
-        "shadow_model": [],
-        "in_night": false,
-        "in_shadow": false
+    "satellites": [
+      {
+        "active": true,
+        "id": "Spark1",
+        "orbit": {
+          "anamoly": 0
+        },
+        "solar_panel": {
+          "area": 37.58
+        },
+        "battery": {
+          "capacity": 16150,
+          "charge": 16150,
+          "dod": 0.6
+        },
+        "sat_power_draw": 2814,
+        "laser_power_draw": 0,
+        "vehicles": [],
+        "vehData": -1,
+        "chosen_vehicle": -1,
+        "lasers": [],
+        "cumulative_laser_energy_draw": 0,
+        "cumulative_laser_energy_output": 0,
+        "cumulative_undelivered_laser_capacity": 0,
+        "beam_metrics": {
+          "start_time": -1,
+          "beam_count": 0,
+          "last_beam": 0,
+          "min_beam": 0,
+          "max_beam": 0,
+          "avg_beam": 0,
+          "avg_power": 0
+        }
       },
-      "solar_panel": {
-        "height": 1,
-        "width": 2,
+      {
+        "active": true,
+        "id": "Spark2",
+        "orbit": {
+          "anamoly": 180
+        },
+        "solar_panel": {
+          "area": 37.58
+        },
+        "battery": {
+          "capacity": 16150,
+          "charge": 16150,
+          "dod": 0.6
+        },
+        "sat_power_draw": 2814,
+        "laser_power_draw": 0,
+        "vehicles": [],
+        "vehData": -1,
+        "chosen_vehicle": -1,
+        "lasers": [],
+        "cumulative_laser_energy_draw": 0,
+        "cumulative_laser_energy_output": 0,
+        "cumulative_undelivered_laser_capacity": 0,
+        "beam_metrics": {
+          "start_time": -1,
+          "beam_count": 0,
+          "last_beam": 0,
+          "min_beam": 0,
+          "max_beam": 0,
+          "avg_beam": 0,
+          "avg_power": 0
+        }
+      }
+    ],
+    "vehicles": [
+      {
+        "active": true,
+        "id": "IM Nova-C",
+        "location": {
+          "name": "Malpert A",
+          "lat": -85,
+          "long": 13,
+          "shadow_model": [],
+          "in_night": false,
+          "in_shadow": false
+        },
+        "solar_panel": {
+          "height": 1.5,
+          "width": 1
+        },
+        "battery": {
+          "capacity": 1625,
+          "charge": 1625
+        },
+        "power_draw": 50,
+        "ttl": 0,
+        "ttl_below_threshold": 0,
+        "ttl_below_zero": 0,
+        "laser_panel": {
+          "diameter": 0.75
+        },
+        "beams": [],
+        "beam_metrics": {
+          "beam_count": 0,
+          "last_beam_energy": 0,
+          "min_beam_energy": 0,
+          "max_beam_energy": 0,
+          "avg_beam_energy": 0
+        },
+        "excess_laser_panel_energy": 0,
+        "cumulative_laser_panel_energy": 0
       },
-      "battery": {
-        "capacity": 1000,
-        "charge": 750,
+      {
+        "active": true,
+        "id": "IM Nova-C",
+        "location": {
+          "name": "South Pole",
+          "lat": -89.5,
+          "long": 190,
+          "shadow_model": [],
+          "in_night": false,
+          "in_shadow": false
+        },
+        "solar_panel": {
+          "height": 1.5,
+          "width": 1
+        },
+        "battery": {
+          "capacity": 1625,
+          "charge": 1625
+        },
+        "power_draw": 50,
+        "ttl": 0,
+        "ttl_below_threshold": 0,
+        "ttl_below_zero": 0,
+        "laser_panel": {
+          "diameter": 0.75
+        },
+        "beams": [],
+        "beam_metrics": {
+          "beam_count": 0,
+          "last_beam_energy": 0,
+          "min_beam_energy": 0,
+          "max_beam_energy": 0,
+          "avg_beam_energy": 0
+        },
+        "excess_laser_panel_energy": 0,
+        "cumulative_laser_panel_energy": 0
       },
-      "power_draw": 50,
-      "ttl": 0,
-      "ttl_below_threshold": 0,
-      "ttl_below_zero": 0,
-      "laser_panel": {
-        "diameter": 0.75,
+      {
+        "active": true,
+        "id": "VIPER",
+        "location": {
+          "name": "Nobile Crater",
+          "lat": -85,
+          "long": 31,
+          "shadow_model": [],
+          "in_night": false,
+          "in_shadow": false
+        },
+        "solar_panel": {
+          "height": 1,
+          "width": 1
+        },
+        "battery": {
+          "capacity": 5625,
+          "charge": 5625
+        },
+        "power_draw": 80,
+        "ttl": 0,
+        "ttl_below_threshold": 0,
+        "ttl_below_zero": 0,
+        "laser_panel": {
+          "diameter": 0.75
+        },
+        "beams": [],
+        "beam_metrics": {
+          "beam_count": 0,
+          "last_beam_energy": 0,
+          "min_beam_energy": 0,
+          "max_beam_energy": 0,
+          "avg_beam_energy": 0
+        },
+        "excess_laser_panel_energy": 0,
+        "cumulative_laser_panel_energy": 0
       },
-      "beams": [],
-      "beam_metrics": {
-        "beam_count": 0,
-        "last_beam_energy": 0,
-        "min_beam_energy": 0,
-        "max_beam_energy": 0,
-        "avg_beam_energy": 0,
+      {
+        "active": true,
+        "id": "Draper S2",
+        "location": {
+          "name": "Schrödinger",
+          "lat": -81,
+          "long": 132,
+          "shadow_model": [],
+          "in_night": false,
+          "in_shadow": false
+        },
+        "solar_panel": {
+          "height": 1.5,
+          "width": 1
+        },
+        "battery": {
+          "capacity": 1188,
+          "charge": 1188
+        },
+        "power_draw": 12.5,
+        "ttl": 0,
+        "ttl_below_threshold": 0,
+        "ttl_below_zero": 0,
+        "laser_panel": {
+          "diameter": 0.75
+        },
+        "beams": [],
+        "beam_metrics": {
+          "beam_count": 0,
+          "last_beam_energy": 0,
+          "min_beam_energy": 0,
+          "max_beam_energy": 0,
+          "avg_beam_energy": 0
+        },
+        "excess_laser_panel_energy": 0,
+        "cumulative_laser_panel_energy": 0
       },
-      "excess_laser_panel_energy" : 0,
-      "cumulative_laser_panel_energy" : 0,
-    },
-    {
-      "active": true,
-      "id": "VIPER1",
-      "location": {
-        "name": "",
-        "lat": -80,
-        "long": 90,
-        "shadow_model": [],
-        "in_night": false,
-        "in_shadow": false
+      {
+        "active": true,
+        "id": "Chang'E-7",
+        "location": {
+          "name": "Shackelton",
+          "lat": -89,
+          "long": 123,
+          "shadow_model": [],
+          "in_night": false,
+          "in_shadow": false
+        },
+        "solar_panel": {
+          "height": 1.5,
+          "width": 1
+        },
+        "battery": {
+          "capacity": 250,
+          "charge": 250
+        },
+        "power_draw": 12.5,
+        "ttl": 0,
+        "ttl_below_threshold": 0,
+        "ttl_below_zero": 0,
+        "laser_panel": {
+          "diameter": 0.75
+        },
+        "beams": [],
+        "beam_metrics": {
+          "beam_count": 0,
+          "last_beam_energy": 0,
+          "min_beam_energy": 0,
+          "max_beam_energy": 0,
+          "avg_beam_energy": 0
+        },
+        "excess_laser_panel_energy": 0,
+        "cumulative_laser_panel_energy": 0
       },
-      "solar_panel": {
-        "height": 1,
-        "width": 2,
+      {
+        "active": true,
+        "id": "Outland MAPP",
+        "location": {
+          "name": "",
+          "lat": -85,
+          "long": 295,
+          "shadow_model": [],
+          "in_night": false,
+          "in_shadow": false
+        },
+        "solar_panel": {
+          "height": 1.5,
+          "width": 1
+        },
+        "battery": {
+          "capacity": 500,
+          "charge": 500
+        },
+        "power_draw": 25,
+        "ttl": 0,
+        "ttl_below_threshold": 0,
+        "ttl_below_zero": 0,
+        "laser_panel": {
+          "diameter": 0.75
+        },
+        "beams": [],
+        "beam_metrics": {
+          "beam_count": 0,
+          "last_beam_energy": 0,
+          "min_beam_energy": 0,
+          "max_beam_energy": 0,
+          "avg_beam_energy": 0
+        },
+        "excess_laser_panel_energy": 0,
+        "cumulative_laser_panel_energy": 0
       },
-      "battery": {
-        "capacity": 1000,
-        "charge": 750,
+      {
+        "active": true,
+        "id": "Astrobotic Perrigrine",
+        "location": {
+          "name": "",
+          "lat": -85,
+          "long": 240,
+          "shadow_model": [],
+          "in_night": false,
+          "in_shadow": false
+        },
+        "solar_panel": {
+          "height": 1.5,
+          "width": 1
+        },
+        "battery": {
+          "capacity": 1250,
+          "charge": 1250
+        },
+        "power_draw": 25,
+        "ttl": 0,
+        "ttl_below_threshold": 0,
+        "ttl_below_zero": 0,
+        "laser_panel": {
+          "diameter": 0.75
+        },
+        "beams": [],
+        "beam_metrics": {
+          "beam_count": 0,
+          "last_beam_energy": 0,
+          "min_beam_energy": 0,
+          "max_beam_energy": 0,
+          "avg_beam_energy": 0
+        },
+        "excess_laser_panel_energy": 0,
+        "cumulative_laser_panel_energy": 0
       },
-      "power_draw": 50,
-      "ttl": 0,
-      "ttl_below_threshold": 0,       
-      "ttl_below_zero": 0,
-      "laser_panel": {
-        "diameter": 0.75,
-      },
-      "beams": [],
-      "beam_metrics": {
-        "beam_count": 0,
-        "last_beam_energy": 0,
-        "min_beam_energy": 0,
-        "max_beam_energy": 0,
-        "avg_beam_energy": 0,
-      },
-      "excess_laser_panel_energy" : 0,
-      "cumulative_laser_panel_energy" : 0,
-    },
-    
-    {
-      "active": true,
-      "id": "VIPER2",
-      "location": {
-        "name": "",
-        "lat": -80,
-        "long": 270,
-        "shadow_model": [],
-        "in_night": false,
-        "in_shadow": false
-      },
-      "solar_panel": {
-        "height": 1,
-        "width": 2,
-      },
-      "battery": {
-        "capacity": 1000,
-        "charge": 750,
-      },
-      "power_draw": 50,
-      "ttl": 0,
-      "ttl_below_threshold": 0,       
-      "ttl_below_zero": 0,
-      "laser_panel": {
-        "diameter": 0.75,
-      },
-      "beams": [],
-      "beam_metrics": {
-        "beam_count": 0,
-        "last_beam_energy": 0,
-        "min_beam_energy": 0,
-        "max_beam_energy": 0,
-        "avg_beam_energy": 0,
-      },
-      "excess_laser_panel_energy" : 0,
-      "cumulative_laser_panel_energy" : 0,
-    },    
-    {
-      "active": true,
-      "id": "VIPER3",
-      "location": {
-        "name": "",
-        "lat": -80,
-        "long": 180,
-        "shadow_model": [],
-        "in_night": false,
-        "in_shadow": false
-      },
-      "solar_panel": {
-        "height": 1,
-        "width": 2,
-      },
-      "battery": {
-        "capacity": 1000,
-        "charge": 750,
-      },
-      "power_draw": 50,
-      "ttl": 0,
-      "ttl_below_threshold": 0,       
-      "ttl_below_zero": 0,
-      "laser_panel": {
-        "diameter": 0.75,
-      },
-      "beams": [],
-      "beam_metrics": {
-        "beam_count": 0,
-        "last_beam_energy": 0,
-        "min_beam_energy": 0,
-        "max_beam_energy": 0,
-        "avg_beam_energy": 0,
-      },
-      "excess_laser_panel_energy" : 0,
-      "cumulative_laser_panel_energy" : 0,
-    },
-    {
-      "active": true,
-      "id": "VIPER4",
-      "location": {
-        "name": "",
-        "lat": -80,
-        "long": 0,
-        "shadow_model": [],
-        "in_night": false,
-        "in_shadow": false
-      },
-      "solar_panel": {
-        "height": 1,
-        "width": 2,
-      },
-      "battery": {
-        "capacity": 1000,
-        "charge": 750,
-      },
-      "power_draw": 50,
-      "ttl": 0,
-      "ttl_below_threshold": 0,       
-      "ttl_below_zero": 0,
-      "laser_panel": {
-        "diameter": 0.75,
-      },
-      "beams": [],
-      "beam_metrics": {
-        "beam_count": 0,
-        "last_beam_energy": 0,
-        "min_beam_energy": 0,
-        "max_beam_energy": 0,
-        "avg_beam_energy": 0,
-      },
-      "excess_laser_panel_energy" : 0,
-      "cumulative_laser_panel_energy" : 0,
-    },    
-    {
-      "active": true,
-      "id": "VIPER5",
-      "location": {
-        "name": "",
-        "lat": -89.75,
-        "long": 180,
-        "shadow_model": [],
-        "in_night": false,
-        "in_shadow": false
-      },
-      "solar_panel": {
-        "height": 1,
-        "width": 2,
-      },
-      "battery": {
-        "capacity": 1000,
-        "charge": 750,
-      },
-      "power_draw": 50,
-      "ttl": 0,
-      "ttl_below_threshold": 0,       
-      "ttl_below_zero": 0,
-      "laser_panel": {
-        "diameter": 0.75,
-      },
-      "beams": [],
-      "beam_metrics": {
-        "beam_count": 0,
-        "last_beam_energy": 0,
-        "min_beam_energy": 0,
-        "max_beam_energy": 0,
-        "avg_beam_energy": 0,
-      },
-      "excess_laser_panel_energy" : 0,
-      "cumulative_laser_panel_energy" : 0,
-    },
-     {
-      "active": false,
-      "id": "VIPER6",
-      "location": {
-        "name": "",
-        "lat": -89.75,
-        "long": 180,
-        "shadow_model": [],
-        "in_night": false,
-        "in_shadow": false
-      },
-      "solar_panel": {
-        "height": 1,
-        "width": 2,
-      },
-      "battery": {
-        "capacity": 1000,
-        "charge": 750,
-      },
-      "power_draw": 50,
-      "ttl": 0,
-      "ttl_below_threshold": 0,       
-      "ttl_below_zero": 0,
-      "laser_panel": {
-        "diameter": 0.75,
-      },
-      "beams": [],
-      "beam_metrics": {
-        "beam_count": 0,
-        "last_beam_energy": 0,
-        "min_beam_energy": 0,
-        "max_beam_energy": 0,
-        "avg_beam_energy": 0,
-      },
-      "excess_laser_panel_energy" : 0,
-      "cumulative_laser_panel_energy" : 0,
-    },
-    {
-      "active": false,
-      "id": "VIPER7",
-      "location": {
-        "name": "",
-        "lat": -89.75,
-        "long": 180,
-        "shadow_model": [],
-        "in_night": false,
-        "in_shadow": false
-      },
-      "solar_panel": {
-        "height": 1,
-        "width": 2,
-      },
-      "battery": {
-        "capacity": 1000,
-        "charge": 750,
-      },
-      "power_draw": 50,
-      "ttl": 0,
-      "ttl_below_threshold": 0,       
-      "ttl_below_zero": 0,
-      "laser_panel": {
-        "diameter": 0.75,
-      },
-      "beams": [],
-      "beam_metrics": {
-        "beam_count": 0,
-        "last_beam_energy": 0,
-        "min_beam_energy": 0,
-        "max_beam_energy": 0,
-        "avg_beam_energy": 0,
-      },
-      "excess_laser_panel_energy" : 0,
-      "cumulative_laser_panel_energy" : 0,
-    }
-  ],
-}
+      {
+        "active": false,
+        "id": "Astrobotic Griffin",
+        "location": {
+          "name": "",
+          "lat": -90,
+          "long": 0,
+          "shadow_model": [],
+          "in_night": false,
+          "in_shadow": false
+        },
+        "solar_panel": {
+          "height": 1.5,
+          "width": 1
+        },
+        "battery": {
+          "capacity": 6250,
+          "charge": 6250
+        },
+        "power_draw": 150,
+        "ttl": 0,
+        "ttl_below_threshold": 0,
+        "ttl_below_zero": 0,
+        "laser_panel": {
+          "diameter": 0.75
+        },
+        "beams": [],
+        "beam_metrics": {
+          "beam_count": 0,
+          "last_beam_energy": 0,
+          "min_beam_energy": 0,
+          "max_beam_energy": 0,
+          "avg_beam_energy": 0
+        },
+        "excess_laser_panel_energy": 0,
+        "cumulative_laser_panel_energy": 0
+      }
+    ]
+  }
 
