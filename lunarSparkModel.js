@@ -172,8 +172,8 @@ function updateVehicles() {
 			veh.battery.percent = (veh.battery.charge/veh.battery.capacity)*100; // %
 
 			// Update Time to Live
-			veh.ttl = veh.battery.charge/veh.power_draw*60; // min
-			veh.ttl_percent = veh.ttl / (veh.battery.capacity/veh.power_draw*60)*100 // %
+			veh.ttl = veh.battery.charge/(veh.power_draw/lunarSpark.system.vehicle.eps_eff)*60; // min  // conider eps efficiency
+			veh.ttl_percent = veh.ttl / (veh.battery.capacity/(veh.power_draw/lunarSpark.system.vehicle.eps_eff)*60)*100 // %
 			if (veh.ttl < lunarSpark.test_case.ttl_threshold) {
 				veh.ttl_below_threshold += timeStep
 			}
