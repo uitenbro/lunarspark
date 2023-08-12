@@ -492,7 +492,7 @@ function printVehicle(index) {
         vehicle.appendChild(row);
         vehicle.appendChild(printRow("Vehicle Pwr Draw:",  (veh.power_draw).toFixed(0), "W"));
         vehicle.appendChild(printRow("Time to Live (TTL):", veh.ttl.toFixed(1), "min"));
-        //vehicle.appendChild(printRow("TTL below "+lunarSpark.test_case.ttl_threshold+" min:", veh.ttl_below_threshold.toFixed(1), "min"));
+        vehicle.appendChild(printRow("TTL below "+lunarSpark.test_case.ttl_threshold+" min:", veh.ttl_below_threshold.toFixed(1), "min"));
         vehicle.appendChild(printRow("TTL below zero:", veh.ttl_below_zero.toFixed(1), "min"));
         //vehicle.appendChild(printBatteryGuage(veh.ttl_percent));
         vehicle.appendChild(printRow("", "", "", true));
