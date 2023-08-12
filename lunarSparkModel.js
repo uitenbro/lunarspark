@@ -262,7 +262,7 @@ function chooseVehicle(sat) {
 				// if battery capacity is really small or the charge is low enough to take a full beam (prevent excess delivery)
 				if ((prioritizedVehicles[i].battery.capacity < lunarSpark.environment.small_capacity) ||				
 					 (prioritizedVehicles[i].battery.capacity - 
-						(prioritizedVehicles[i].battery.charge - prioritizedVehicles[i].power_draw*lunarSpark.environment.predict_time/60) > lunarSpark.environment.adequate_capacity)) {
+						(prioritizedVehicles[i].battery.charge - (prioritizedVehicles[i].power_draw/lunarSpark.system.vehicle.eps_eff)*lunarSpark.environment.predict_time/60) > lunarSpark.environment.adequate_capacity)) {
 
 					// if the ttl pred indicates the veh will be alive for the next power delivery opportunity 
 					if (prioritizedVehicles[i].ttl - lunarSpark.environment.chance_to_live > 0) {
