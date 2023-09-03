@@ -527,6 +527,7 @@ function printVehicle(index) {
         vehicle.appendChild(printRow("Battery Charge:", "---", "-"));
         vehicle.appendChild(printRow("Vehicle Pwr Draw:",  "---", "-"));
         vehicle.appendChild(printRow("Time to Live (TTL):", "---", "min"));
+        vehicle.appendChild(printRow("TTL below "+lunarSpark.test_case.ttl_threshold+" min:", "--", "min"));
         vehicle.appendChild(printRow("TTL below zero:", "---", "min"));
         vehicle.appendChild(printRow("", "", "", true));
         vehicle.appendChild(printRow("Solar Panel Pwr Output:", "---", "-"));
