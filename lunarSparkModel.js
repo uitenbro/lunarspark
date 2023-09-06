@@ -233,11 +233,12 @@ function vehicleSort(a,b){
 }
 
 function updateSatelliteDatastore(sat) {
+	// TODO: this is not producing a unique datastore for each satellite.  The selection is independent but the datastore appears to be shared.
 	var vehData = [...lunarSpark.vehicles]
-	// predict key factors for next orbit approach
+	// predict key factors for next orbit approach (only used for displays)
 	for (var i=0;i<vehData.length;i++) {
-		vehData[i].battery_charge_pred = (vehData[i].battery.charge - vehData[i].power_draw*lunarSpark.environment.predict_time/60) // (Wh - Wh) 
-		vehData[i].ttl_pred = (vehData[i].battery_charge_pred / vehData[i].power_draw) * 60 // (Wh) / W
+		vehData[i].battery_charge_pred = (vehData[i].battery.charge - (vehData[i].power_draw/lunarSpark.system.vehicle.eps_eff)*lunarSpark.environment.predict_time/60) // (Wh - Wh) 
+		vehData[i].ttl_pred = vehData[i].ttl // min 
 		vehData[i].battery_available_pred = vehData[i].battery.capacity - vehData[i].battery_charge_pred // Wh
 	}
 	return [...vehData]
