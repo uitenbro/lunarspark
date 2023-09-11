@@ -9,6 +9,7 @@ var lunarSparkInput = {
       "time": 0,
       "time_step": 3,
       "predict_time": 0,
+      // "small_battery": 501, // consider making this the default in the model when not specified
       "orbit": {
         "altitude": 700000,
         "ascending_node": 90,
@@ -115,7 +116,7 @@ var lunarSparkInput = {
     "vehicles": [
       {
         "active": true,
-        "id": "IM Nova-C",
+        "id": "IM Nova-C 1",
         "location": {
           "name": "Malpert A",
           "lat": -85,
@@ -152,7 +153,7 @@ var lunarSparkInput = {
       },
       {
         "active": true,
-        "id": "IM Nova-C",
+        "id": "IM Nova-C 2",
         "location": {
           "name": "South Pole",
           "lat": -89.5,

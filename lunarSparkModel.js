@@ -254,30 +254,40 @@ function chooseVehicle(sat) {
 	var chosenVehicleIndex = -1
 	var executeDelivery = true
 
-	for (var i=0;i<prioritizedVehicles.length;i++) {
+	for (var i=0;i<prioritizedVehicles.length;i++) { 
 		if (prioritizedVehicles[i].active == true) { 
 
 			// if the vehicle is in the dark (prevent delivery in the light)
 			if (prioritizedVehicles[i].location.in_shadow == true || prioritizedVehicles[i].location.in_night == true) { 
 			
-				// if battery capacity is really small or the charge is low enough to take a full beam (prevent excess delivery)
-				if ((prioritizedVehicles[i].battery.capacity < lunarSpark.environment.small_capacity) ||				
-					 (prioritizedVehicles[i].battery.capacity - 
-						(prioritizedVehicles[i].battery.charge - (prioritizedVehicles[i].power_draw/lunarSpark.system.vehicle.eps_eff)*lunarSpark.environment.predict_time/60) > lunarSpark.environment.adequate_capacity)) {
+				// if the vehicle is not getting serviced by the other satellite TODO: figure out how to prevent the two drink issue.
+				// The implemenation in comments is not great.  Need to implment a TTL prediction based on other satellite selection
+				// var other_sat = (sat+1)%2
+				// if (lunarSpark.satellites[sat].vehData[lunarSpark.satellites[other_sat].chosen_vehicle.index] == undefined
+				//     || lunarSpark.satellites[sat].vehData[lunarSpark.satellites[other_sat].chosen_vehicle.index].id != prioritizedVehicles[i].id) {
 
-					// if the ttl pred indicates the veh will be alive for the next power delivery opportunity 
-					if (prioritizedVehicles[i].ttl - lunarSpark.environment.chance_to_live > 0) {
-						var chosenVehicleIndex = lunarSpark.satellites[sat].vehData.indexOf(prioritizedVehicles[i])
-						break;
+					// if battery capacity is really small or the charge is low enough to take a full beam (prevent excess delivery)
+					if ((prioritizedVehicles[i].battery.capacity < lunarSpark.environment.small_capacity) ||				
+						 (prioritizedVehicles[i].battery.capacity - 
+							(prioritizedVehicles[i].battery.charge - (prioritizedVehicles[i].power_draw/lunarSpark.system.vehicle.eps_eff)*lunarSpark.environment.predict_time/60) > lunarSpark.environment.adequate_capacity)) {
+
+						// if the ttl pred indicates the veh will be alive for the next power delivery opportunity 
+						if (prioritizedVehicles[i].ttl - lunarSpark.environment.chance_to_live > 0) {
+							var chosenVehicleIndex = lunarSpark.satellites[sat].vehData.indexOf(prioritizedVehicles[i])
+							break;
+						}
+						else {
+							console.log("Chance to Live:(TTL))", prioritizedVehicles[i].ttl)
+						}
 					}
 					else {
-						console.log("Chance to Live:(TTL))", prioritizedVehicles[i].ttl)
+						console.log("Adquate Capacity:(small battery)",prioritizedVehicles[i].battery.capacity)
+						console.log("Adquate Capacity:(capacity))",(prioritizedVehicles[i].battery.charge - prioritizedVehicles[i].power_draw*lunarSpark.environment.predict_time/60))
 					}
 				}
-				else {
-					console.log("Adquate Capacity:(small battery)",prioritizedVehicles[i].battery.capacity)
-					console.log("Adquate Capacity:(capacity))",(prioritizedVehicles[i].battery.charge - prioritizedVehicles[i].power_draw*lunarSpark.environment.predict_time/60))
-				}
+				// else {
+				// 	console.log("Already chosen by other satellite", prioritizedVehicles[i].id)
+				// }
 			}
 			else {
 				console.log("In Dark:",prioritizedVehicles[i].location.in_shadow, prioritizedVehicles[i].location.in_night)
