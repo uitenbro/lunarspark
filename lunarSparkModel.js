@@ -284,7 +284,7 @@ function chooseVehicle(sat) {
 						console.log("Adquate Capacity:(small battery)",prioritizedVehicles[i].battery.capacity)
 						console.log("Adquate Capacity:(capacity))",(prioritizedVehicles[i].battery.charge - prioritizedVehicles[i].power_draw*lunarSpark.environment.predict_time/60))
 					}
-				}
+				// }
 				// else {
 				// 	console.log("Already chosen by other satellite", prioritizedVehicles[i].id)
 				// }
